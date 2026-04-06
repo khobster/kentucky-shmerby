@@ -4,156 +4,108 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kentucky Shmerby</title>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <style>
-        /* Blocky Arcade Aesthetic */
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
         body {
             font-family: 'Press Start 2P', monospace;
-            background-color: #6bd0e0; /* Sky blue from Smashy Road */
+            background-color: #6bd0e0; 
             color: #fff;
             text-align: center;
             margin: 0;
             padding: 20px;
-            overflow-x: hidden;
+            overflow: hidden;
             user-select: none;
         }
 
-        h1 { 
-            color: #ffd700; 
-            font-size: 28px; 
-            text-shadow: 4px 4px 0px #000; 
-            margin-bottom: 40px;
-        }
-        
+        h1 { color: #ffd700; font-size: 28px; text-shadow: 4px 4px 0px #000; margin-bottom: 20px; }
         .hidden { display: none !important; }
+        #game-container { max-width: 900px; margin: 0 auto; position: relative; }
 
-        #game-container { max-width: 800px; margin: 0 auto; }
-
-        /* Chunky UI Elements */
+        /* Tapping Phase UI */
         #tap-zone {
-            width: 100%;
-            height: 300px;
-            background-color: #e53935;
-            border: 8px solid #000;
+            width: 100%; max-width: 600px; height: 300px; margin: 20px auto;
+            background-color: #e53935; border: 8px solid #000;
             box-shadow: 0px 10px 0px #b71c1c;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 20px;
-            box-sizing: border-box;
-            color: white;
-            line-height: 1.8;
-            text-shadow: 2px 2px 0px #000;
-            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; cursor: pointer; color: white; line-height: 1.8;
+            text-shadow: 2px 2px 0px #000; border-radius: 8px;
         }
-
-        #tap-zone:active { 
-            transform: translateY(10px);
-            box-shadow: 0px 0px 0px #b71c1c;
-        }
+        #tap-zone:active { transform: translateY(10px); box-shadow: 0px 0px 0px #b71c1c; }
 
         button {
-            padding: 15px 30px;
-            font-size: 16px;
-            font-family: 'Press Start 2P', monospace;
-            cursor: pointer;
-            background: #ffeb3b;
-            color: #000;
-            border: 6px solid #000;
-            box-shadow: 0px 6px 0px #f57f17;
-            margin-top: 20px;
-            text-transform: uppercase;
+            padding: 15px 30px; font-size: 16px; font-family: inherit; cursor: pointer;
+            background: #ffeb3b; color: #000; border: 6px solid #000;
+            box-shadow: 0px 6px 0px #f57f17; margin-top: 20px; text-transform: uppercase;
         }
         button:hover { background: #fff176; }
         button:disabled { background: #999; box-shadow: 0px 6px 0px #666; cursor: not-allowed; }
 
-        /* Voxel 3D Race Track */
+        /* 3D Oval Track */
         #race-phase {
-            perspective: 800px; /* Gives the 3D depth */
-            margin-top: 50px;
+            perspective: 800px; /* The 3D camera */
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
         }
 
         #track-container {
-            background-color: #545454; /* Asphalt grey */
-            border-left: 60px solid #a4e054; /* Chunky green grass */
-            border-right: 60px solid #a4e054;
-            border-top: 8px solid #000;
-            border-bottom: 8px solid #000;
-            padding: 20px 0;
-            /* Tilt the track back to mimic the screenshot */
-            transform: rotateX(45deg); 
-            box-shadow: 0px 20px 0px #3b3b3b;
+            width: 700px;
+            height: 400px;
+            background-color: #6bd0e0;
+            border-radius: 50%;
+            border: 60px solid #545454; /* The Asphalt Road */
+            box-shadow: 0 0 0 15px #a4e054, inset 0 0 0 15px #a4e054; /* Grass borders */
+            transform: rotateX(55deg); /* Tilts the track back into 3D space */
             position: relative;
+            transform-style: preserve-3d;
         }
 
-        .lane {
-            border-bottom: 6px dashed #fff; /* Road markings */
-            position: relative;
-            height: 60px;
-            text-align: left;
-            margin-bottom: 10px;
-        }
-        .lane:last-child { border-bottom: none; }
-        
-        .horse-wrapper {
+        /* The Finish Line */
+        .finish-line {
             position: absolute;
-            left: 0;
-            top: 10px;
-            transition: left 0.1s linear;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            /* Counter-rotate the horses so they stand straight up on the tilted track */
-            transform: rotateX(-45deg); 
-            transform-origin: bottom center;
+            top: 0; left: 50%;
+            width: 15px; height: 60px;
+            background: repeating-linear-gradient(0deg, #fff, #fff 10px, #000 10px, #000 20px);
+            transform: translateY(-60px); /* Move onto the top part of the road */
         }
 
-        /* Voxel/Blocky CSS Horse */
-        .voxel-horse {
-            width: 30px;
-            height: 20px;
-            background: #8B4513;
-            border: 4px solid #000;
-            position: relative;
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.3);
-        }
-        .voxel-horse::after {
-            content: '';
+        /* Smashy Road Style Cars */
+        .racer-wrapper {
             position: absolute;
-            right: -10px;
-            top: -15px;
-            width: 15px;
-            height: 15px;
-            background: #8B4513;
-            border: 4px solid #000;
+            left: 50%; top: 50%; /* Start at center, math will move them */
+            display: flex; flex-direction: column; align-items: center;
+            /* Center the anchor point */
+            margin-left: -15px; margin-top: -10px;
+        }
+
+        .car {
+            width: 30px; height: 18px;
+            background-color: var(--car-color);
+            border: 3px solid #000;
+            border-radius: 4px;
+            position: relative;
+            box-shadow: 0px 4px 0px rgba(0,0,0,0.5); /* 3D thickness */
+        }
+        /* Windshield */
+        .car::after {
+            content: ''; position: absolute;
+            right: 4px; top: 2px; bottom: 2px; width: 6px;
+            background: #e0f7fa; border: 2px solid #000;
+            border-radius: 2px;
         }
 
         .horse-name { 
-            font-size: 8px; 
-            color: #fff; 
-            background: #000; 
-            padding: 4px; 
-            white-space: nowrap; 
-            margin-bottom: 25px; /* Push name above the horse head */
+            font-size: 10px; color: #fff; background: #000; 
+            padding: 4px; white-space: nowrap; margin-bottom: 20px; 
             border: 2px solid #fff;
-        }
-        
-        .finish-line {
-            position: absolute;
-            right: 10%;
-            top: 0;
-            bottom: 0;
-            width: 20px;
-            background: repeating-linear-gradient( 0deg, #fff, #fff 15px, #000 15px, #000 30px );
-            border-left: 4px solid #000;
-            z-index: 0;
+            /* Counter-rotate text so it faces the camera, not the track */
+            transform: rotateX(-55deg) translateY(-20px); 
         }
 
         #timer-display { font-size: 40px; color: #fff; text-shadow: 4px 4px #000; }
-        #race-status { text-shadow: 3px 3px #000; line-height: 1.5; }
+        #race-status { text-shadow: 3px 3px #000; line-height: 1.5; height: 60px; }
     </style>
 </head>
 <body>
@@ -162,7 +114,7 @@
         <h1>KENTUCKY SHMERBY</h1>
 
         <div id="lobby">
-            <p>Your Racer:</p>
+            <p>Your Derby Kart:</p>
             <h2 id="player-horse-name" style="color: #ffeb3b; text-shadow: 2px 2px #000;">Loading...</h2>
             <button id="start-btn" disabled>ENTER DERBY</button>
         </div>
@@ -177,24 +129,38 @@
         </div>
 
         <div id="race-phase" class="hidden">
-            <h2 id="race-status">THE GATES ARE OPEN!</h2>
+            <div style="position: absolute; top: -60px; width: 100%;">
+                <h2 id="race-status">THE GATES ARE OPEN!</h2>
+                <button id="restart-btn" class="hidden" onclick="location.reload()">Race Again</button>
+            </div>
+            
             <div id="track-container">
                 <div class="finish-line"></div>
-                <div id="lanes"></div>
+                <div id="racers-container"></div>
             </div>
-            <button id="restart-btn" class="hidden" onclick="location.reload()">Race Again</button>
         </div>
     </div>
 
     <script>
         // --- GAME STATE ---
-        let playerHorse = { name: "Loading...", taps: 0, isPlayer: true, color: "#e91e63" }; // Player is pink/red
+        let playerHorse = { name: "Loading...", taps: 0, isPlayer: true, color: "#e91e63" }; 
         let horses = [];
         let timeRemaining = 10;
         const TAP_DURATION = 10; 
 
         const fallbackWords = ["Cosmic", "Potato", "Angry", "Toaster", "Midnight", "Goblin", "Sweaty", "Pancake", "Liquid", "Taxpayer"];
-        const botColors = ["#2196f3", "#4caf50", "#ff9800", "#9c27b0", "#00bcd4"];
+        const botColors = ["#2196f3", "#4caf50", "#ff9800", "#9c27b0"];
+
+        // Track Dimensions (matches CSS)
+        const trackWidth = 700;
+        const trackHeight = 400;
+        // Lane radiuses (inner to outer)
+        const laneRadii = [
+            { rx: 320, ry: 170 }, 
+            { rx: 340, ry: 190 }, 
+            { rx: 360, ry: 210 }, 
+            { rx: 380, ry: 230 }  
+        ];
 
         // --- DOM ELEMENTS ---
         const lobbyEl = document.getElementById('lobby');
@@ -203,7 +169,7 @@
         const tapZone = document.getElementById('tap-zone');
         const timerDisplay = document.getElementById('timer-display');
         const racePhaseEl = document.getElementById('race-phase');
-        const lanesEl = document.getElementById('lanes');
+        const racersContainer = document.getElementById('racers-container');
         const raceStatus = document.getElementById('race-status');
         const restartBtn = document.getElementById('restart-btn');
 
@@ -225,7 +191,6 @@
             document.getElementById('player-horse-name').innerText = playerHorse.name;
             startBtn.disabled = false;
         }
-
         initGame();
 
         // --- PHASE 2: TAPPING LOGIC ---
@@ -263,29 +228,28 @@
                     name: await fetchRandomName(),
                     taps: Math.floor(Math.random() * 50) + 30, 
                     isPlayer: false,
-                    color: botColors[i % botColors.length]
+                    color: botColors[i]
                 });
             }
-
             horses.sort(() => Math.random() - 0.5);
 
             horses.forEach((horse, index) => {
-                horse.position = 0; 
-                horse.baseSpeed = 0.1; 
-                horse.speedMultiplier = horse.baseSpeed + (horse.taps * 0.005); 
+                // Start at top center (-90 degrees in radians)
+                horse.angle = -Math.PI / 2; 
+                horse.baseSpeed = 0.005; 
+                horse.speedMultiplier = horse.baseSpeed + (horse.taps * 0.0003); 
+                horse.lane = laneRadii[index];
 
-                const lane = document.createElement('div');
-                lane.className = 'lane';
-                lane.innerHTML = `
-                    <div class="horse-wrapper" id="horse-${index}">
-                        <div class="horse-name" style="color: ${horse.isPlayer ? '#ffeb3b' : '#fff'}">${horse.name}</div>
-                        <div class="voxel-horse" style="background-color: ${horse.color};"></div>
-                    </div>
-                `;
-                lanesEl.appendChild(lane);
+                const wrapper = document.createElement('div');
+                wrapper.className = 'racer-wrapper';
+                wrapper.id = `horse-${index}`;
                 
-                // Color the bot horse heads to match their body
-                document.styleSheets[0].insertRule(`#horse-${index} .voxel-horse::after { background-color: ${horse.color}; }`, 0);
+                // NO insertRule! Using inline CSS variables instead.
+                wrapper.innerHTML = `
+                    <div class="horse-name" style="color: ${horse.isPlayer ? '#ffeb3b' : '#fff'}">${horse.name}</div>
+                    <div class="car" style="--car-color: ${horse.color};"></div>
+                `;
+                racersContainer.appendChild(wrapper);
             });
 
             setTimeout(raceLoop, 1000); 
@@ -295,13 +259,26 @@
             let raceFinished = false;
 
             horses.forEach((horse, index) => {
-                let randomJitter = Math.random() * 0.3; 
-                horse.position += horse.speedMultiplier + randomJitter;
+                let randomJitter = (Math.random() * 0.002); 
+                horse.angle += horse.speedMultiplier + randomJitter;
+
+                // Calculate X and Y along the ellipse
+                let x = horse.lane.rx * Math.cos(horse.angle);
+                let y = horse.lane.ry * Math.sin(horse.angle);
+
+                // Calculate rotation so the car faces the direction it's driving
+                // atan2 gives us the angle of the tangent to the curve
+                let rotation = Math.atan2(
+                    horse.lane.ry * Math.cos(horse.angle), 
+                    -horse.lane.rx * Math.sin(horse.angle)
+                ) * (180 / Math.PI);
 
                 const horseDiv = document.getElementById(`horse-${index}`);
-                horseDiv.style.left = `${horse.position}%`;
+                // Apply position and rotation
+                horseDiv.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
 
-                if (horse.position >= 80 && !raceFinished) { 
+                // One full lap is completed when angle reaches 270 degrees (3 * Math.PI / 2)
+                if (horse.angle >= (3 * Math.PI / 2) && !raceFinished) { 
                     raceFinished = true;
                     raceStatus.innerText = `${horse.name} WINS!`;
                     if(horse.isPlayer) {
