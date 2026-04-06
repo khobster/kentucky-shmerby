@@ -10,7 +10,7 @@
 
         body {
             font-family: 'Press Start 2P', monospace;
-            background-color: #6bd0e0; 
+            background-color: #87CEEB; /* Sky blue */
             color: #fff;
             text-align: center;
             margin: 0;
@@ -42,22 +42,23 @@
         button:hover { background: #fff176; }
         button:disabled { background: #999; box-shadow: 0px 6px 0px #666; cursor: not-allowed; }
 
-        /* 3D Oval Track */
+        /* 3D Derby Track */
         #race-phase {
-            perspective: 800px; /* The 3D camera */
+            perspective: 800px; 
             margin-top: 40px;
             display: flex;
             justify-content: center;
         }
 
         #track-container {
-            width: 700px;
-            height: 400px;
-            background-color: #6bd0e0;
+            width: 750px;
+            height: 450px;
+            background-color: #4caf50; /* Infield Grass */
             border-radius: 50%;
-            border: 60px solid #545454; /* The Asphalt Road */
-            box-shadow: 0 0 0 15px #a4e054, inset 0 0 0 15px #a4e054; /* Grass borders */
-            transform: rotateX(55deg); /* Tilts the track back into 3D space */
+            border: 55px solid #bd9a6c; /* Dirt Track */
+            outline: 6px solid #fff; /* Outer White Rail */
+            box-shadow: inset 0 0 0 6px #fff; /* Inner White Rail */
+            transform: rotateX(55deg); 
             position: relative;
             transform-style: preserve-3d;
         }
@@ -65,42 +66,72 @@
         /* The Finish Line */
         .finish-line {
             position: absolute;
-            top: 0; left: 50%;
-            width: 15px; height: 60px;
-            background: repeating-linear-gradient(0deg, #fff, #fff 10px, #000 10px, #000 20px);
-            transform: translateY(-60px); /* Move onto the top part of the road */
+            top: -55px; left: 50%;
+            width: 10px; height: 55px;
+            background: repeating-linear-gradient(0deg, #fff, #fff 8px, #000 8px, #000 16px);
+            border-left: 2px solid #000;
         }
 
-        /* Smashy Road Style Cars */
+        /* Voxel Horses & Jockeys */
         .racer-wrapper {
             position: absolute;
-            left: 50%; top: 50%; /* Start at center, math will move them */
+            left: 50%; top: 50%; 
             display: flex; flex-direction: column; align-items: center;
-            /* Center the anchor point */
-            margin-left: -15px; margin-top: -10px;
+            margin-left: -15px; margin-top: -15px;
         }
 
-        .car {
-            width: 30px; height: 18px;
-            background-color: var(--car-color);
-            border: 3px solid #000;
-            border-radius: 4px;
+        .voxel-horse {
+            width: 32px; height: 14px;
+            background-color: #5c3a21; /* Dark brown horse body */
             position: relative;
-            box-shadow: 0px 4px 0px rgba(0,0,0,0.5); /* 3D thickness */
+            box-shadow: 0px 4px 0px rgba(0,0,0,0.5); 
+            border-radius: 4px;
         }
-        /* Windshield */
-        .car::after {
+        
+        /* Horse Head */
+        .voxel-horse::before {
             content: ''; position: absolute;
-            right: 4px; top: 2px; bottom: 2px; width: 6px;
-            background: #e0f7fa; border: 2px solid #000;
-            border-radius: 2px;
+            right: -8px; top: -10px; width: 12px; height: 14px;
+            background-color: #5c3a21;
+            border-radius: 4px;
+        }
+
+        /* Colored Saddlecloth with Number */
+        .saddle {
+            position: absolute;
+            left: 8px; top: 0px;
+            width: 14px; height: 12px;
+            background-color: var(--racer-color);
+            color: #fff;
+            font-size: 8px;
+            font-family: sans-serif;
+            font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid #000;
+            box-sizing: border-box;
+            text-shadow: 1px 1px 0px #000;
+        }
+
+        /* Jockey */
+        .jockey {
+            position: absolute;
+            left: 10px; top: -10px;
+            width: 10px; height: 10px;
+            background-color: var(--racer-color);
+            border-radius: 5px 5px 0 0;
+            border: 1px solid #000;
+        }
+        /* Jockey Helmet bill */
+        .jockey::after {
+            content: ''; position: absolute;
+            right: -3px; top: 2px; width: 4px; height: 2px;
+            background-color: #000;
         }
 
         .horse-name { 
-            font-size: 10px; color: #fff; background: #000; 
-            padding: 4px; white-space: nowrap; margin-bottom: 20px; 
+            font-size: 10px; color: #fff; background: rgba(0,0,0,0.7); 
+            padding: 4px; white-space: nowrap; margin-bottom: 25px; 
             border: 2px solid #fff;
-            /* Counter-rotate text so it faces the camera, not the track */
             transform: rotateX(-55deg) translateY(-20px); 
         }
 
@@ -114,7 +145,7 @@
         <h1>KENTUCKY SHMERBY</h1>
 
         <div id="lobby">
-            <p>Your Derby Kart:</p>
+            <p>Your Steed:</p>
             <h2 id="player-horse-name" style="color: #ffeb3b; text-shadow: 2px 2px #000;">Loading...</h2>
             <button id="start-btn" disabled>ENTER DERBY</button>
         </div>
@@ -130,7 +161,7 @@
 
         <div id="race-phase" class="hidden">
             <div style="position: absolute; top: -60px; width: 100%;">
-                <h2 id="race-status">THE GATES ARE OPEN!</h2>
+                <h2 id="race-status">AND THEY'RE OFF!</h2>
                 <button id="restart-btn" class="hidden" onclick="location.reload()">Race Again</button>
             </div>
             
@@ -143,7 +174,8 @@
 
     <script>
         // --- GAME STATE ---
-        let playerHorse = { name: "Loading...", taps: 0, isPlayer: true, color: "#e91e63" }; 
+        // Numbers 1-20 are traditional for the Derby
+        let playerHorse = { name: "Loading...", taps: 0, isPlayer: true, color: "#e91e63", number: Math.floor(Math.random() * 20) + 1 }; 
         let horses = [];
         let timeRemaining = 10;
         const TAP_DURATION = 10; 
@@ -151,15 +183,12 @@
         const fallbackWords = ["Cosmic", "Potato", "Angry", "Toaster", "Midnight", "Goblin", "Sweaty", "Pancake", "Liquid", "Taxpayer"];
         const botColors = ["#2196f3", "#4caf50", "#ff9800", "#9c27b0"];
 
-        // Track Dimensions (matches CSS)
-        const trackWidth = 700;
-        const trackHeight = 400;
-        // Lane radiuses (inner to outer)
+        // Track Dimensions
         const laneRadii = [
-            { rx: 320, ry: 170 }, 
             { rx: 340, ry: 190 }, 
-            { rx: 360, ry: 210 }, 
-            { rx: 380, ry: 230 }  
+            { rx: 355, ry: 205 }, 
+            { rx: 370, ry: 220 }, 
+            { rx: 385, ry: 235 }  
         ];
 
         // --- DOM ELEMENTS ---
@@ -188,7 +217,7 @@
 
         async function initGame() {
             playerHorse.name = await fetchRandomName();
-            document.getElementById('player-horse-name').innerText = playerHorse.name;
+            document.getElementById('player-horse-name').innerText = `#${playerHorse.number} ${playerHorse.name}`;
             startBtn.disabled = false;
         }
         initGame();
@@ -228,26 +257,36 @@
                     name: await fetchRandomName(),
                     taps: Math.floor(Math.random() * 50) + 30, 
                     isPlayer: false,
-                    color: botColors[i]
+                    color: botColors[i],
+                    number: Math.floor(Math.random() * 20) + 1
                 });
             }
             horses.sort(() => Math.random() - 0.5);
 
             horses.forEach((horse, index) => {
-                // Start at top center (-90 degrees in radians)
                 horse.angle = -Math.PI / 2; 
-                horse.baseSpeed = 0.005; 
-                horse.speedMultiplier = horse.baseSpeed + (horse.taps * 0.0003); 
+                
+                // MATH FOR A 2-MINUTE RACE:
+                // 120 seconds * 60 frames per second = 7200 frames to complete one lap (2 * Math.PI radians)
+                // Base increment per frame = (2 * Math.PI) / 7200 ≈ 0.00087
+                // (Increase this number if the 2-minute wait is too boring!)
+                horse.baseSpeed = 0.00080; 
+                
+                // Tap multiplier drastically reduced to fit the new 2-minute scale
+                horse.speedMultiplier = horse.baseSpeed + (horse.taps * 0.000004); 
+                
                 horse.lane = laneRadii[index];
 
                 const wrapper = document.createElement('div');
                 wrapper.className = 'racer-wrapper';
                 wrapper.id = `horse-${index}`;
                 
-                // NO insertRule! Using inline CSS variables instead.
                 wrapper.innerHTML = `
                     <div class="horse-name" style="color: ${horse.isPlayer ? '#ffeb3b' : '#fff'}">${horse.name}</div>
-                    <div class="car" style="--car-color: ${horse.color};"></div>
+                    <div class="voxel-horse" style="--racer-color: ${horse.color};">
+                        <div class="jockey"></div>
+                        <div class="saddle">${horse.number}</div>
+                    </div>
                 `;
                 racersContainer.appendChild(wrapper);
             });
@@ -259,34 +298,31 @@
             let raceFinished = false;
 
             horses.forEach((horse, index) => {
-                let randomJitter = (Math.random() * 0.002); 
+                // Tiny random jitter so the horses visually fight for position
+                let randomJitter = (Math.random() * 0.0002); 
                 horse.angle += horse.speedMultiplier + randomJitter;
 
-                // Calculate X and Y along the ellipse
                 let x = horse.lane.rx * Math.cos(horse.angle);
                 let y = horse.lane.ry * Math.sin(horse.angle);
 
-                // Calculate rotation so the car faces the direction it's driving
-                // atan2 gives us the angle of the tangent to the curve
                 let rotation = Math.atan2(
                     horse.lane.ry * Math.cos(horse.angle), 
                     -horse.lane.rx * Math.sin(horse.angle)
                 ) * (180 / Math.PI);
 
                 const horseDiv = document.getElementById(`horse-${index}`);
-                // Apply position and rotation
                 horseDiv.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
 
-                // One full lap is completed when angle reaches 270 degrees (3 * Math.PI / 2)
+                // 3 * Math.PI / 2 represents one full lap back to the top center line
                 if (horse.angle >= (3 * Math.PI / 2) && !raceFinished) { 
                     raceFinished = true;
-                    raceStatus.innerText = `${horse.name} WINS!`;
+                    
                     if(horse.isPlayer) {
                         raceStatus.style.color = "#ffeb3b";
-                        raceStatus.innerText += `\n(You had ${horse.taps} taps!)`; 
+                        raceStatus.innerText = `YOU WIN! \n ${horse.name} takes the Derby!`; 
                     } else {
                         raceStatus.style.color = "#fff";
-                        raceStatus.innerText += `\n(You lost. You had ${playerHorse.taps} taps.)`;
+                        raceStatus.innerText = `YOU LOST. \n ${horse.name} takes the Derby!`;
                     }
                     restartBtn.classList.remove('hidden');
                 }
