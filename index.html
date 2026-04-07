@@ -63,11 +63,11 @@
         }
 
         #track-container {
-            box-sizing: border-box; /* CRITICAL: Fixes the radius math */
+            box-sizing: border-box; 
             width: 900px; height: 500px;
             background-color: #4caf50; 
             border-radius: 50%;
-            border: 70px solid #bd9a6c; /* The Dirt Track */
+            border: 75px solid #bd9a6c; /* The Dirt Track */
             outline: 6px solid #fff; 
             box-shadow: inset 0 0 0 6px #fff; 
             transform: scale(1.6) rotateX(55deg); 
@@ -77,109 +77,101 @@
         }
 
         .finish-line {
-            position: absolute; top: -70px; left: 50%; width: 14px; height: 70px;
+            position: absolute; top: -75px; left: 50%; width: 14px; height: 75px;
             background: repeating-linear-gradient(0deg, #fff, #fff 10px, #000 10px, #000 20px);
             border-left: 2px solid #000;
         }
 
-        /* --- THE NEW HORSES & BALLOON JOCKEYS --- */
+        /* --- THE NEW 2.5D BILLBOARD HORSES --- */
         .racer-wrapper {
             position: absolute; left: 50%; top: 50%; 
-            display: flex; flex-direction: column; align-items: center;
-            margin-left: -20px; margin-top: -30px;
+            /* Centers the wrapper exactly on the calculation point */
+            margin-left: 0px; margin-top: 0px;
         }
 
-        /* Muybridge-style Gallop Cycle */
-        @keyframes gallop-muibridge {
-            0% { transform: translateY(0px) rotate(-6deg); }
-            12.5% { transform: translateY(-4px) rotate(4deg); }
-            25% { transform: translateY(0px) rotate(-6deg); }
-            37.5% { transform: translateY(2px) rotate(-12deg); }
-            50% { transform: translateY(-2px) rotate(2deg); }
-            62.5% { transform: translateY(0px) rotate(-8deg); }
-            75% { transform: translateY(3px) rotate(-15deg); }
-            87.5% { transform: translateY(0px) rotate(-6deg); }
-            100% { transform: translateY(0px) rotate(-6deg); }
+        /* The shadow lies FLAT on the 3D dirt track */
+        .horse-shadow {
+            position: absolute; left: -15px; top: -5px; width: 30px; height: 10px;
+            background: rgba(0,0,0,0.4); border-radius: 50%;
         }
 
-        /* Leg Sequenced Swing Animations */
-        @keyframes swing-leg-front {
-            0% { transform: rotate(-30deg) translateY(0px); }
-            25% { transform: rotate(15deg) translateY(-2px); }
-            50% { transform: rotate(-30deg) translateY(0px); }
-            75% { transform: rotate(-45deg) translateY(2px); }
-            100% { transform: rotate(-30deg) translateY(0px); }
-        }
-        @keyframes swing-leg-back {
-            0% { transform: rotate(15deg) translateY(0px); }
-            25% { transform: rotate(-30deg) translateY(-2px); }
-            50% { transform: rotate(15deg) translateY(0px); }
-            75% { transform: rotate(45deg) translateY(2px); }
-            100% { transform: rotate(15deg) translateY(0px); }
+        /* The billboard stands UP towards the camera */
+        .billboard-container {
+            position: absolute; left: -15px; top: -35px; /* Centers the horse over the shadow */
+            width: 30px; height: 35px;
+            transform-origin: bottom center;
+            /* Will be dynamically rotated and flipped by JS */
         }
 
-        .horse-assembly {
-            position: relative; width: 40px; height: 30px;
-            animation: gallop-muibridge 0.3s infinite linear;
+        /* Clean 2D Horse Profile */
+        @keyframes gallop-bob {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-4px); }
+            100% { transform: translateY(0px); }
+        }
+        @keyframes leg-scissor {
+            0% { transform: rotate(-25deg); }
+            100% { transform: rotate(25deg); }
         }
 
-        /* Horse Anatomy */
-        .horse-body {
-            position: absolute; top: 10px; left: 0; width: 34px; height: 14px;
-            background-color: #5c3a21; border-radius: 8px; z-index: 2;
-            box-shadow: inset -2px -2px 0px rgba(0,0,0,0.3);
+        .horse-2d {
+            position: absolute; width: 100%; height: 100%;
+            animation: gallop-bob 0.25s infinite linear;
         }
-        .horse-neck {
-            position: absolute; top: 2px; right: 0; width: 14px; height: 16px;
-            background-color: #5c3a21; transform: rotate(30deg); z-index: 1;
+        .h-body {
+            position: absolute; bottom: 10px; left: 0; width: 30px; height: 12px;
+            background: #5c3a21; border-radius: 6px; border: 1px solid #3a2212;
         }
-        .horse-head {
-            position: absolute; top: 0px; right: -8px; width: 16px; height: 10px;
-            background-color: #5c3a21; border-radius: 4px; z-index: 3;
+        .h-head {
+            position: absolute; right: -8px; top: -8px; width: 12px; height: 16px;
+            background: #5c3a21; border-radius: 4px; transform: rotate(15deg); border: 1px solid #3a2212;
         }
-
-        /* Sequenced Legs */
-        .leg {
-            position: absolute; width: 5px; height: 14px; background-color: #4a2e1a;
-            top: 20px; transform-origin: top center; z-index: 1;
-            border-radius: 2px;
+        .h-tail {
+            position: absolute; left: -6px; top: 2px; width: 10px; height: 4px;
+            background: #222; transform: rotate(-30deg);
         }
-        .leg.front-1 { right: 6px; animation: swing-leg-front 0.3s infinite linear; }
-        .leg.front-2 { right: 10px; animation: swing-leg-back 0.3s infinite linear; }
-        .leg.back-1 { left: 4px; animation: swing-leg-back 0.3s infinite linear; }
-        .leg.back-2 { left: 8px; animation: swing-leg-front 0.3s infinite linear; }
+        .h-leg {
+            position: absolute; bottom: -2px; width: 4px; height: 12px; background: #3a2212;
+            transform-origin: top center; border-radius: 2px;
+        }
+        .h-leg.front { right: 4px; animation: leg-scissor 0.25s infinite alternate; }
+        .h-leg.back { left: 4px; animation: leg-scissor 0.25s infinite alternate-reverse; }
 
         /* Saddlecloth */
-        .saddle {
-            position: absolute; left: 10px; top: 8px; width: 14px; height: 12px;
-            background-color: var(--racer-color); color: #fff; font-size: 8px; font-family: sans-serif; font-weight: bold;
+        .h-saddle {
+            position: absolute; left: 10px; top: -2px; width: 12px; height: 10px;
+            background-color: var(--racer-color); color: #fff; font-size: 7px; font-family: sans-serif; font-weight: bold;
             display: flex; align-items: center; justify-content: center;
-            border: 1px solid #000; z-index: 4; text-shadow: 1px 1px 0px #000;
+            border: 1px solid #000; text-shadow: 1px 1px 0px #000;
         }
 
-        /* Smiley Balloon Guy Jockey */
-        @keyframes balloon-bounce {
+        /* Smiley Balloon Jockey */
+        @keyframes balloon-float {
             0% { transform: translateY(0px) rotate(-5deg); }
-            50% { transform: translateY(-3px) rotate(5deg); }
-            100% { transform: translateY(0px) rotate(-5deg); }
+            100% { transform: translateY(-4px) rotate(5deg); }
         }
 
-        .jockey-balloon {
-            position: absolute; left: 10px; top: -14px; width: 14px; height: 14px;
-            background-color: #fff; /* White balloon */
-            border-radius: 50%; border: 2px solid #000;
-            display: flex; align-items: center; justify-content: center;
-            animation: balloon-bounce 0.6s infinite ease-in-out;
-            z-index: 5;
+        .balloon-jockey {
+            position: absolute; left: 8px; top: -22px; width: 16px; height: 18px;
+            background: #ffeb3b; border-radius: 50%; border: 1px solid #000;
+            animation: balloon-float 0.4s infinite alternate ease-in-out;
         }
-        /* Happy Smiley Face (pixel art) */
-        .balloon-face {
-            width: 10px; height: 10px;
-            background: radial-gradient(circle, #ff0 30%, transparent 31%) center/3px 3px no-repeat,
-                        radial-gradient(circle, #000 30%, transparent 31%) 3px 2px/2px 2px no-repeat,
-                        radial-gradient(circle, #000 30%, transparent 31%) 7px 2px/2px 2px no-repeat,
-                        #ff0; /* Yellow happy smile on face */
-            border-radius: 50%;
+        /* The string attaching it to the horse */
+        .balloon-jockey::after {
+            content: ''; position: absolute; left: 7px; bottom: -10px; width: 1px; height: 10px; background: #fff;
+        }
+        /* Happy Face */
+        .smiley {
+            position: absolute; top: 4px; left: 3px; width: 10px; height: 8px;
+        }
+        .smiley-eye {
+            position: absolute; width: 2px; height: 2px; background: #000; border-radius: 50%; top: 0;
+        }
+        .smiley-eye.left { left: 1px; }
+        .smiley-eye.right { right: 1px; }
+        .smiley-mouth {
+            position: absolute; bottom: 0; left: 1px; width: 6px; height: 3px;
+            border-bottom: 2px solid #000; border-radius: 50%;
         }
 
         #timer-display { font-size: 40px; color: #fff; text-shadow: 4px 4px #000; position: relative; z-index: 10;}
@@ -226,7 +218,6 @@
 
     <script>
         // --- THE DERBY PDF DICTIONARY ---
-        // Extracted directly from 1875-2025 Kentucky Derby records
         const derbyWords = [
             "Affirmed", "Agile", "Alan", "Dale", "Always", "Dreaming", "Alysheba", "American", "Pharoah", "Animal", "Kingdom",
             "Apollo", "Aristides", "Assault", "Authentic", "Azra", "Baden", "Barbaro", "Behave", "Yourself", "Ben", "Ali",
@@ -269,14 +260,12 @@
         let camX = 0;
         let camY = 0;
 
-        // FIXED TRACK MATH: Keeps the horses centered on the 70px wide dirt track
-        // Container is 900x500. With box-sizing: border-box and a 70px border:
-        // The dirt lies between rx [380, 450] and ry [180, 250].
+        // WIDER TRACK RADII: Spread out to prevent clumping
         const laneRadii = [
-            { rx: 395, ry: 195 }, 
-            { rx: 410, ry: 210 }, 
+            { rx: 385, ry: 185 }, 
+            { rx: 405, ry: 205 }, 
             { rx: 425, ry: 225 }, 
-            { rx: 440, ry: 240 }  
+            { rx: 445, ry: 245 }  
         ];
 
         // --- DOM ELEMENTS ---
@@ -343,7 +332,9 @@
             horses.sort(() => Math.random() - 0.5);
 
             horses.forEach((horse, index) => {
-                horse.angle = -Math.PI / 2; 
+                // STAGGERED START: Spreads them out behind the starting gate
+                horse.angle = -Math.PI / 2 - (0.05 + (index * 0.04)); 
+                
                 horse.baseSpeed = 0.00080; 
                 horse.speedMultiplier = horse.baseSpeed + (horse.taps * 0.000004); 
                 horse.lane = laneRadii[index];
@@ -352,20 +343,27 @@
                 wrapper.className = 'racer-wrapper';
                 wrapper.id = `horse-${index}`;
                 
-                // NEW ASSEMBLED CSS HORSE & SMILEY BALLOON JOCKEY
+                // BILLBOARD HORSE & SMILEY BALLOON
                 wrapper.innerHTML = `
-                    <div class="horse-assembly" style="--racer-color: ${horse.color};">
-                        <div class="horse-head"></div>
-                        <div class="horse-neck"></div>
-                        <div class="horse-body"></div>
-                        <div class="leg front-1"></div>
-                        <div class="leg front-2"></div>
-                        <div class="leg back-1"></div>
-                        <div class="leg back-2"></div>
-                        <div class="jockey-balloon">
-                            <div class="balloon-face"></div>
+                    <div class="horse-shadow"></div>
+                    <div class="billboard-container" id="billboard-${index}">
+                        <div class="horse-2d">
+                            <div class="h-tail"></div>
+                            <div class="h-leg back"></div>
+                            <div class="h-leg front"></div>
+                            <div class="h-body"></div>
+                            <div class="h-head"></div>
+                            
+                            <div class="balloon-jockey">
+                                <div class="smiley">
+                                    <div class="smiley-eye left"></div>
+                                    <div class="smiley-eye right"></div>
+                                    <div class="smiley-mouth"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="h-saddle" style="--racer-color: ${horse.color};">${horse.number}</div>
                         </div>
-                        <div class="saddle">${horse.number}</div>
                     </div>
                 `;
                 racersContainer.appendChild(wrapper);
@@ -427,14 +425,20 @@
                 let x = horse.lane.rx * Math.cos(horse.angle);
                 let y = horse.lane.ry * Math.sin(horse.angle);
 
-                let rotation = Math.atan2(
-                    horse.lane.ry * Math.cos(horse.angle), 
-                    -horse.lane.rx * Math.sin(horse.angle)
-                ) * (180 / Math.PI);
-
                 const horseDiv = document.getElementById(`horse-${index}`);
-                horseDiv.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
+                const billboard = document.getElementById(`billboard-${index}`);
+                
+                // Move the wrapper around the track
+                horseDiv.style.transform = `translate(${x}px, ${y}px)`;
                 horseDiv.style.zIndex = zIndex; 
+
+                // BILLBOARDING LOGIC: Find out if the horse is moving left or right
+                // Math.sin(angle) goes positive on the bottom half of the track (moving left)
+                let movingRight = Math.sin(horse.angle) < 0; 
+                let flip = movingRight ? 1 : -1;
+                
+                // Keep the horse standing straight up, but flip horizontally if moving left
+                billboard.style.transform = `rotateX(-55deg) scaleX(${flip})`;
 
                 if (horse.angle >= (3 * Math.PI / 2) && !raceFinished) { 
                     raceFinished = true;
