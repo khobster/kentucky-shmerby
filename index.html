@@ -63,10 +63,11 @@
         }
 
         #track-container {
-            width: 800px; height: 450px;
+            box-sizing: border-box; /* CRITICAL: Fixes the radius math */
+            width: 900px; height: 500px;
             background-color: #4caf50; 
             border-radius: 50%;
-            border: 65px solid #bd9a6c; /* The Dirt Track */
+            border: 70px solid #bd9a6c; /* The Dirt Track */
             outline: 6px solid #fff; 
             box-shadow: inset 0 0 0 6px #fff; 
             transform: scale(1.6) rotateX(55deg); 
@@ -76,7 +77,7 @@
         }
 
         .finish-line {
-            position: absolute; top: -65px; left: 50%; width: 14px; height: 65px;
+            position: absolute; top: -70px; left: 50%; width: 14px; height: 70px;
             background: repeating-linear-gradient(0deg, #fff, #fff 10px, #000 10px, #000 20px);
             border-left: 2px solid #000;
         }
@@ -116,6 +117,7 @@
         .horse-body {
             position: absolute; top: 10px; left: 0; width: 34px; height: 14px;
             background-color: #5c3a21; border-radius: 8px; z-index: 2;
+            box-shadow: inset -2px -2px 0px rgba(0,0,0,0.3);
         }
         .horse-neck {
             position: absolute; top: 2px; right: 0; width: 14px; height: 16px;
@@ -130,6 +132,7 @@
         .leg {
             position: absolute; width: 5px; height: 14px; background-color: #4a2e1a;
             top: 20px; transform-origin: top center; z-index: 1;
+            border-radius: 2px;
         }
         .leg.front-1 { right: 6px; animation: swing-front 0.3s infinite linear; }
         .leg.front-2 { right: 10px; animation: swing-back 0.3s infinite linear; }
@@ -208,7 +211,29 @@
         // --- THE DERBY PDF DICTIONARY ---
         // Extracted directly from 1875-2025 Kentucky Derby records
         const derbyWords = [
-            "Affirmed", "Agile", "Alan", "Dale", "Always", "Dreaming", "Alysheba", "American", "Pharoah", "Animal", "Kingdom", "Apollo", "Aristides", "Assault", "Authentic", "Azra", "Baden", "Barbaro", "Behave", "Yourself", "Ben", "Ali", "Brush", "Big", "Brown", "Black", "Gold", "Bold", "Forbes", "Venture", "Brokers", "Tip", "Bubbling", "Over", "Buchanan", "Burgoo", "King", "California", "Chrome", "Cannonade", "Canonero", "Carry", "Back", "Cavalcade", "Chant", "Charismatic", "Chateaugay", "Citation", "Clyde", "Dusen", "Count", "Fleet", "Turf", "Country", "House", "Dark", "Star", "Day", "Decidedly", "Determine", "Donau", "Donerail", "Dust", "Commander", "Elwood", "Exterminator", "Ferdinand", "Flying", "Ebony", "Fonso", "Foolish", "Pleasure", "Forward", "Pass", "Funny", "Cide", "Fusaichi", "Pegasus", "Gallahadion", "Gallant", "Fox", "Gato", "Del", "Sol", "Genuine", "Risk", "George", "Smith", "Giacomo", "Gin", "Grindstone", "Halma", "Hill", "Gail", "Hindoo", "His", "Eminence", "Hoop", "Iron", "Liege", "Jet", "Pilot", "Joe", "Cotton", "Johnstown", "Judge", "Himes", "Justify", "Kauai", "Lawrin", "Leonatus", "Lieut", "Gibson", "Lil", "Tee", "Lookout", "Lord", "Murphy", "Lucky", "Debonair", "Macbeth", "Mage", "Majestic", "Prince", "Mandaloun", "Manuel", "Meridian", "Middleground", "Mine", "Bird", "Monarchos", "Montrose", "Morvich", "Mystik", "Dan", "Needles", "Northern", "Dancer", "Nyquist", "Old", "Rosebud", "Omaha", "Omar", "Khayyam", "Orb", "Paul", "Jones", "Pensive", "Pink", "Plaudit", "Pleasant", "Colony", "Ponder", "Proud", "Clarion", "Real", "Quiet", "Regret", "Reigh", "Strike", "Riley", "Riva", "Ridge", "Sea", "Hero", "Seattle", "Slew", "Secretariat", "Shut", "Out", "Silver", "Charm", "Sir", "Barton", "Huon", "Smarty", "Sovereignty", "Spectacular", "Bid", "Spend", "Buck", "Spokane", "Stone", "Street", "Sense", "Sunday", "Silence", "Sunny's", "Halo", "Super", "Saver", "Swale", "Swaps", "Thunder", "Gulch", "Tim", "Tam", "Tomy", "Lee", "Twenty", "Grand", "Typhoon", "Unbridled", "Vagrant", "Venetian", "Way", "War", "Admiral", "Emblem", "Whirlaway", "Whiskery", "Winning", "Colors", "Wintergreen", "Worth", "Zev", "Mystery", "Ghost", "Thunder"
+            "Affirmed", "Agile", "Alan", "Dale", "Always", "Dreaming", "Alysheba", "American", "Pharoah", "Animal", "Kingdom",
+            "Apollo", "Aristides", "Assault", "Authentic", "Azra", "Baden", "Barbaro", "Behave", "Yourself", "Ben", "Ali",
+            "Brush", "Big", "Brown", "Black", "Gold", "Bold", "Forbes", "Venture", "Brokers", "Tip", "Bubbling", "Over",
+            "Buchanan", "Burgoo", "King", "California", "Chrome", "Cannonade", "Canonero", "Carry", "Back", "Cavalcade",
+            "Chant", "Charismatic", "Chateaugay", "Citation", "Clyde", "Dusen", "Count", "Fleet", "Turf", "Country", "House",
+            "Dark", "Star", "Day", "Decidedly", "Determine", "Donau", "Donerail", "Dust", "Commander", "Elwood", "Exterminator",
+            "Ferdinand", "Flying", "Ebony", "Fonso", "Foolish", "Pleasure", "Forward", "Pass", "Funny", "Cide", "Fusaichi",
+            "Pegasus", "Gallahadion", "Gallant", "Fox", "Gato", "Del", "Sol", "Genuine", "Risk", "George", "Smith", "Giacomo",
+            "Gin", "Grindstone", "Halma", "Hill", "Gail", "Hindoo", "His", "Eminence", "Hoop", "Iron", "Liege", "Jet", "Pilot",
+            "Joe", "Cotton", "Johnstown", "Judge", "Himes", "Justify", "Kauai", "Lawrin", "Leonatus", "Lieut", "Gibson", "Lil",
+            "Tee", "Lookout", "Lord", "Murphy", "Lucky", "Debonair", "Macbeth", "Mage", "Majestic", "Prince", "Mandaloun",
+            "Manuel", "Meridian", "Middleground", "Mine", "Bird", "Monarchos", "Montrose", "Morvich", "Mystik", "Dan",
+            "Needles", "Northern", "Dancer", "Nyquist", "Old", "Rosebud", "Omaha", "Omar", "Khayyam", "Orb", "Paul", "Jones",
+            "Pensive", "Pink", "Plaudit", "Pleasant", "Colony", "Ponder", "Proud", "Clarion", "Real", "Quiet", "Regret",
+            "Reigh", "Strike", "Riley", "Riva", "Ridge", "Sea", "Hero", "Seattle", "Slew", "Secretariat", "Shut", "Out",
+            "Silver", "Charm", "Sir", "Barton", "Huon", "Smarty", "Sovereignty", "Spectacular", "Bid", "Spend", "Buck",
+            "Spokane", "Stone", "Street", "Sense", "Sunday", "Silence", "Sunny", "Halo", "Super", "Saver", "Swale", "Swaps",
+            "Thunder", "Gulch", "Tim", "Tam", "Tomy", "Lee", "Twenty", "Grand", "Typhoon", "Unbridled", "Vagrant", "Venetian",
+            "Way", "War", "Admiral", "Emblem", "Whirlaway", "Whiskery", "Winning", "Colors", "Wintergreen", "Worth", "Zev",
+            "Mystery", "Ghost", "Action", "Affiliate", "Archarcharch", "Avatar", "Bally", "Ache", "Bodemeister", "Capote",
+            "Cyberknife", "Danza", "Dornoch", "Epicenter", "Exaggerator", "Frosted", "Girvin", "Hansen", "Ice", "Box",
+            "Improbable", "Keen", "Liaison", "Mendelssohn", "Nehro", "Ocho", "Practical", "Joke", "Scat", "Daddy",
+            "Tacitus", "Upstart", "Vekoma", "Zandon"
         ];
 
         function generateWeirdName() {
@@ -227,15 +252,14 @@
         let camX = 0;
         let camY = 0;
 
-        // FIXED TRACK MATH: Keeps the horses centered on the 65px wide dirt track
-        // Track center is at X: 400, Y: 225
-        // Inner grass edge is roughly rx: 335, ry: 160
-        // Outer track edge is roughly rx: 400, ry: 225
+        // FIXED TRACK MATH: Keeps the horses centered on the 70px wide dirt track
+        // Container is 900x500. With box-sizing: border-box and a 70px border:
+        // The dirt lies between rx [380, 450] and ry [180, 250].
         const laneRadii = [
-            { rx: 350, ry: 175 }, 
-            { rx: 365, ry: 190 }, 
-            { rx: 380, ry: 205 }, 
-            { rx: 395, ry: 220 }  
+            { rx: 395, ry: 195 }, 
+            { rx: 410, ry: 210 }, 
+            { rx: 425, ry: 225 }, 
+            { rx: 440, ry: 240 }  
         ];
 
         // --- DOM ELEMENTS ---
