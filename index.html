@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kentucky Shmerby - True 3D</title>
+    <title>Kentucky Shmerby</title>
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
@@ -17,11 +17,7 @@
         h1 { color: #ffd700; font-size: 28px; text-shadow: 4px 4px 0px #000; margin: 20px 0; position: relative; z-index: 10; }
         .hidden { display: none !important; }
         #game-container { width: 100vw; height: 100vh; position: relative; display: flex; flex-direction: column; align-items: center; }
-
-        /* The 3D Canvas */
         #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-
-        /* UI Overlays */
         #lobby, #tapping-phase { position: relative; z-index: 10; margin-top: 50px; }
         
         #tap-zone {
@@ -47,7 +43,6 @@
             box-shadow: 0px 4px 15px rgba(0,0,0,0.6); transition: opacity 0.5s ease;
         }
 
-        /* Flexbox Chyron */
         #leaderboard {
             position: absolute; bottom: 0; left: 0; width: 100%; height: 60px;
             background: rgba(17, 17, 17, 0.95); border-top: 4px solid #ffd700;
@@ -63,7 +58,6 @@
         .leaderboard-color { width: 12px; height: 12px; border: 2px solid #fff; margin-right: 6px; display: inline-block; flex-shrink: 0; }
         .leaderboard-name { white-space: nowrap; font-size: 10px; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex-grow: 1; text-align: left; }
 
-        /* Results Modal */
         #results-modal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(0,0,0,0.95); border: 6px solid #ffd700; padding: 30px;
@@ -113,11 +107,10 @@
             <div id="results-list"></div>
             <button onclick="location.reload()" style="margin: 20px auto 0 auto; display: block;">Race Again</button>
         </div>
-
     </div>
 
     <script>
-        // --- 1. GAME DATA & LOGIC ---
+        // --- GAME DATA ---
         const derbyWords = [
             "Affirmed", "Agile", "Alan", "Dale", "Dreaming", "Alysheba", "American", "Pharoah", "Animal", "Kingdom",
             "Apollo", "Aristides", "Assault", "Authentic", "Azra", "Baden", "Barbaro", "Behave", "Yourself", "Ben", "Ali",
@@ -141,59 +134,90 @@
         ];
 
         function generateWeirdName() {
-            let word1 = derbyWords[Math.floor(Math.random() * derbyWords.length)];
-            let word2 = derbyWords[Math.floor(Math.random() * derbyWords.length)];
-            return `${word1} ${word2}`;
+            return derbyWords[Math.floor(Math.random() * derbyWords.length)] + ' ' + derbyWords[Math.floor(Math.random() * derbyWords.length)];
         }
 
         let playerHorse = { name: generateWeirdName(), taps: 0, isPlayer: true, color: "#e91e63", number: Math.floor(Math.random() * 20) + 1 }; 
         let gameHorses = [];
         let finishOrder = [];
         let raceFinished = false;
-        let timeRemaining = 10;
         const botColors = ["#2196f3", "#4caf50", "#ff9800", "#9c27b0", "#00bcd4"];
         
-        // Track settings
         const trackScaleX = 1.6; 
         const baseRadius = 180;
         const laneWidth = 8;
 
-        // --- 2. THREE.JS 3D ENGINE SETUP ---
+        // --- THREE.JS SETUP ---
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x87CEEB); 
+        scene.fog = new THREE.Fog(0x87CEEB, 400, 800);
         
         const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 2000);
-        let cameraLookTarget = new THREE.Vector3(0, 0, 0); // Smooth tracking target
+        let cameraLookTarget = new THREE.Vector3(0, 0, 0);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.shadowMap.enabled = true;
         container.appendChild(renderer.domElement);
 
-        // Lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
         scene.add(ambientLight);
         const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
         dirLight.position.set(100, 200, 50);
         dirLight.castShadow = true;
-        dirLight.shadow.camera.top = 300;
-        dirLight.shadow.camera.bottom = -300;
-        dirLight.shadow.camera.left = -300;
-        dirLight.shadow.camera.right = 300;
+        dirLight.shadow.camera.top = 400;
+        dirLight.shadow.camera.bottom = -400;
+        dirLight.shadow.camera.left = -400;
+        dirLight.shadow.camera.right = 400;
         scene.add(dirLight);
 
-        // Build the 3D Track
+        // --- MOWING-STRIPE INFIELD TEXTURE ---
+        function createMowedGrassTexture() {
+            const c = document.createElement('canvas');
+            c.width = 512; c.height = 512;
+            const ctx = c.getContext('2d');
+            
+            const stripeCount = 16;
+            const stripeH = c.height / stripeCount;
+            
+            for (let i = 0; i < stripeCount; i++) {
+                // Alternate between two greens — like real mow lines
+                ctx.fillStyle = i % 2 === 0 ? '#4da843' : '#3d8a35';
+                ctx.fillRect(0, i * stripeH, c.width, stripeH);
+            }
+            
+            // Subtle noise grain overlay for organic feel
+            const imageData = ctx.getImageData(0, 0, c.width, c.height);
+            for (let j = 0; j < imageData.data.length; j += 4) {
+                const noise = (Math.random() - 0.5) * 12;
+                imageData.data[j]     += noise;
+                imageData.data[j + 1] += noise;
+                imageData.data[j + 2] += noise;
+            }
+            ctx.putImageData(imageData, 0, 0);
+            
+            const tex = new THREE.CanvasTexture(c);
+            tex.wrapS = THREE.RepeatWrapping;
+            tex.wrapT = THREE.RepeatWrapping;
+            tex.repeat.set(4, 4);
+            return tex;
+        }
+
+        // --- BUILD 3D TRACK ---
         function createTrack() {
             const trackGroup = new THREE.Group();
             
-            const grassGeo = new THREE.CylinderGeometry(0, baseRadius - 2, 64);
-            const grassMat = new THREE.MeshLambertMaterial({ color: 0x4caf50 });
+            // Mowed infield
+            const grassGeo = new THREE.CircleGeometry(baseRadius - 2, 64);
+            const grassMat = new THREE.MeshLambertMaterial({ map: createMowedGrassTexture() });
             const grass = new THREE.Mesh(grassGeo, grassMat);
             grass.rotation.x = -Math.PI / 2;
             grass.receiveShadow = true;
             trackGroup.add(grass);
 
+            // Dirt track ring
             const dirtGeo = new THREE.RingGeometry(baseRadius - 2, baseRadius + 60, 64);
             const dirtMat = new THREE.MeshLambertMaterial({ color: 0xbd9a6c });
             const dirt = new THREE.Mesh(dirtGeo, dirtMat);
@@ -201,6 +225,15 @@
             dirt.receiveShadow = true;
             trackGroup.add(dirt);
 
+            // Outer ground beyond track
+            const outerGeo = new THREE.RingGeometry(baseRadius + 60, baseRadius + 200, 64);
+            const outerMat = new THREE.MeshLambertMaterial({ color: 0x5a9e4b });
+            const outer = new THREE.Mesh(outerGeo, outerMat);
+            outer.rotation.x = -Math.PI / 2;
+            outer.position.y = -0.1;
+            trackGroup.add(outer);
+
+            // Rails
             const railMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
             const innerRailGeo = new THREE.TorusGeometry(baseRadius - 2, 0.5, 8, 64);
             const innerRail = new THREE.Mesh(innerRailGeo, railMat);
@@ -212,10 +245,23 @@
             outerRail.rotation.x = -Math.PI / 2; outerRail.position.y = 2;
             trackGroup.add(outerRail);
 
+            // Finish line
+            const finishCanvas = document.createElement('canvas');
+            finishCanvas.width = 64; finishCanvas.height = 64;
+            const fctx = finishCanvas.getContext('2d');
+            const sq = 8;
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    fctx.fillStyle = (r + c) % 2 === 0 ? '#fff' : '#000';
+                    fctx.fillRect(c * sq, r * sq, sq, sq);
+                }
+            }
+            const finishTex = new THREE.CanvasTexture(finishCanvas);
             const finishGeo = new THREE.PlaneGeometry(64, 4);
-            const finishLine = new THREE.Mesh(finishGeo, railMat);
+            const finishMat = new THREE.MeshBasicMaterial({ map: finishTex });
+            const finishLine = new THREE.Mesh(finishGeo, finishMat);
             finishLine.rotation.x = -Math.PI / 2; finishLine.rotation.z = Math.PI / 2;
-            finishLine.position.set(0, 0.1, -(baseRadius + 29));
+            finishLine.position.set(0, 0.15, -(baseRadius + 29));
             trackGroup.add(finishLine);
 
             trackGroup.scale.set(trackScaleX, 1, 1);
@@ -223,106 +269,173 @@
         }
         createTrack();
 
-        // --- 3. DYNAMIC 3D TEXTURES ---
+        // --- SMILEY JOCKEY TEXTURE (smaller face, forward-looking) ---
         function createSmileyTexture() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 128; canvas.height = 128;
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#ffeb3b'; ctx.fillRect(0, 0, 128, 128); // Yellow base
+            const c = document.createElement('canvas');
+            c.width = 128; c.height = 128;
+            const ctx = c.getContext('2d');
+            
+            // Yellow base
+            ctx.fillStyle = '#ffeb3b';
+            ctx.fillRect(0, 0, 128, 128);
+            
+            // Smaller, centered face features
             ctx.fillStyle = '#000';
-            ctx.beginPath(); ctx.arc(40, 50, 10, 0, Math.PI * 2); ctx.fill(); // Left eye
-            ctx.beginPath(); ctx.arc(88, 50, 10, 0, Math.PI * 2); ctx.fill(); // Right eye
-            ctx.beginPath(); ctx.arc(64, 75, 24, 0, Math.PI, false); ctx.lineWidth = 6; ctx.stroke(); // Smile
-            return new THREE.CanvasTexture(canvas);
+            // Eyes — smaller, slightly higher
+            ctx.beginPath(); ctx.arc(48, 52, 6, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(80, 52, 6, 0, Math.PI * 2); ctx.fill();
+            // Eye highlights
+            ctx.fillStyle = '#fff';
+            ctx.beginPath(); ctx.arc(50, 50, 2, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(82, 50, 2, 0, Math.PI * 2); ctx.fill();
+            // Mouth — smaller smile
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.arc(64, 68, 14, 0.1 * Math.PI, 0.9 * Math.PI, false); ctx.stroke();
+            
+            return new THREE.CanvasTexture(c);
         }
         const globalSmileyTexture = createSmileyTexture();
 
+        // --- SADDLE TEXTURE ---
         function createSaddleTexture(number, color) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 128; canvas.height = 128;
-            const ctx = canvas.getContext('2d');
+            const c = document.createElement('canvas');
+            c.width = 128; c.height = 128;
+            const ctx = c.getContext('2d');
             ctx.fillStyle = color; ctx.fillRect(0, 0, 128, 128);
             ctx.strokeStyle = '#000'; ctx.lineWidth = 8; ctx.strokeRect(0, 0, 128, 128);
             ctx.fillStyle = '#fff'; ctx.font = 'bold 70px "Press Start 2P", monospace'; 
             ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
             ctx.fillText(number, 64, 72);
             ctx.lineWidth = 4; ctx.strokeText(number, 64, 72);
-            return new THREE.CanvasTexture(canvas);
+            return new THREE.CanvasTexture(c);
         }
 
-        // --- 4. 3D HORSE GENERATOR ---
+        // --- 3D HORSE BUILDER ---
         function create3DHorse(colorHex, number) {
             const horseGroup = new THREE.Group();
-            const bodyGroup = new THREE.Group(); // Handles the bounding gallop
+            const bodyGroup = new THREE.Group();
             horseGroup.add(bodyGroup);
 
-            const brownMat = new THREE.MeshLambertMaterial({ color: 0x5c3a21 });
+            const brownMat = new THREE.MeshLambertMaterial({ color: 0x6B4226 });
             const darkBrownMat = new THREE.MeshLambertMaterial({ color: 0x3a2212 });
+            const hoofMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
 
-            // Main Body
-            const bodyGeo = new THREE.BoxGeometry(12, 5, 4);
+            // Body
+            const bodyGeo = new THREE.BoxGeometry(12, 5, 5);
             const body = new THREE.Mesh(bodyGeo, brownMat);
-            body.position.y = 5; body.castShadow = true;
+            body.position.y = 6; body.castShadow = true;
             bodyGroup.add(body);
 
-            // Saddlecloth Overlays
-            const saddleGeo = new THREE.PlaneGeometry(6, 4);
+            // Saddlecloths
+            const saddleGeo = new THREE.PlaneGeometry(6, 4.5);
             const saddleTex = createSaddleTexture(number.toString(), colorHex);
             const saddleMat = new THREE.MeshLambertMaterial({ map: saddleTex });
             
             const saddleR = new THREE.Mesh(saddleGeo, saddleMat);
-            saddleR.position.set(0, 5, 2.1); // Placed slightly outside body
+            saddleR.position.set(0, 6, 2.6);
             bodyGroup.add(saddleR);
 
             const saddleL = new THREE.Mesh(saddleGeo, saddleMat);
-            saddleL.position.set(0, 5, -2.1);
-            saddleL.rotation.y = Math.PI; // Faces outward
+            saddleL.position.set(0, 6, -2.6);
+            saddleL.rotation.y = Math.PI;
             bodyGroup.add(saddleL);
 
+            // Neck
+            const neckGeo = new THREE.BoxGeometry(3, 7, 3.5);
+            const neck = new THREE.Mesh(neckGeo, brownMat);
+            neck.position.set(6, 9, 0);
+            neck.rotation.z = 0.4;
+            neck.castShadow = true;
+            bodyGroup.add(neck);
+
             // Head
-            const headGeo = new THREE.BoxGeometry(4, 5, 3);
+            const headGeo = new THREE.BoxGeometry(5, 3, 3);
             const head = new THREE.Mesh(headGeo, brownMat);
-            head.position.set(7, 8, 0); head.castShadow = true;
+            head.position.set(9, 12, 0); head.castShadow = true;
             bodyGroup.add(head);
 
+            // Snout
+            const snoutGeo = new THREE.BoxGeometry(3, 2, 2.5);
+            const snout = new THREE.Mesh(snoutGeo, new THREE.MeshLambertMaterial({ color: 0x7B5433 }));
+            snout.position.set(12, 11.5, 0);
+            bodyGroup.add(snout);
+
+            // Ears
+            const earGeo = new THREE.ConeGeometry(0.6, 2, 4);
+            const earL = new THREE.Mesh(earGeo, brownMat);
+            earL.position.set(8.5, 14, 1); earL.rotation.z = 0.2;
+            bodyGroup.add(earL);
+            const earR = new THREE.Mesh(earGeo, brownMat);
+            earR.position.set(8.5, 14, -1); earR.rotation.z = 0.2;
+            bodyGroup.add(earR);
+
+            // Eyes
+            const eyeGeo = new THREE.SphereGeometry(0.5, 8, 8);
+            const eyeMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+            const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
+            eyeL.position.set(10.5, 12.5, 1.5);
+            bodyGroup.add(eyeL);
+            const eyeR = new THREE.Mesh(eyeGeo, eyeMat);
+            eyeR.position.set(10.5, 12.5, -1.5);
+            bodyGroup.add(eyeR);
+
+            // Mane
+            const maneMat = new THREE.MeshLambertMaterial({ color: 0x1a0f00 });
+            for (let i = 0; i < 5; i++) {
+                const tuftGeo = new THREE.BoxGeometry(1, 2, 3.5);
+                const tuft = new THREE.Mesh(tuftGeo, maneMat);
+                tuft.position.set(5 + i * 1.2, 10 + i * 0.6, 0);
+                tuft.rotation.z = 0.3 + i * 0.05;
+                bodyGroup.add(tuft);
+            }
+
             // Tail
-            const tailGeo = new THREE.BoxGeometry(3, 1, 1);
-            const tail = new THREE.Mesh(tailGeo, darkBrownMat);
-            tail.position.set(-7, 5, 0);
+            const tailGeo = new THREE.BoxGeometry(4, 1.5, 1.5);
+            const tail = new THREE.Mesh(tailGeo, maneMat);
+            tail.position.set(-8.5, 6.5, 0);
+            tail.rotation.z = -0.3;
             bodyGroup.add(tail);
 
-            // Legs
-            const legGeo = new THREE.BoxGeometry(1.5, 5, 1.5);
-            legGeo.translate(0, -2.5, 0); // Moves pivot point to the top of the leg
+            // Legs (pivot at top)
+            const legGeo = new THREE.BoxGeometry(1.5, 5.5, 1.5);
+            legGeo.translate(0, -2.75, 0);
             const legs = [];
-            const legPositions = [ [4, 4, 1.5], [4, 4, -1.5], [-4, 4, 1.5], [-4, 4, -1.5] ];
+            const legPositions = [ [4, 4, 1.8], [4, 4, -1.8], [-4, 4, 1.8], [-4, 4, -1.8] ];
             legPositions.forEach(pos => {
                 const leg = new THREE.Mesh(legGeo, darkBrownMat);
                 leg.position.set(pos[0], pos[1], pos[2]); leg.castShadow = true;
-                bodyGroup.add(leg); legs.push(leg);
+                bodyGroup.add(leg);
+                // Hoof
+                const hoofGeo = new THREE.BoxGeometry(1.8, 1.2, 1.8);
+                const hoof = new THREE.Mesh(hoofGeo, hoofMat);
+                hoof.position.set(0, -5.5, 0);
+                leg.add(hoof);
+                legs.push(leg);
             });
 
-            // Balloon Jockey
+            // Balloon Jockey — anchored to bodyGroup so it follows horse rotation
             const balloonGroup = new THREE.Group();
-            balloonGroup.position.set(0, 11, 0); 
-            horseGroup.add(balloonGroup); // Anchored to root to hover smoothly
+            balloonGroup.position.set(-1, 13, 0); 
+            bodyGroup.add(balloonGroup);
 
             const balloonGeo = new THREE.SphereGeometry(2.5, 32, 32);
-            const balloonMatGeo = new THREE.MeshLambertMaterial({ map: globalSmileyTexture });
-            const balloon = new THREE.Mesh(balloonGeo, balloonMatGeo);
-            balloon.rotation.y = -Math.PI / 2; // Initial face forward
+            const balloonMat = new THREE.MeshLambertMaterial({ map: globalSmileyTexture });
+            const balloon = new THREE.Mesh(balloonGeo, balloonMat);
+            // Face forward (+X is forward on the horse)
+            balloon.rotation.y = -Math.PI / 2;
             balloonGroup.add(balloon);
             
-            const stringGeo = new THREE.CylinderGeometry(0.1, 0.1, 4);
+            const stringGeo = new THREE.CylinderGeometry(0.08, 0.08, 3.5);
             const stringMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
             const string = new THREE.Mesh(stringGeo, stringMat);
             string.position.y = -2;
             balloonGroup.add(string);
 
-            return { root: horseGroup, bodyGroup: bodyGroup, head: head, tail: tail, legs: legs, balloonGroup: balloonGroup };
+            return { root: horseGroup, bodyGroup, head, tail, legs, balloonGroup };
         }
 
-        // --- 5. UI LOGIC ---
+        // --- UI ---
         document.getElementById('player-horse-name').innerText = `#${playerHorse.number} ${playerHorse.name}`;
 
         document.getElementById('start-btn').addEventListener('click', () => {
@@ -332,22 +445,22 @@
             
             let startTime = Date.now();
             let timerInterval = setInterval(() => {
-                let elapsedTime = (Date.now() - startTime) / 1000;
-                timeRemaining = (10 - elapsedTime).toFixed(1);
-                if (timeRemaining <= 0) { timeRemaining = 0; clearInterval(timerInterval); start3DRace(); }
-                document.getElementById('timer-display').innerText = timeRemaining;
+                let elapsed = (Date.now() - startTime) / 1000;
+                let remaining = (10 - elapsed).toFixed(1);
+                if (remaining <= 0) { remaining = 0; clearInterval(timerInterval); start3DRace(); }
+                document.getElementById('timer-display').innerText = remaining;
             }, 100);
         });
 
         document.getElementById('tap-zone').addEventListener('pointerdown', (e) => { e.preventDefault(); playerHorse.taps++; });
 
-        // --- 6. RACE LOGIC ---
+        // --- RACE START ---
         function start3DRace() {
             document.getElementById('tapping-phase').classList.add('hidden');
             document.getElementById('race-phase').classList.remove('hidden');
 
             gameHorses.push(playerHorse);
-            for(let i=0; i<5; i++){
+            for (let i = 0; i < 5; i++) {
                 let newNum; do { newNum = Math.floor(Math.random() * 20) + 1; } while (gameHorses.some(h => h.number === newNum));
                 gameHorses.push({ name: generateWeirdName(), taps: Math.floor(Math.random() * 50) + 30, isPlayer: false, color: botColors[i], number: newNum });
             }
@@ -357,7 +470,7 @@
                 horse.angle = -Math.PI / 2 - (0.05 + (index * 0.03)); 
                 horse.baseSpeed = 0.0010; 
                 horse.speedMultiplier = horse.baseSpeed + (horse.taps * 0.00001); 
-                horse.radius = baseRadius + (index * laneWidth);
+                horse.radius = baseRadius + 10 + (index * laneWidth);
                 horse.finished = false;
 
                 const model = create3DHorse(horse.color, horse.number);
@@ -365,17 +478,16 @@
                 horse.model = model;
             });
 
-            updateDOMLeaderboard();
+            updateLeaderboard();
             animate(); 
         }
 
-        function updateDOMLeaderboard() {
+        function updateLeaderboard() {
             const sorted = [...gameHorses].sort((a, b) => {
                 if (a.finished && !b.finished) return -1;
                 if (!a.finished && b.finished) return 1;
                 return b.angle - a.angle;
             });
-            
             const list = document.getElementById('standings-list');
             list.innerHTML = '';
             sorted.forEach((horse, i) => {
@@ -396,28 +508,24 @@
             setTimeout(() => { el.style.opacity = 0; setTimeout(() => el.remove(), 500); }, 3000);
         }
 
-        // --- 7. RENDER LOOP ---
+        // --- RENDER LOOP ---
         const clock = new THREE.Clock();
 
         function animate() {
             if (!raceFinished) requestAnimationFrame(animate);
             
-            const delta = clock.getDelta();
             const time = clock.getElapsedTime();
+            const gallopSpeed = 20;
 
             let activeLeader = null;
             let highestAngle = -999;
-            const gallopSpeed = 20;
 
             gameHorses.forEach((horse, i) => {
-                let randomJitter = (Math.random() * 0.0005); 
-                horse.angle += horse.speedMultiplier + randomJitter;
+                horse.angle += horse.speedMultiplier + (Math.random() * 0.0005);
 
-                // Math: Calculate X/Z Position on Oval
                 const x = Math.cos(horse.angle) * horse.radius * trackScaleX;
                 const z = Math.sin(horse.angle) * horse.radius;
                 
-                // Math: Calculate Tangent for accurate 3D rotation
                 const dx = -Math.sin(horse.angle) * horse.radius * trackScaleX;
                 const dz = Math.cos(horse.angle) * horse.radius;
                 const tangent = Math.atan2(-dz, dx);
@@ -425,27 +533,24 @@
                 horse.model.root.position.set(x, 0, z);
                 horse.model.root.rotation.y = tangent;
 
-                // --- THE RUGGED GALLOP ANIMATION ---
+                // Gallop animation
                 const cycle = time * gallopSpeed + (i * 1.5);
-                
-                // Bounding & Pitching
                 horse.model.bodyGroup.position.y = Math.abs(Math.sin(cycle)) * 2;
-                horse.model.bodyGroup.rotation.z = Math.cos(cycle) * 0.15; 
-                horse.model.head.rotation.z = -0.2 + Math.sin(cycle) * 0.2;
-                horse.model.tail.rotation.z = -0.4 + Math.sin(cycle) * 0.3;
+                horse.model.bodyGroup.rotation.z = Math.cos(cycle) * 0.12; 
+                horse.model.head.rotation.z = -0.15 + Math.sin(cycle) * 0.15;
+                horse.model.tail.rotation.z = -0.3 + Math.sin(cycle) * 0.25;
 
-                // Scissor Legs
+                // Leg scissor
                 const legSwing = Math.sin(cycle) * 0.7;
-                horse.model.legs[0].rotation.z = legSwing;       // Front Right
-                horse.model.legs[1].rotation.z = legSwing * 0.8; // Front Left
-                horse.model.legs[2].rotation.z = -legSwing;      // Back Right
-                horse.model.legs[3].rotation.z = -legSwing * 0.8;// Back Left
+                horse.model.legs[0].rotation.z = legSwing;
+                horse.model.legs[1].rotation.z = legSwing * 0.8;
+                horse.model.legs[2].rotation.z = -legSwing;
+                horse.model.legs[3].rotation.z = -legSwing * 0.8;
                 
-                // Balloon Bob & LookAt
-                horse.model.balloonGroup.position.y = 11 + Math.sin(time * 5 + i) * 0.5;
-                horse.model.balloonGroup.lookAt(camera.position); // Smiley ALWAYS faces you!
+                // Balloon bob (stays facing forward with bodyGroup, just bobs up/down)
+                horse.model.balloonGroup.position.y = 13 + Math.sin(time * 5 + i) * 0.8;
 
-                // Check Finish Line
+                // Finish check
                 if (horse.angle >= (3 * Math.PI / 2) && !horse.finished) { 
                     horse.finished = true;
                     finishOrder.push(horse);
@@ -459,30 +564,27 @@
                 }
             });
 
-            updateDOMLeaderboard();
+            updateLeaderboard();
 
-            // --- SMOOTH BROADCAST CAMERA ---
+            // Broadcast camera — follows leader from outside rail
             if (activeLeader) {
-                // Position camera outside and slightly behind the leader
                 const camAngle = activeLeader.angle - 0.15;
-                const camRadius = activeLeader.radius + 60;
+                const camRadius = activeLeader.radius + 65;
                 
                 const targetX = Math.cos(camAngle) * camRadius * trackScaleX;
                 const targetZ = Math.sin(camAngle) * camRadius;
                 
-                camera.position.lerp(new THREE.Vector3(targetX, 30, targetZ), 0.05);
+                camera.position.lerp(new THREE.Vector3(targetX, 35, targetZ), 0.05);
                 
-                // Look slightly ahead of the leader
-                const lookAngle = activeLeader.angle + 0.1;
+                const lookAngle = activeLeader.angle + 0.08;
                 const lookX = Math.cos(lookAngle) * activeLeader.radius * trackScaleX;
                 const lookZ = Math.sin(lookAngle) * activeLeader.radius;
                 
-                const targetLook = new THREE.Vector3(lookX, 0, lookZ);
-                cameraLookTarget.lerp(targetLook, 0.05);
+                cameraLookTarget.lerp(new THREE.Vector3(lookX, 3, lookZ), 0.05);
                 camera.lookAt(cameraLookTarget);
             }
 
-            // End Game Modal
+            // Finish
             if (finishOrder.length === gameHorses.length && !raceFinished) {
                 raceFinished = true;
                 document.getElementById('race-status').innerText = "RACE COMPLETE!";
