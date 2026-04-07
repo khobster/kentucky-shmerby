@@ -76,13 +76,12 @@
         #camera-rig {
             position: absolute; width: 100%; height: 100%;
             transform-style: preserve-3d; transition: transform 0.1s linear; 
-            /* This moves the entire world so the horses never clip */
         }
 
         #track-container {
             box-sizing: border-box; width: 1400px; height: 800px;
             background-color: #4caf50; border-radius: 50%; border: 120px solid #bd9a6c; outline: 6px solid #fff; box-shadow: inset 0 0 0 6px #fff; 
-            transform: rotateX(60deg); /* Lays the track flat in 3D space */
+            transform: rotateX(60deg); 
             position: absolute; left: 50%; top: 50%; margin-left: -700px; margin-top: -400px;
             transform-style: preserve-3d;
         }
@@ -103,19 +102,16 @@
             background: rgba(0,0,0,0.5); border-radius: 50%; transform: translateZ(1px);
         }
 
-        /* Rotates along the track tangent, then stands straight up */
         .horse-3d-anchor {
             position: absolute; transform-style: preserve-3d;
             transform: rotateZ(var(--tangent-angle)) rotateX(-90deg); 
         }
 
-        /* Gallop bobbing */
         @keyframes gallop-bob {
             0% { transform: translateY(0px) rotateZ(-2deg); }
             50% { transform: translateY(-4px) rotateZ(2deg); }
             100% { transform: translateY(0px) rotateZ(-2deg); }
         }
-        /* Scissor Leg Animation */
         @keyframes leg-scissor { 
             0% { transform: translateZ(var(--tz)) rotateZ(-30deg); } 
             100% { transform: translateZ(var(--tz)) rotateZ(30deg); } 
@@ -128,14 +124,13 @@
 
         .face { position: absolute; border: 1px solid rgba(0,0,0,0.4); box-sizing: border-box; }
 
-        /* Main Body (40px long, 14px high, 12px thick) */
+        /* Main Body */
         .h-body { position: absolute; bottom: 12px; left: 0; width: 40px; height: 14px; border-radius: 4px; }
         .h-body.left  { transform: translateZ(6px); background: #5c3a21; display: flex; align-items: center; justify-content: center; }
-        /* Right side uses rotateY(180) to flip the number perfectly! */
         .h-body.right { transform: translateZ(-6px) rotateY(180deg); background: #5c3a21; display: flex; align-items: center; justify-content: center; }
         .h-body.top   { width: 40px; height: 12px; background: #3a2212; transform: rotateX(90deg) translateZ(8px); bottom: 18px; }
 
-        /* Saddlecloth integrated directly into the 3D body sides */
+        /* Saddlecloths */
         .h-saddle {
             width: 16px; height: 12px; background: var(--racer-color); color: #fff; font-size: 9px; font-weight: bold;
             display: flex; align-items: center; justify-content: center; border: 2px solid #000; text-shadow: 1px 1px 0 #000;
@@ -165,7 +160,6 @@
         .balloon-string { position: absolute; width: 2px; height: 12px; background: #fff; left: 8px; bottom: -10px; }
         .balloon {
             position: absolute; width: 18px; height: 18px; background: #ffeb3b; border-radius: 50%; border: 2px solid #000; left: 0; bottom: 0;
-            /* JavaScript counter-rotates this so the smiley ALWAYS faces the camera */
             transform: rotateY(var(--face-camera-angle));
         }
         .smiley-eye { position: absolute; width: 3px; height: 3px; background: #000; border-radius: 50%; top: 5px; }
@@ -244,11 +238,7 @@
             "Silver", "Charm", "Barton", "Huon", "Smarty", "Sovereignty", "Spectacular", "Bid", "Spend", "Buck",
             "Spokane", "Stone", "Street", "Sense", "Sunday", "Silence", "Sunny", "Halo", "Super", "Saver", "Swale", "Swaps",
             "Thunder", "Gulch", "Tim", "Tam", "Tomy", "Lee", "Twenty", "Grand", "Typhoon", "Unbridled", "Vagrant", "Venetian",
-            "Way", "War", "Admiral", "Emblem", "Whirlaway", "Whiskery", "Winning", "Colors", "Wintergreen", "Worth", "Zev",
-            "Mystery", "Ghost", "Action", "Affiliate", "Archarcharch", "Avatar", "Bally", "Ache", "Bodemeister", "Capote",
-            "Cyberknife", "Danza", "Dornoch", "Epicenter", "Exaggerator", "Frosted", "Girvin", "Hansen", "Ice", "Box",
-            "Improbable", "Keen", "Liaison", "Mendelssohn", "Nehro", "Ocho", "Practical", "Joke", "Scat", "Daddy",
-            "Tacitus", "Upstart", "Vekoma", "Zandon"
+            "Way", "War", "Admiral", "Emblem", "Whirlaway", "Whiskery", "Winning", "Colors", "Wintergreen", "Worth", "Zev"
         ];
 
         function generateWeirdName() {
@@ -269,7 +259,6 @@
         let camX = 0;
         let camY = 0;
 
-        // Expanded Track Radii for 6 horses on the 1400x800 track
         const laneRadii = [
             { rx: 510, ry: 290 }, 
             { rx: 530, ry: 310 }, 
@@ -333,7 +322,7 @@
             horses.sort(() => Math.random() - 0.5);
 
             horses.forEach((horse, index) => {
-                horse.angle = -Math.PI / 2 - (0.04 + (index * 0.03)); // Staggered start gate
+                horse.angle = -Math.PI / 2 - (0.04 + (index * 0.03)); 
                 horse.baseSpeed = 0.00060; 
                 horse.speedMultiplier = horse.baseSpeed + (horse.taps * 0.000004); 
                 horse.lane = laneRadii[index];
@@ -343,7 +332,6 @@
                 wrapper.className = 'racer-wrapper';
                 wrapper.id = `horse-${index}`;
                 
-                // Constructing the True 3D CSS Horse
                 wrapper.innerHTML = `
                     <div class="horse-shadow"></div>
                     <div class="horse-3d-anchor" id="anchor-${index}">
@@ -441,18 +429,16 @@
                  return yA - yB;
             });
 
-            // True TV Drone Camera: Centers exactly on the active leader to eliminate clipping!
             const activeHorses = sortedHorses.filter(h => !horses[h.index].finished);
             const trackingHorse = activeHorses.length > 0 ? horses[activeHorses[activeHorses.length - 1].index] : horses[sortedHorses[sortedHorses.length - 1].index];
                 
             let targetCamX = -trackingHorse.lane.rx * Math.cos(trackingHorse.angle);
             let targetCamY = -trackingHorse.lane.ry * Math.sin(trackingHorse.angle);
 
-            camX += (targetCamX - camX) * 0.1; // Smooth panning
+            camX += (targetCamX - camX) * 0.1; 
             camY += (targetCamY - camY) * 0.1;
             
-            // Apply camera rig translation. Massive 2.6x zoom.
-            cameraRig.style.transform = `scale(2.6) translate(${camX}px, ${camY}px)`;
+            cameraRig.style.transform = `scale(3.2) translate(${camX}px, ${camY}px)`;
 
             horses.forEach((horse, i) => {
                 let randomJitter = (Math.random() * 0.0002); 
@@ -475,7 +461,6 @@
                 let x = horse.lane.rx * Math.cos(horse.angle);
                 let y = horse.lane.ry * Math.sin(horse.angle);
 
-                // Math: Determines the exact 3D angle the horse should point
                 let tangent = Math.atan2(horse.lane.ry * Math.cos(horse.angle), -horse.lane.rx * Math.sin(horse.angle));
 
                 const horseDiv = document.getElementById(`horse-${index}`);
@@ -485,17 +470,14 @@
                 horseDiv.style.transform = `translate(${x}px, ${y}px)`;
                 horseDiv.style.zIndex = zIndex; 
                 
-                // Physically rotates the 3D horse box along the track
                 anchor.style.setProperty('--tangent-angle', `${tangent}rad`);
-                
-                // Counter-rotates the balloon jockey so he ALWAYS faces the camera
                 balloon.style.setProperty('--face-camera-angle', `${-tangent}rad`);
             });
 
             if (finishOrder.length === horses.length && !raceFinished) {
                 raceFinished = true;
                 raceStatus.innerText = "RACE COMPLETE!";
-                setTimeout(showResults, 2500); // 2.5 seconds to let them read the final notifications
+                setTimeout(showResults, 2500); 
             }
 
             if (!raceFinished) {
