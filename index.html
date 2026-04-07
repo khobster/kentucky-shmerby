@@ -15,7 +15,7 @@
             text-align: center;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Crucial for the dynamic camera */
+            overflow: hidden; 
             user-select: none;
         }
 
@@ -42,47 +42,33 @@
             z-index: 10; position: relative;
         }
         button:hover { background: #fff176; }
-        button:disabled { background: #999; box-shadow: 0px 6px 0px #666; cursor: not-allowed; }
 
         /* Broadcast Chyron (Bottom Ticker) */
         #leaderboard {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%; height: 60px;
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 60px;
             background: rgba(17, 17, 17, 0.95);
             border-top: 4px solid #ffd700;
             display: flex; align-items: center; justify-content: space-evenly;
-            z-index: 100;
-            font-size: 10px;
-            box-shadow: 0px -4px 15px rgba(0,0,0,0.5);
+            z-index: 100; font-size: 10px; box-shadow: 0px -4px 15px rgba(0,0,0,0.5);
         }
-        .leaderboard-row {
-            display: flex; align-items: center;
-        }
+        .leaderboard-row { display: flex; align-items: center; }
         .leaderboard-place { color: #ffd700; margin-right: 8px; font-size: 12px; }
-        .leaderboard-color {
-            width: 15px; height: 15px; border: 2px solid #fff; margin-right: 8px;
-            display: inline-block;
-        }
-        .leaderboard-name {
-            white-space: nowrap; max-width: 180px; overflow: hidden; text-overflow: ellipsis;
-        }
+        .leaderboard-color { width: 15px; height: 15px; border: 2px solid #fff; margin-right: 8px; display: inline-block; }
+        .leaderboard-name { white-space: nowrap; max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
 
         /* 3D Derby Track - CAMERA VIEW */
         #race-phase {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            perspective: 800px; 
-            display: flex; justify-content: center; align-items: center;
-            overflow: hidden;
+            perspective: 800px; display: flex; justify-content: center; align-items: center; overflow: hidden;
         }
 
         #track-container {
-            width: 900px; height: 500px;
+            width: 800px; height: 450px;
             background-color: #4caf50; 
             border-radius: 50%;
-            border: 70px solid #bd9a6c; 
+            border: 65px solid #bd9a6c; /* The Dirt Track */
             outline: 6px solid #fff; 
             box-shadow: inset 0 0 0 6px #fff; 
-            /* Initial transform, JS will override this to zoom and pan */
             transform: scale(1.6) rotateX(55deg); 
             position: absolute;
             transform-style: preserve-3d;
@@ -90,85 +76,94 @@
         }
 
         .finish-line {
-            position: absolute; top: -70px; left: 50%;
-            width: 14px; height: 70px;
+            position: absolute; top: -65px; left: 50%; width: 14px; height: 65px;
             background: repeating-linear-gradient(0deg, #fff, #fff 10px, #000 10px, #000 20px);
             border-left: 2px solid #000;
         }
 
-        /* Voxel Horses & Jockeys */
+        /* --- THE NEW HORSES & JOCKEYS --- */
         .racer-wrapper {
             position: absolute; left: 50%; top: 50%; 
             display: flex; flex-direction: column; align-items: center;
-            margin-left: -22px; margin-top: -22px;
+            margin-left: -20px; margin-top: -30px;
         }
 
-        /* Muybridge Gallop Animation */
-        @keyframes gallop {
-            0% { transform: translateY(0px) rotate(-3deg); }
-            25% { transform: translateY(-5px) rotate(3deg); }
-            50% { transform: translateY(0px) rotate(-3deg); }
-            75% { transform: translateY(3px) rotate(-6deg); }
-            100% { transform: translateY(0px) rotate(-3deg); }
+        /* Body Pitching Animation */
+        @keyframes gallop-body {
+            0% { transform: translateY(0px) rotate(-5deg); }
+            50% { transform: translateY(-4px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(-5deg); }
         }
 
-        .voxel-horse {
-            width: 44px; height: 20px;
-            background-color: #5c3a21; 
-            position: relative;
-            box-shadow: 0px 6px 0px rgba(0,0,0,0.5); 
-            border-radius: 4px;
-            /* Apply the galloping animation */
-            animation: gallop 0.35s infinite linear;
+        /* Leg Swinging Animations */
+        @keyframes swing-front {
+            0% { transform: rotate(-30deg); }
+            50% { transform: rotate(20deg); }
+            100% { transform: rotate(-30deg); }
         }
-        
-        .voxel-horse::before {
-            content: ''; position: absolute;
-            right: -10px; top: -14px; width: 16px; height: 20px;
-            background-color: #5c3a21; border-radius: 4px;
+        @keyframes swing-back {
+            0% { transform: rotate(20deg); }
+            50% { transform: rotate(-30deg); }
+            100% { transform: rotate(20deg); }
         }
 
+        .horse-assembly {
+            position: relative; width: 40px; height: 30px;
+            animation: gallop-body 0.3s infinite linear;
+        }
+
+        /* Horse Anatomy */
+        .horse-body {
+            position: absolute; top: 10px; left: 0; width: 34px; height: 14px;
+            background-color: #5c3a21; border-radius: 8px; z-index: 2;
+        }
+        .horse-neck {
+            position: absolute; top: 2px; right: 0; width: 14px; height: 16px;
+            background-color: #5c3a21; transform: rotate(30deg); z-index: 1;
+        }
+        .horse-head {
+            position: absolute; top: 0px; right: -8px; width: 16px; height: 10px;
+            background-color: #5c3a21; border-radius: 4px; z-index: 3;
+        }
+
+        /* Swinging Legs */
+        .leg {
+            position: absolute; width: 5px; height: 14px; background-color: #4a2e1a;
+            top: 20px; transform-origin: top center; z-index: 1;
+        }
+        .leg.front-1 { right: 6px; animation: swing-front 0.3s infinite linear; }
+        .leg.front-2 { right: 10px; animation: swing-back 0.3s infinite linear; }
+        .leg.back-1 { left: 4px; animation: swing-back 0.3s infinite linear; }
+        .leg.back-2 { left: 8px; animation: swing-front 0.3s infinite linear; }
+
+        /* Saddlecloth */
         .saddle {
-            position: absolute; left: 12px; top: 0px;
-            width: 18px; height: 16px;
-            background-color: var(--racer-color);
-            color: #fff; font-size: 10px; font-family: sans-serif; font-weight: bold;
+            position: absolute; left: 10px; top: 8px; width: 14px; height: 12px;
+            background-color: var(--racer-color); color: #fff; font-size: 8px; font-family: sans-serif; font-weight: bold;
             display: flex; align-items: center; justify-content: center;
-            border: 2px solid #000; box-sizing: border-box; text-shadow: 1px 1px 0px #000;
+            border: 1px solid #000; z-index: 4; text-shadow: 1px 1px 0px #000;
         }
 
         /* Plump Robot Jockey */
         .jockey {
-            position: absolute; left: 12px; top: -18px;
-            width: 18px; height: 18px;
-            background-color: #e0e0e0; /* Silver body */
-            border-radius: 8px 8px 4px 4px; /* Plump shape */
-            border: 2px solid #000;
-            box-shadow: inset -2px -2px 0px rgba(0,0,0,0.3);
+            position: absolute; left: 8px; top: -8px; width: 16px; height: 18px;
+            background-color: #e0e0e0; border-radius: 8px 8px 4px 4px; border: 2px solid #000;
+            box-shadow: inset -2px -2px 0px rgba(0,0,0,0.3); z-index: 5;
         }
-        /* Glowing Cyan Eye */
         .jockey::before {
-            content: ''; position: absolute;
-            right: 2px; top: 4px; width: 6px; height: 4px;
-            background-color: #0ff; border-radius: 2px;
-            box-shadow: 0 0 4px #0ff;
+            content: ''; position: absolute; right: 2px; top: 4px; width: 5px; height: 3px;
+            background-color: #0ff; border-radius: 2px; box-shadow: 0 0 4px #0ff;
         }
-        /* Antenna Line */
         .jockey::after {
-            content: ''; position: absolute;
-            left: 6px; top: -6px; width: 2px; height: 6px;
-            background-color: #000;
+            content: ''; position: absolute; left: 5px; top: -6px; width: 2px; height: 6px; background-color: #000;
         }
-        /* Red Antenna Ball */
         .antenna-ball {
-            position: absolute; left: 4px; top: -10px;
-            width: 6px; height: 6px; background-color: #f00;
-            border-radius: 50%; border: 1px solid #000;
+            position: absolute; left: 3px; top: -10px; width: 6px; height: 6px; background-color: #f00;
+            border-radius: 50%; border: 1px solid #000; z-index: 6;
         }
 
         #timer-display { font-size: 40px; color: #fff; text-shadow: 4px 4px #000; position: relative; z-index: 10;}
         #race-status { text-shadow: 3px 3px #000; line-height: 1.5; text-align: center; position: relative; z-index: 10;}
-        
         #lobby { position: relative; z-index: 10; margin-top: 50px; }
     </style>
 </head>
@@ -179,8 +174,8 @@
 
         <div id="lobby">
             <p>Your Steed:</p>
-            <h2 id="player-horse-name" style="color: #ffeb3b; text-shadow: 2px 2px #000;">Generating Steed...</h2>
-            <button id="start-btn" disabled>LOADING...</button>
+            <h2 id="player-horse-name" style="color: #ffeb3b; text-shadow: 2px 2px #000;">Loading...</h2>
+            <button id="start-btn">ENTER DERBY</button>
         </div>
 
         <div id="tapping-phase" class="hidden">
@@ -193,7 +188,6 @@
         </div>
 
         <div id="race-phase" class="hidden">
-            
             <div style="position: absolute; top: 20px; width: 100%; z-index: 100;">
                 <h2 id="race-status">AND THEY'RE OFF!</h2>
                 <button id="restart-btn" class="hidden" onclick="location.reload()" style="margin: 0 auto; display: block;">Race Again</button>
@@ -207,63 +201,41 @@
             <div id="leaderboard">
                 <div id="standings-list" style="display: flex; width: 100%; justify-content: space-evenly;"></div>
             </div>
-
         </div>
     </div>
 
     <script>
-        // --- THE DATAMUSE ENGINE ---
-        let adjsPool = [];
-        let nounsPool = [];
-
-        async function buildDictionaryPool() {
-            const letters = "abcdefghijklmnopqrstuvwxyz";
-            let fetchPromises = [];
-
-            for(let i=0; i<3; i++) {
-                let adjLetter = letters[Math.floor(Math.random() * 26)];
-                let nounLetter = letters[Math.floor(Math.random() * 26)];
-                
-                fetchPromises.push(fetch(`https://api.datamuse.com/words?sp=${adjLetter}*&md=p&max=1000`));
-                fetchPromises.push(fetch(`https://api.datamuse.com/words?sp=${nounLetter}*&md=p&max=1000`));
-            }
-
-            try {
-                const responses = await Promise.all(fetchPromises);
-                for (let res of responses) {
-                    let data = await res.json();
-                    adjsPool.push(...data.filter(w => w.tags && w.tags.includes('adj')).map(w => w.word));
-                    nounsPool.push(...data.filter(w => w.tags && w.tags.includes('n')).map(w => w.word));
-                }
-            } catch (e) {
-                console.log("Dictionary backup triggered.");
-            }
-        }
+        // --- THE DERBY PDF DICTIONARY ---
+        // Extracted directly from 1875-2025 Kentucky Derby records
+        const derbyWords = [
+            "Affirmed", "Agile", "Alan", "Dale", "Always", "Dreaming", "Alysheba", "American", "Pharoah", "Animal", "Kingdom", "Apollo", "Aristides", "Assault", "Authentic", "Azra", "Baden", "Barbaro", "Behave", "Yourself", "Ben", "Ali", "Brush", "Big", "Brown", "Black", "Gold", "Bold", "Forbes", "Venture", "Brokers", "Tip", "Bubbling", "Over", "Buchanan", "Burgoo", "King", "California", "Chrome", "Cannonade", "Canonero", "Carry", "Back", "Cavalcade", "Chant", "Charismatic", "Chateaugay", "Citation", "Clyde", "Dusen", "Count", "Fleet", "Turf", "Country", "House", "Dark", "Star", "Day", "Decidedly", "Determine", "Donau", "Donerail", "Dust", "Commander", "Elwood", "Exterminator", "Ferdinand", "Flying", "Ebony", "Fonso", "Foolish", "Pleasure", "Forward", "Pass", "Funny", "Cide", "Fusaichi", "Pegasus", "Gallahadion", "Gallant", "Fox", "Gato", "Del", "Sol", "Genuine", "Risk", "George", "Smith", "Giacomo", "Gin", "Grindstone", "Halma", "Hill", "Gail", "Hindoo", "His", "Eminence", "Hoop", "Iron", "Liege", "Jet", "Pilot", "Joe", "Cotton", "Johnstown", "Judge", "Himes", "Justify", "Kauai", "Lawrin", "Leonatus", "Lieut", "Gibson", "Lil", "Tee", "Lookout", "Lord", "Murphy", "Lucky", "Debonair", "Macbeth", "Mage", "Majestic", "Prince", "Mandaloun", "Manuel", "Meridian", "Middleground", "Mine", "Bird", "Monarchos", "Montrose", "Morvich", "Mystik", "Dan", "Needles", "Northern", "Dancer", "Nyquist", "Old", "Rosebud", "Omaha", "Omar", "Khayyam", "Orb", "Paul", "Jones", "Pensive", "Pink", "Plaudit", "Pleasant", "Colony", "Ponder", "Proud", "Clarion", "Real", "Quiet", "Regret", "Reigh", "Strike", "Riley", "Riva", "Ridge", "Sea", "Hero", "Seattle", "Slew", "Secretariat", "Shut", "Out", "Silver", "Charm", "Sir", "Barton", "Huon", "Smarty", "Sovereignty", "Spectacular", "Bid", "Spend", "Buck", "Spokane", "Stone", "Street", "Sense", "Sunday", "Silence", "Sunny's", "Halo", "Super", "Saver", "Swale", "Swaps", "Thunder", "Gulch", "Tim", "Tam", "Tomy", "Lee", "Twenty", "Grand", "Typhoon", "Unbridled", "Vagrant", "Venetian", "Way", "War", "Admiral", "Emblem", "Whirlaway", "Whiskery", "Winning", "Colors", "Wintergreen", "Worth", "Zev", "Mystery", "Ghost", "Thunder"
+        ];
 
         function generateWeirdName() {
-            if (adjsPool.length === 0 || nounsPool.length === 0) return "Cosmic Potato";
-            let adj = adjsPool[Math.floor(Math.random() * adjsPool.length)];
-            let noun = nounsPool[Math.floor(Math.random() * nounsPool.length)];
-            return `${adj.charAt(0).toUpperCase() + adj.slice(1)} ${noun.charAt(0).toUpperCase() + noun.slice(1)}`;
+            let word1 = derbyWords[Math.floor(Math.random() * derbyWords.length)];
+            let word2 = derbyWords[Math.floor(Math.random() * derbyWords.length)];
+            return `${word1} ${word2}`;
         }
 
         // --- GAME STATE & CAMERA ---
-        let playerHorse = { name: "Loading...", taps: 0, isPlayer: true, color: "#e91e63", number: Math.floor(Math.random() * 20) + 1 }; 
+        let playerHorse = { name: generateWeirdName(), taps: 0, isPlayer: true, color: "#e91e63", number: Math.floor(Math.random() * 20) + 1 }; 
         let horses = [];
         let timeRemaining = 10;
         const TAP_DURATION = 10; 
         const botColors = ["#2196f3", "#4caf50", "#ff9800", "#9c27b0"];
         
-        // Camera smoothing variables
         let camX = 0;
         let camY = 0;
 
-        // Expanded Track Radii for the larger track
+        // FIXED TRACK MATH: Keeps the horses centered on the 65px wide dirt track
+        // Track center is at X: 400, Y: 225
+        // Inner grass edge is roughly rx: 335, ry: 160
+        // Outer track edge is roughly rx: 400, ry: 225
         const laneRadii = [
-            { rx: 395, ry: 195 }, 
-            { rx: 415, ry: 215 }, 
-            { rx: 435, ry: 235 }, 
-            { rx: 455, ry: 255 }  
+            { rx: 350, ry: 175 }, 
+            { rx: 365, ry: 190 }, 
+            { rx: 380, ry: 205 }, 
+            { rx: 395, ry: 220 }  
         ];
 
         // --- DOM ELEMENTS ---
@@ -281,19 +253,12 @@
         const mainTitle = document.getElementById('main-title');
 
         // --- INIT ---
-        async function initGame() {
-            await buildDictionaryPool();
-            playerHorse.name = generateWeirdName();
-            document.getElementById('player-horse-name').innerText = `#${playerHorse.number} ${playerHorse.name}`;
-            startBtn.disabled = false;
-            startBtn.innerText = "ENTER DERBY";
-        }
-        initGame();
+        document.getElementById('player-horse-name').innerText = `#${playerHorse.number} ${playerHorse.name}`;
 
         // --- PHASE 2: TAPPING LOGIC ---
         startBtn.addEventListener('click', () => {
             lobbyEl.classList.add('hidden');
-            mainTitle.classList.add('hidden'); // Hide title during action
+            mainTitle.classList.add('hidden'); 
             tapPhaseEl.classList.remove('hidden');
             
             let startTime = Date.now();
@@ -338,20 +303,24 @@
 
             horses.forEach((horse, index) => {
                 horse.angle = -Math.PI / 2; 
-                
-                // MATH FOR APPROX 2-MINUTE RACE
                 horse.baseSpeed = 0.00080; 
                 horse.speedMultiplier = horse.baseSpeed + (horse.taps * 0.000004); 
-                
                 horse.lane = laneRadii[index];
 
                 const wrapper = document.createElement('div');
                 wrapper.className = 'racer-wrapper';
                 wrapper.id = `horse-${index}`;
                 
-                // Robot Jockey implemented here
+                // NEW ASSEMBLED CSS HORSE & JOCKEY
                 wrapper.innerHTML = `
-                    <div class="voxel-horse" style="--racer-color: ${horse.color};">
+                    <div class="horse-assembly" style="--racer-color: ${horse.color};">
+                        <div class="horse-head"></div>
+                        <div class="horse-neck"></div>
+                        <div class="horse-body"></div>
+                        <div class="leg front-1"></div>
+                        <div class="leg front-2"></div>
+                        <div class="leg back-1"></div>
+                        <div class="leg back-2"></div>
                         <div class="jockey"><div class="antenna-ball"></div></div>
                         <div class="saddle">${horse.number}</div>
                     </div>
@@ -365,7 +334,6 @@
 
         function updateLeaderboard() {
             const sorted = [...horses].sort((a, b) => b.angle - a.angle);
-            
             standingsList.innerHTML = '';
             sorted.forEach((horse, i) => {
                 const row = document.createElement('div');
@@ -392,16 +360,14 @@
                  return yA - yB;
             });
 
-            // Calculate Lead Horse for the Camera Pan
-            const leadHorse = horses[sortedHorses[sortedHorses.length - 1].index]; // The one furthest ahead
+            // Camera Tracking
+            const leadHorse = horses[sortedHorses[sortedHorses.length - 1].index]; 
             let targetCamX = -leadHorse.lane.rx * Math.cos(leadHorse.angle);
             let targetCamY = -leadHorse.lane.ry * Math.sin(leadHorse.angle);
 
-            // Smoothly move the camera toward the lead horse (Lerp)
             camX += (targetCamX - camX) * 0.05;
             camY += (targetCamY - camY) * 0.05;
             
-            // Apply scale (zoom) and translation (pan) to the track
             trackContainer.style.transform = `scale(1.7) rotateX(55deg) translate(${camX * 0.6}px, ${camY * 0.6}px)`;
 
             horses.forEach((horse, i) => {
@@ -427,10 +393,8 @@
                 horseDiv.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
                 horseDiv.style.zIndex = zIndex; 
 
-                // Finish line check
                 if (horse.angle >= (3 * Math.PI / 2) && !raceFinished) { 
                     raceFinished = true;
-                    
                     if(horse.isPlayer) {
                         raceStatus.style.color = "#ffeb3b";
                         raceStatus.innerText = `YOU WIN! \n ${horse.name} takes the Derby!`; 
