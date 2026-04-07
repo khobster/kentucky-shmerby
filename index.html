@@ -17,7 +17,6 @@
         .hidden { display: none !important; }
         #game-container { width: 100vw; height: 100vh; position: relative; display: flex; flex-direction: column; align-items: center; }
 
-        /* Tapping Phase UI */
         #tap-zone {
             width: 90%; max-width: 600px; height: 300px; margin: 20px auto; background-color: #e53935; border: 8px solid #000;
             box-shadow: 0px 10px 0px #b71c1c; display: flex; align-items: center; justify-content: center;
@@ -31,7 +30,6 @@
         }
         button:hover { background: #fff176; }
 
-        /* Finish Line Broadcast Notifications */
         #notifications-container {
             position: absolute; top: 80px; left: 50%; transform: translateX(-50%);
             z-index: 1000; display: flex; flex-direction: column; align-items: center; pointer-events: none;
@@ -42,7 +40,6 @@
             box-shadow: 0px 4px 15px rgba(0,0,0,0.6); transition: opacity 0.5s ease;
         }
 
-        /* Broadcast Chyron - Flexbox Fix */
         #leaderboard {
             position: absolute; bottom: 0; left: 0; width: 100%; height: 60px;
             background: rgba(17, 17, 17, 0.95); border-top: 4px solid #ffd700;
@@ -58,7 +55,6 @@
         .leaderboard-color { width: 12px; height: 12px; border: 2px solid #fff; margin-right: 6px; display: inline-block; flex-shrink: 0; }
         .leaderboard-name { white-space: nowrap; font-size: 10px; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex-grow: 1; text-align: left; }
 
-        /* Superfecta Results Modal */
         #results-modal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(0,0,0,0.95); border: 6px solid #ffd700; padding: 30px;
@@ -67,10 +63,10 @@
         .result-row { display: flex; align-items: center; margin: 10px 0; font-size: 12px; border-bottom: 2px dashed #444; padding-bottom: 10px; }
         .result-place { width: 60px; color: #ffd700; }
 
-        /* 3D Derby Track - DYNAMIC DRONE CAMERA */
+        /* 3D Derby Track */
         #race-phase {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            perspective: 1000px; display: flex; justify-content: center; align-items: center; overflow: hidden;
+            perspective: 800px; display: flex; justify-content: center; align-items: center; overflow: hidden;
         }
         
         #camera-rig {
@@ -79,108 +75,93 @@
         }
 
         #track-container {
-            box-sizing: border-box; width: 1400px; height: 800px;
-            background-color: #4caf50; border-radius: 50%; border: 120px solid #bd9a6c; outline: 6px solid #fff; box-shadow: inset 0 0 0 6px #fff; 
+            box-sizing: border-box; width: 1800px; height: 1000px; /* Massive track prevents clipping */
+            background-color: #4caf50; border-radius: 50%; border: 140px solid #bd9a6c; outline: 8px solid #fff; box-shadow: inset 0 0 0 8px #fff; 
             transform: rotateX(60deg); 
-            position: absolute; left: 50%; top: 50%; margin-left: -700px; margin-top: -400px;
+            position: absolute; left: 50%; top: 50%; margin-left: -900px; margin-top: -500px;
             transform-style: preserve-3d;
         }
 
         .finish-line {
-            position: absolute; top: -120px; left: 50%; width: 16px; height: 120px;
-            background: repeating-linear-gradient(0deg, #fff, #fff 10px, #000 10px, #000 20px); border-left: 2px solid #000;
+            position: absolute; top: -140px; left: 50%; width: 20px; height: 140px;
+            background: repeating-linear-gradient(0deg, #fff, #fff 15px, #000 15px, #000 30px); border-left: 3px solid #000;
         }
 
-        /* --- THE REPAIRED 2.5D BILLBOARD HORSES --- */
+        /* --- TRUE 3D CSS HORSES (REPAIRED & ENLARGED) --- */
         .racer-wrapper {
             position: absolute; left: 50%; top: 50%; margin-left: 0; margin-top: 0;
+            transform-style: preserve-3d;
         }
         
         .horse-shadow {
-            position: absolute; left: -20px; top: -10px; width: 40px; height: 20px;
-            background: rgba(0,0,0,0.5); border-radius: 50%;
+            position: absolute; left: -25px; top: -12px; width: 50px; height: 24px;
+            background: rgba(0,0,0,0.5); border-radius: 50%; transform: translateZ(1px);
         }
 
-        .billboard-container {
-            position: absolute; left: -20px; top: -38px; width: 40px; height: 40px;
-            transform-origin: bottom center;
-            /* Counters the 60deg track tilt so the horse ALWAYS stands perfectly upright */
-            transform: rotateX(-60deg); 
+        .horse-3d-anchor {
+            position: absolute; transform-style: preserve-3d;
+            transform: rotateZ(var(--tangent-angle)) rotateX(-90deg); 
         }
 
         @keyframes gallop-bob {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-4px); }
-            100% { transform: translateY(0px); }
+            0% { transform: translateY(0px) rotateZ(-3deg); }
+            50% { transform: translateY(-6px) rotateZ(3deg); }
+            100% { transform: translateY(0px) rotateZ(-3deg); }
         }
-        @keyframes leg-scissor {
-            0% { transform: rotate(-35deg); }
-            100% { transform: rotate(35deg); }
+        @keyframes leg-scissor { 
+            0% { transform: translateZ(var(--tz)) rotateZ(-35deg); } 
+            100% { transform: translateZ(var(--tz)) rotateZ(35deg); } 
         }
 
-        .horse-2d {
-            position: absolute; width: 100%; height: 100%;
-            animation: gallop-bob 0.3s infinite linear;
+        .horse-model {
+            position: absolute; transform-style: preserve-3d; animation: gallop-bob 0.3s infinite linear;
+            bottom: 0; left: -24px; /* Centers the larger horse on the track line */
         }
-        
-        /* Clean 2D Details */
-        .h-body {
-            position: absolute; bottom: 8px; left: 2px; width: 34px; height: 14px;
-            background: #5c3a21; border-radius: 6px; border: 1px solid #3a2212; z-index: 2;
-        }
-        .h-head {
-            position: absolute; right: 0px; top: 8px; width: 12px; height: 16px;
-            background: #5c3a21; border-radius: 4px; transform: rotate(15deg); border: 1px solid #3a2212; z-index: 2;
-        }
-        .h-tail {
-            position: absolute; left: -2px; top: 18px; width: 10px; height: 4px;
-            background: #222; transform: rotate(-30deg); z-index: 1;
-        }
-        
-        /* Scissor Legs */
-        .h-leg {
-            position: absolute; bottom: -2px; width: 4px; height: 12px; background: #3a2212;
-            transform-origin: top center; border-radius: 2px; z-index: 1;
-        }
-        .h-leg.front-1 { right: 8px; animation: leg-scissor 0.3s infinite alternate; }
-        .h-leg.front-2 { right: 12px; animation: leg-scissor 0.3s infinite alternate-reverse; }
-        .h-leg.back-1 { left: 6px; animation: leg-scissor 0.3s infinite alternate-reverse; }
-        .h-leg.back-2 { left: 10px; animation: leg-scissor 0.3s infinite alternate; }
 
-        /* Highly readable Saddlecloth */
+        .face { position: absolute; border: 1px solid rgba(0,0,0,0.6); box-sizing: border-box; }
+
+        /* Main Body (48px long, 18px high, 16px wide) */
+        .h-body { position: absolute; bottom: 14px; left: 0; width: 48px; height: 18px; border-radius: 4px; }
+        .h-body.left  { transform: translateZ(8px); background: #5c3a21; display: flex; align-items: center; justify-content: center; }
+        .h-body.right { transform: translateZ(-8px) rotateY(180deg); background: #5c3a21; display: flex; align-items: center; justify-content: center; }
+        .h-body.top   { width: 48px; height: 16px; background: #3a2212; transform: rotateX(90deg) translateZ(10px); bottom: 22px; }
+
+        /* Huge Saddlecloths */
         .h-saddle {
-            position: absolute; left: 10px; top: 10px; width: 16px; height: 14px;
-            background-color: var(--racer-color); color: #fff; font-size: 9px; font-family: sans-serif; font-weight: bold;
-            display: flex; align-items: center; justify-content: center;
-            border: 2px solid #000; box-sizing: border-box; z-index: 3;
-        }
-        .saddle-text {
-            display: inline-block; text-shadow: 1px 1px 0px #000;
+            width: 20px; height: 16px; background: var(--racer-color); color: #fff; font-size: 11px; font-weight: bold;
+            display: flex; align-items: center; justify-content: center; border: 2px solid #000; text-shadow: 1px 1px 0 #000;
         }
 
-        /* Smiley Balloon Jockey - Firmly anchored! */
-        @keyframes balloon-float {
-            0% { transform: translateY(0px) rotate(-5deg); }
-            100% { transform: translateY(-4px) rotate(5deg); }
-        }
+        /* Head */
+        .h-head { position: absolute; right: -10px; bottom: 24px; width: 16px; height: 18px; border-radius: 4px; }
+        .h-head.left { transform: translateZ(8.1px) rotateZ(20deg); background: #5c3a21; }
+        .h-head.right { transform: translateZ(-8.1px) rotateY(180deg) rotateZ(-20deg); background: #5c3a21; }
 
-        .balloon-jockey {
-            position: absolute; left: 10px; top: -10px; width: 16px; height: 16px;
-            background: #ffeb3b; border-radius: 50%; border: 1px solid #000;
-            animation: balloon-float 0.4s infinite alternate ease-in-out;
-            z-index: 4;
+        .h-tail { position: absolute; left: -8px; bottom: 22px; width: 14px; height: 5px; background: #222; transform: translateZ(0) rotateZ(-30deg); }
+
+        /* Scissor Legs */
+        .h-leg { position: absolute; bottom: 0px; width: 5px; height: 18px; background: #222; transform-origin: top center; border-radius: 3px; }
+        .h-leg.f1 { left: 36px; --tz: 8px; animation: leg-scissor 0.3s infinite alternate; }
+        .h-leg.f2 { left: 41px; --tz: -8px; animation: leg-scissor 0.3s infinite alternate-reverse; }
+        .h-leg.b1 { left: 6px; --tz: 8px; animation: leg-scissor 0.3s infinite alternate-reverse; }
+        .h-leg.b2 { left: 11px; --tz: -8px; animation: leg-scissor 0.3s infinite alternate; }
+
+        /* Smiley Balloon Jockey - Firmly attached to the back */
+        @keyframes balloon-bob { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
+        
+        .jockey-anchor {
+            position: absolute; left: 18px; bottom: 32px; transform-style: preserve-3d; 
+            animation: balloon-bob 0.5s infinite alternate ease-in-out;
         }
-        .balloon-jockey::after {
-            content: ''; position: absolute; left: 7px; bottom: -12px; width: 1px; height: 12px; background: #fff;
+        .balloon-string { position: absolute; width: 2px; height: 16px; background: #fff; left: 9px; bottom: -14px; }
+        .balloon {
+            position: absolute; width: 22px; height: 22px; background: #ffeb3b; border-radius: 50%; border: 2px solid #000; left: -2px; bottom: 0;
+            transform: rotateY(var(--face-camera-angle));
         }
-        .smiley { position: absolute; top: 4px; left: 3px; width: 10px; height: 8px; }
-        .smiley-eye { position: absolute; width: 2px; height: 2px; background: #000; border-radius: 50%; top: 0; }
-        .smiley-eye.left { left: 1px; }
-        .smiley-eye.right { right: 5px; }
-        .smiley-mouth {
-            position: absolute; bottom: 0; left: 1px; width: 6px; height: 3px;
-            border-bottom: 2px solid #000; border-radius: 50%;
-        }
+        .smiley-eye { position: absolute; width: 4px; height: 4px; background: #000; border-radius: 50%; top: 6px; }
+        .smiley-eye.left { left: 4px; }
+        .smiley-eye.right { right: 4px; }
+        .smiley-mouth { position: absolute; bottom: 4px; left: 4px; width: 10px; height: 4px; border-bottom: 2px solid #000; border-radius: 50%; }
 
         #timer-display { font-size: 40px; color: #fff; text-shadow: 4px 4px #000; position: relative; z-index: 10;}
         #race-status { text-shadow: 3px 3px #000; line-height: 1.5; text-align: center; position: relative; z-index: 10;}
@@ -233,7 +214,6 @@
     </div>
 
     <script>
-        // --- THE DERBY PDF DICTIONARY ---
         const derbyWords = [
             "Affirmed", "Agile", "Alan", "Dale", "Dreaming", "Alysheba", "American", "Pharoah", "Animal", "Kingdom",
             "Apollo", "Aristides", "Assault", "Authentic", "Azra", "Baden", "Barbaro", "Behave", "Yourself", "Ben", "Ali",
@@ -262,7 +242,6 @@
             return `${word1} ${word2}`;
         }
 
-        // --- GAME STATE ---
         let playerHorse = { name: generateWeirdName(), taps: 0, isPlayer: true, color: "#e91e63", number: Math.floor(Math.random() * 20) + 1 }; 
         let horses = [];
         let finishOrder = [];
@@ -275,16 +254,16 @@
         let camX = 0;
         let camY = 0;
 
+        // Expanded Radii for the massive 1800x1000 track
         const laneRadii = [
-            { rx: 510, ry: 290 }, 
-            { rx: 530, ry: 310 }, 
-            { rx: 550, ry: 330 }, 
-            { rx: 570, ry: 350 },  
-            { rx: 590, ry: 370 },  
-            { rx: 610, ry: 390 }   
+            { rx: 780, ry: 380 }, 
+            { rx: 805, ry: 405 }, 
+            { rx: 830, ry: 430 }, 
+            { rx: 855, ry: 455 },  
+            { rx: 880, ry: 480 },  
+            { rx: 905, ry: 505 }   
         ];
 
-        // --- DOM ELEMENTS ---
         const lobbyEl = document.getElementById('lobby');
         const startBtn = document.getElementById('start-btn');
         const tapPhaseEl = document.getElementById('tapping-phase');
@@ -301,7 +280,6 @@
         const resultsTitle = document.getElementById('results-title');
         const notifContainer = document.getElementById('notifications-container');
 
-        // --- INIT ---
         document.getElementById('player-horse-name').innerText = `#${playerHorse.number} ${playerHorse.name}`;
 
         startBtn.addEventListener('click', () => {
@@ -323,7 +301,6 @@
 
         tapZone.addEventListener('pointerdown', (e) => { e.preventDefault(); playerHorse.taps++; });
 
-        // --- PHASE 3: RACE LOGIC ---
         function startRace() {
             tapPhaseEl.classList.add('hidden');
             racePhaseEl.classList.remove('hidden');
@@ -338,12 +315,10 @@
             horses.sort(() => Math.random() - 0.5);
 
             horses.forEach((horse, index) => {
-                horse.angle = -Math.PI / 2 - (0.04 + (index * 0.03)); 
+                horse.angle = -Math.PI / 2 - (0.03 + (index * 0.02)); 
                 horse.baseSpeed = 0.00060; 
                 horse.speedMultiplier = horse.baseSpeed + (horse.taps * 0.000004); 
                 horse.lane = laneRadii[index];
-                horse.prevX = 0;
-                horse.flip = 1;
                 horse.finished = false;
 
                 const wrapper = document.createElement('div');
@@ -352,25 +327,33 @@
                 
                 wrapper.innerHTML = `
                     <div class="horse-shadow"></div>
-                    <div class="billboard-container" id="billboard-${index}">
-                        <div class="horse-2d">
+                    <div class="horse-3d-anchor" id="anchor-${index}">
+                        <div class="horse-model">
                             <div class="h-tail"></div>
-                            <div class="h-leg back-1"></div>
-                            <div class="h-leg back-2"></div>
-                            <div class="h-leg front-1"></div>
-                            <div class="h-leg front-2"></div>
-                            <div class="h-body"></div>
-                            <div class="h-head"></div>
+                            <div class="h-leg f1"></div>
+                            <div class="h-leg f2"></div>
+                            <div class="h-leg b1"></div>
+                            <div class="h-leg b2"></div>
                             
-                            <div class="h-saddle" style="--racer-color: ${horse.color};">
-                                <span class="saddle-text" id="saddle-text-${index}">${horse.number}</span>
+                            <div class="h-body left">
+                                <div class="h-saddle" style="--racer-color: ${horse.color};">${horse.number}</div>
                             </div>
-
-                            <div class="balloon-jockey">
-                                <div class="smiley">
-                                    <div class="smiley-eye left"></div>
-                                    <div class="smiley-eye right"></div>
-                                    <div class="smiley-mouth"></div>
+                            <div class="h-body right">
+                                <div class="h-saddle" style="--racer-color: ${horse.color};">${horse.number}</div>
+                            </div>
+                            <div class="face h-body top"></div>
+                            
+                            <div class="h-head left"></div>
+                            <div class="h-head right"></div>
+                            
+                            <div class="jockey-anchor">
+                                <div class="balloon-string"></div>
+                                <div class="balloon" id="balloon-${index}">
+                                    <div class="smiley">
+                                        <div class="smiley-eye left"></div>
+                                        <div class="smiley-eye right"></div>
+                                        <div class="smiley-mouth"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -445,10 +428,18 @@
             let targetCamX = -trackingHorse.lane.rx * Math.cos(trackingHorse.angle);
             let targetCamY = -trackingHorse.lane.ry * Math.sin(trackingHorse.angle);
 
+            // CAMERA CLAMP FIX: Prevent the camera from moving so far that it shows the background
+            // Assuming a viewport around 1200x800 and a track size of 1800x1000
+            const maxPanX = 300; 
+            const maxPanY = 200;
+            
+            targetCamX = Math.max(-maxPanX, Math.min(maxPanX, targetCamX));
+            targetCamY = Math.max(-maxPanY, Math.min(maxPanY, targetCamY));
+
             camX += (targetCamX - camX) * 0.1; 
             camY += (targetCamY - camY) * 0.1;
             
-            cameraRig.style.transform = `scale(3.2) translate(${camX * 0.6}px, ${camY * 0.6}px)`;
+            cameraRig.style.transform = `scale(1.8) translate(${camX}px, ${camY}px)`;
 
             horses.forEach((horse, i) => {
                 let randomJitter = (Math.random() * 0.0002); 
@@ -471,30 +462,23 @@
                 let x = horse.lane.rx * Math.cos(horse.angle);
                 let y = horse.lane.ry * Math.sin(horse.angle);
 
-                // By ONLY translating the wrapper, the horse never rotates upside down.
+                let tangent = Math.atan2(horse.lane.ry * Math.cos(horse.angle), -horse.lane.rx * Math.sin(horse.angle));
+
                 const horseDiv = document.getElementById(`horse-${index}`);
-                const billboard = document.getElementById(`billboard-${index}`);
-                const saddleText = document.getElementById(`saddle-text-${index}`);
+                const anchor = document.getElementById(`anchor-${index}`);
+                const balloon = document.getElementById(`balloon-${index}`);
                 
                 horseDiv.style.transform = `translate(${x}px, ${y}px)`;
                 horseDiv.style.zIndex = zIndex; 
                 
-                // Flip the horse sprite based on X velocity
-                let dx = x - horse.prevX;
-                if (Math.abs(dx) > 0.01) { horse.flip = dx > 0 ? 1 : -1; }
-                horse.prevX = x;
-
-                // Keeps billboard perfectly vertical against the tilted track
-                billboard.style.transform = `rotateX(-60deg) scaleX(${horse.flip})`;
-                
-                // CRUCIAL: Counter-flip the saddle text so it NEVER reads backward
-                saddleText.style.transform = `scaleX(${horse.flip})`;
+                anchor.style.setProperty('--tangent-angle', `${tangent}rad`);
+                balloon.style.setProperty('--face-camera-angle', `${-tangent}rad`);
             });
 
             if (finishOrder.length === horses.length && !raceFinished) {
                 raceFinished = true;
                 raceStatus.innerText = "RACE COMPLETE!";
-                setTimeout(showResults, 2500); 
+                setTimeout(showResults, 3000); 
             }
 
             if (!raceFinished) {
