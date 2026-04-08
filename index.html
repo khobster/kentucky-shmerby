@@ -9,11 +9,12 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:'Press Start 2P',monospace;background:#000;color:#fff;overflow:hidden;user-select:none;}
+        body{font-family:'Press Start 2P',monospace;background:#87CEEB;color:#fff;overflow:hidden;user-select:none;}
         .hidden{display:none!important;}
         #game-container{width:100vw;height:100vh;position:relative;display:flex;flex-direction:column;align-items:center;}
         #canvas-container{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;}
         #lobby,#tapping-phase{position:relative;z-index:10;margin-top:50px;text-align:center;}
+        #lobby{background:rgba(0,0,0,0.6);padding:30px 40px;border-radius:12px;border:3px solid #ffd700;}
         h1{color:#ffd700;font-size:24px;text-shadow:4px 4px 0 #000;margin:20px 0;position:relative;z-index:10;}
         #tap-zone{width:90%;max-width:600px;height:280px;margin:20px auto;background:#e53935;border:8px solid #000;
             box-shadow:0 10px 0 #b71c1c;display:flex;align-items:center;justify-content:center;
@@ -57,9 +58,9 @@
     <div id="canvas-container"></div>
     <h1 id="main-title">KENTUCKY SHMERBY</h1>
     <div id="lobby">
-        <p style="font-size:11px;">Your Steed:</p>
-        <h2 id="player-horse-name" style="color:#ffeb3b;text-shadow:2px 2px #000;font-size:16px;">Loading...</h2>
-        <p style="font-size:9px;color:#ffd700;margin-top:12px;">1¼ MILES • RUN FOR THE ROSES</p>
+        <p style="font-size:11px;margin-bottom:8px;">Your Steed:</p>
+        <h2 id="player-horse-name" style="color:#ffeb3b;text-shadow:2px 2px #000;font-size:16px;margin:0 0 12px 0;">Loading...</h2>
+        <p style="font-size:9px;color:#ffd700;margin:0;">1¼ MILES • RUN FOR THE ROSES</p>
         <button id="start-btn">ENTER DERBY</button>
     </div>
     <div id="tapping-phase" class="hidden">
@@ -174,6 +175,11 @@ function saddleTex(num,col){
     }
     g.scale.set(TRACK_SX,1,1);scene.add(g);
 })();
+
+// Initial camera + render so lobby shows the track
+camera.position.set(0, 350, -50);
+camera.lookAt(0, 0, 0);
+renderer.render(scene, camera);
 
 // --- MASCOT HEADS ---
 function buildLiberty(){
@@ -399,6 +405,19 @@ function startRace(){
         scene.add(model.root);
         h.model=model;
     });
+
+    // SNAP camera to starting gate position on frame 1
+    const initR=BASE_R+DIRT_W+60;
+    const initAngle=START_ANGLE+0.06;
+    camera.position.set(
+        Math.cos(initAngle)*initR*TRACK_SX,
+        25,
+        Math.sin(initAngle)*initR
+    );
+    const lookR=BASE_R+15;
+    camTarget.set(Math.cos(START_ANGLE)*lookR*TRACK_SX, 5, Math.sin(START_ANGLE)*lookR);
+    camera.lookAt(camTarget);
+
     updateLB();
     animate();
 }
@@ -524,13 +543,13 @@ function animate(){
 
         const tx=Math.cos(camAngle)*camR*TRACK_SX;
         const tz=Math.sin(camAngle)*camR;
-        camera.position.lerp(new THREE.Vector3(tx,camH,tz),.04);
+        camera.position.lerp(new THREE.Vector3(tx,camH,tz),.08);
 
         // Look at the middle of the pack
         const lookR=(BASE_R+15);
         const lx=Math.cos(packMid)*lookR*TRACK_SX;
         const lz=Math.sin(packMid)*lookR;
-        camTarget.lerp(new THREE.Vector3(lx,5,lz),.04);
+        camTarget.lerp(new THREE.Vector3(lx,5,lz),.08);
         camera.lookAt(camTarget);
     }
 
