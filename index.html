@@ -263,8 +263,10 @@ function buildBunnyHead() {
     ieR.position.set(-1, 4.2, 0.1); ieR.rotation.z=0.15; g.add(ieR);
     // Eyes
     const eMat = new THREE.MeshBasicMaterial({color:0x222222});
-    g.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.35,6,6),eMat),{position:new THREE.Vector3(0.8,0.4,1.8)}));
-    g.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.35,6,6),eMat),{position:new THREE.Vector3(-0.8,0.4,1.8)}));
+    const beL = new THREE.Mesh(new THREE.SphereGeometry(0.35,6,6),eMat);
+    beL.position.set(0.8,0.4,1.8); g.add(beL);
+    const beR = new THREE.Mesh(new THREE.SphereGeometry(0.35,6,6),eMat);
+    beR.position.set(-0.8,0.4,1.8); g.add(beR);
     // Nose
     const nose = new THREE.Mesh(new THREE.SphereGeometry(0.4,6,6), mat);
     nose.position.set(0,-0.2,2); g.add(nose);
@@ -296,7 +298,8 @@ function buildMouseHead() {
     const snout = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), new THREE.MeshLambertMaterial({color:0xddccbb}));
     snout.position.set(0,-0.3,1.5); snout.scale.set(1,0.7,0.8); g.add(snout);
     // Nose
-    g.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.4,6,6),new THREE.MeshLambertMaterial({color:0x111111})),{position:new THREE.Vector3(0,0,2.2)}));
+    const mNose = new THREE.Mesh(new THREE.SphereGeometry(0.4,6,6),new THREE.MeshLambertMaterial({color:0x111111}));
+    mNose.position.set(0,0,2.2); g.add(mNose);
     // Eyes (white ovals with pupils)
     const wMat = new THREE.MeshBasicMaterial({color:0xffffff});
     for (let side of [-1,1]) {
