@@ -13,13 +13,12 @@
             font-family: 'Press Start 2P', monospace; background-color: #87CEEB; color: #fff;
             text-align: center; margin: 0; padding: 0; overflow: hidden; user-select: none;
         }
-
         h1 { color: #ffd700; font-size: 28px; text-shadow: 4px 4px 0px #000; margin: 20px 0; position: relative; z-index: 10; }
         .hidden { display: none !important; }
         #game-container { width: 100vw; height: 100vh; position: relative; display: flex; flex-direction: column; align-items: center; }
         #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
         #lobby, #tapping-phase { position: relative; z-index: 10; margin-top: 50px; }
-        
+
         #tap-zone {
             width: 90%; max-width: 600px; height: 300px; margin: 20px auto; background-color: #e53935; border: 8px solid #000;
             box-shadow: 0px 10px 0px #b71c1c; display: flex; align-items: center; justify-content: center;
@@ -50,8 +49,8 @@
             z-index: 100; box-shadow: 0px -4px 15px rgba(0,0,0,0.5); padding: 0 10px; box-sizing: border-box;
         }
         #standings-list { display: flex; width: 100%; height: 100%; max-width: 1400px; justify-content: space-evenly; align-items: center; gap: 8px; }
-        .leaderboard-row { 
-            display: flex; align-items: center; flex: 1; min-width: 0; 
+        .leaderboard-row {
+            display: flex; align-items: center; flex: 1; min-width: 0;
             background: #333; padding: 8px 10px; border-radius: 4px; border: 1px solid #555;
         }
         .leaderboard-place { color: #ffd700; margin-right: 6px; font-size: 10px; flex-shrink: 0; }
@@ -68,18 +67,24 @@
 
         #timer-display { font-size: 40px; color: #fff; text-shadow: 4px 4px #000; position: relative; z-index: 10;}
         #race-status { text-shadow: 3px 3px #000; line-height: 1.5; text-align: center; position: relative; z-index: 10;}
+
+        /* Lap counter */
+        #lap-display {
+            position: absolute; top: 60px; width: 100%; z-index: 100; font-size: 14px;
+            text-shadow: 2px 2px #000; color: #ffd700;
+        }
     </style>
 </head>
 <body>
 
     <div id="game-container">
         <div id="canvas-container"></div>
-
         <h1 id="main-title">KENTUCKY SHMERBY</h1>
 
         <div id="lobby">
             <p>Your Steed:</p>
             <h2 id="player-horse-name" style="color: #ffeb3b; text-shadow: 2px 2px #000;">Loading...</h2>
+            <p style="font-size: 10px; color: #ffd700; margin-top: 10px;">1½ MILES • THE TEST OF THE CHAMPION</p>
             <button id="start-btn">ENTER DERBY</button>
         </div>
 
@@ -94,9 +99,8 @@
             <div style="position: absolute; top: 20px; width: 100%; z-index: 100;">
                 <h2 id="race-status">AND THEY'RE OFF!</h2>
             </div>
-            
+            <div id="lap-display"></div>
             <div id="notifications-container"></div>
-
             <div id="leaderboard">
                 <div id="standings-list"></div>
             </div>
@@ -112,47 +116,53 @@
     <script>
         // --- GAME DATA ---
         const derbyWords = [
-            "Affirmed", "Agile", "Alan", "Dale", "Dreaming", "Alysheba", "American", "Pharoah", "Animal", "Kingdom",
-            "Apollo", "Aristides", "Assault", "Authentic", "Azra", "Baden", "Barbaro", "Behave", "Yourself", "Ben", "Ali",
-            "Brush", "Brown", "Black", "Gold", "Bold", "Forbes", "Venture", "Brokers", "Tip", "Bubbling", "Over",
-            "Buchanan", "Burgoo", "King", "California", "Chrome", "Cannonade", "Canonero", "Carry", "Back", "Cavalcade",
-            "Chant", "Charismatic", "Chateaugay", "Citation", "Clyde", "Dusen", "Count", "Fleet", "Turf", "Country", "House",
-            "Dark", "Star", "Decidedly", "Determine", "Donau", "Donerail", "Dust", "Commander", "Elwood", "Exterminator",
-            "Ferdinand", "Flying", "Ebony", "Fonso", "Foolish", "Pleasure", "Forward", "Pass", "Funny", "Cide", "Fusaichi",
-            "Pegasus", "Gallahadion", "Gallant", "Fox", "Gato", "Del", "Sol", "Genuine", "Risk", "George", "Smith", "Giacomo",
-            "Gin", "Grindstone", "Halma", "Hill", "Gail", "Hindoo", "Eminence", "Hoop", "Iron", "Liege", "Jet", "Pilot",
-            "Joe", "Cotton", "Johnstown", "Judge", "Himes", "Justify", "Kauai", "Lawrin", "Leonatus", "Gibson", "Lil",
-            "Tee", "Lookout", "Lord", "Murphy", "Lucky", "Debonair", "Macbeth", "Mage", "Majestic", "Prince", "Mandaloun",
-            "Manuel", "Meridian", "Middleground", "Mine", "Bird", "Monarchos", "Montrose", "Morvich", "Mystik", "Dan",
-            "Needles", "Northern", "Dancer", "Nyquist", "Rosebud", "Omaha", "Omar", "Khayyam", "Orb", "Paul", "Jones",
-            "Pensive", "Pink", "Plaudit", "Pleasant", "Colony", "Ponder", "Proud", "Clarion", "Real", "Quiet", "Regret",
-            "Reigh", "Strike", "Riley", "Riva", "Ridge", "Sea", "Hero", "Seattle", "Slew", "Secretariat", "Shut", "Out",
-            "Silver", "Charm", "Barton", "Huon", "Smarty", "Sovereignty", "Spectacular", "Bid", "Spend", "Buck",
-            "Spokane", "Stone", "Street", "Sense", "Sunday", "Silence", "Sunny", "Halo", "Super", "Saver", "Swale", "Swaps",
-            "Thunder", "Gulch", "Tim", "Tam", "Tomy", "Lee", "Twenty", "Grand", "Typhoon", "Unbridled", "Vagrant", "Venetian",
-            "Way", "War", "Admiral", "Emblem", "Whirlaway", "Whiskery", "Winning", "Colors", "Wintergreen", "Worth", "Zev"
+            "Affirmed","Agile","Alan","Dale","Dreaming","Alysheba","American","Pharoah","Animal","Kingdom",
+            "Apollo","Aristides","Assault","Authentic","Azra","Baden","Barbaro","Behave","Yourself","Ben","Ali",
+            "Brush","Brown","Black","Gold","Bold","Forbes","Venture","Brokers","Tip","Bubbling","Over",
+            "Buchanan","Burgoo","King","California","Chrome","Cannonade","Canonero","Carry","Back","Cavalcade",
+            "Chant","Charismatic","Chateaugay","Citation","Clyde","Dusen","Count","Fleet","Turf","Country","House",
+            "Dark","Star","Decidedly","Determine","Donau","Donerail","Dust","Commander","Elwood","Exterminator",
+            "Ferdinand","Flying","Ebony","Fonso","Foolish","Pleasure","Forward","Pass","Funny","Cide","Fusaichi",
+            "Pegasus","Gallahadion","Gallant","Fox","Gato","Del","Sol","Genuine","Risk","George","Smith","Giacomo",
+            "Gin","Grindstone","Halma","Hill","Gail","Hindoo","Eminence","Hoop","Iron","Liege","Jet","Pilot",
+            "Joe","Cotton","Johnstown","Judge","Himes","Justify","Kauai","Lawrin","Leonatus","Gibson","Lil",
+            "Tee","Lookout","Lord","Murphy","Lucky","Debonair","Macbeth","Mage","Majestic","Prince","Mandaloun",
+            "Manuel","Meridian","Middleground","Mine","Bird","Monarchos","Montrose","Morvich","Mystik","Dan",
+            "Needles","Northern","Dancer","Nyquist","Rosebud","Omaha","Omar","Khayyam","Orb","Paul","Jones",
+            "Pensive","Pink","Plaudit","Pleasant","Colony","Ponder","Proud","Clarion","Real","Quiet","Regret",
+            "Reigh","Strike","Riley","Riva","Ridge","Sea","Hero","Seattle","Slew","Secretariat","Shut","Out",
+            "Silver","Charm","Barton","Huon","Smarty","Sovereignty","Spectacular","Bid","Spend","Buck",
+            "Spokane","Stone","Street","Sense","Sunday","Silence","Sunny","Halo","Super","Saver","Swale","Swaps",
+            "Thunder","Gulch","Tim","Tam","Tomy","Lee","Twenty","Grand","Typhoon","Unbridled","Vagrant","Venetian",
+            "Way","War","Admiral","Emblem","Whirlaway","Whiskery","Winning","Colors","Wintergreen","Worth","Zev"
         ];
 
         function generateWeirdName() {
             return derbyWords[Math.floor(Math.random() * derbyWords.length)] + ' ' + derbyWords[Math.floor(Math.random() * derbyWords.length)];
         }
 
-        let playerHorse = { name: generateWeirdName(), taps: 0, isPlayer: true, color: "#e91e63", number: Math.floor(Math.random() * 20) + 1 }; 
+        let playerHorse = { name: generateWeirdName(), taps: 0, isPlayer: true, color: "#e91e63", number: Math.floor(Math.random() * 20) + 1 };
         let gameHorses = [];
         let finishOrder = [];
         let raceFinished = false;
         const botColors = ["#2196f3", "#4caf50", "#ff9800", "#9c27b0", "#00bcd4"];
-        
-        const trackScaleX = 1.6; 
+
+        const trackScaleX = 1.6;
         const baseRadius = 180;
         const laneWidth = 8;
+
+        // Belmont = 1.5 miles. We'll do 1.5 laps.
+        // Start at -PI/2, one lap = 2*PI, so 1.5 laps = 3*PI
+        // Finish angle = -PI/2 + 3*PI = 5*PI/2
+        const START_ANGLE_OFFSET = -Math.PI / 2;
+        const FINISH_ANGLE = START_ANGLE_OFFSET + (3 * Math.PI); // 1.5 laps
 
         // --- THREE.JS SETUP ---
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x87CEEB); 
-        scene.fog = new THREE.Fog(0x87CEEB, 400, 800);
-        
+        scene.background = new THREE.Color(0x87CEEB);
+        scene.fog = new THREE.Fog(0x87CEEB, 500, 900);
+
         const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 2000);
         let cameraLookTarget = new THREE.Vector3(0, 0, 0);
 
@@ -162,104 +172,142 @@
         renderer.shadowMap.enabled = true;
         container.appendChild(renderer.domElement);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.55);
         scene.add(ambientLight);
         const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
         dirLight.position.set(100, 200, 50);
         dirLight.castShadow = true;
-        dirLight.shadow.camera.top = 400;
-        dirLight.shadow.camera.bottom = -400;
-        dirLight.shadow.camera.left = -400;
-        dirLight.shadow.camera.right = 400;
+        dirLight.shadow.camera.top = 400; dirLight.shadow.camera.bottom = -400;
+        dirLight.shadow.camera.left = -400; dirLight.shadow.camera.right = 400;
         scene.add(dirLight);
 
-        // --- MOWING-STRIPE INFIELD TEXTURE ---
+        // --- MOWED GRASS TEXTURE ---
         function createMowedGrassTexture() {
             const c = document.createElement('canvas');
             c.width = 512; c.height = 512;
             const ctx = c.getContext('2d');
-            
             const stripeCount = 16;
             const stripeH = c.height / stripeCount;
-            
             for (let i = 0; i < stripeCount; i++) {
-                // Alternate between two greens — like real mow lines
                 ctx.fillStyle = i % 2 === 0 ? '#4da843' : '#3d8a35';
                 ctx.fillRect(0, i * stripeH, c.width, stripeH);
             }
-            
-            // Subtle noise grain overlay for organic feel
             const imageData = ctx.getImageData(0, 0, c.width, c.height);
             for (let j = 0; j < imageData.data.length; j += 4) {
-                const noise = (Math.random() - 0.5) * 12;
-                imageData.data[j]     += noise;
-                imageData.data[j + 1] += noise;
-                imageData.data[j + 2] += noise;
+                const n = (Math.random() - 0.5) * 10;
+                imageData.data[j] += n; imageData.data[j+1] += n; imageData.data[j+2] += n;
             }
             ctx.putImageData(imageData, 0, 0);
-            
             const tex = new THREE.CanvasTexture(c);
-            tex.wrapS = THREE.RepeatWrapping;
-            tex.wrapT = THREE.RepeatWrapping;
+            tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
             tex.repeat.set(4, 4);
             return tex;
         }
 
-        // --- BUILD 3D TRACK ---
+        // --- ZEBRA STRIPE TEXTURE ---
+        function createZebraTexture() {
+            const c = document.createElement('canvas');
+            c.width = 128; c.height = 128;
+            const ctx = c.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, 128, 128);
+            ctx.fillStyle = '#222222';
+            const stripes = 8;
+            const h = 128 / stripes;
+            for (let i = 0; i < stripes; i += 2) {
+                ctx.fillRect(0, i * h, 128, h);
+            }
+            return new THREE.CanvasTexture(c);
+        }
+
+        // --- SADDLE TEXTURE ---
+        function createSaddleTexture(number, color) {
+            const c = document.createElement('canvas');
+            c.width = 128; c.height = 128;
+            const ctx = c.getContext('2d');
+            ctx.fillStyle = color; ctx.fillRect(0, 0, 128, 128);
+            ctx.strokeStyle = '#000'; ctx.lineWidth = 8; ctx.strokeRect(0, 0, 128, 128);
+            ctx.fillStyle = '#fff'; ctx.font = 'bold 70px "Press Start 2P", monospace';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(number, 64, 72);
+            ctx.lineWidth = 4; ctx.strokeText(number, 64, 72);
+            return new THREE.CanvasTexture(c);
+        }
+
+        // --- MARSHMALLOW JOCKEY FACE TEXTURE ---
+        function createMarshmallowFaceTexture() {
+            const c = document.createElement('canvas');
+            c.width = 128; c.height = 128;
+            const ctx = c.getContext('2d');
+            // Yellow base
+            ctx.fillStyle = '#FFD54F';
+            ctx.fillRect(0, 0, 128, 128);
+            // Eyes - simple cute dots
+            ctx.fillStyle = '#222';
+            ctx.beginPath(); ctx.arc(45, 50, 5, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(83, 50, 5, 0, Math.PI * 2); ctx.fill();
+            // Eye highlights
+            ctx.fillStyle = '#fff';
+            ctx.beginPath(); ctx.arc(47, 48, 2, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(85, 48, 2, 0, Math.PI * 2); ctx.fill();
+            // Cute little smile
+            ctx.strokeStyle = '#222'; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.arc(64, 65, 12, 0.15 * Math.PI, 0.85 * Math.PI, false); ctx.stroke();
+            // Rosy cheeks
+            ctx.fillStyle = 'rgba(255, 130, 130, 0.4)';
+            ctx.beginPath(); ctx.arc(35, 68, 8, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(93, 68, 8, 0, Math.PI * 2); ctx.fill();
+            return new THREE.CanvasTexture(c);
+        }
+        const marshmallowFaceTex = createMarshmallowFaceTexture();
+        const zebraTex = createZebraTexture();
+
+        // --- BUILD TRACK ---
         function createTrack() {
             const trackGroup = new THREE.Group();
-            
+
             // Mowed infield
             const grassGeo = new THREE.CircleGeometry(baseRadius - 2, 64);
             const grassMat = new THREE.MeshLambertMaterial({ map: createMowedGrassTexture() });
             const grass = new THREE.Mesh(grassGeo, grassMat);
-            grass.rotation.x = -Math.PI / 2;
-            grass.receiveShadow = true;
+            grass.rotation.x = -Math.PI / 2; grass.receiveShadow = true;
             trackGroup.add(grass);
 
-            // Dirt track ring
+            // Dirt track
             const dirtGeo = new THREE.RingGeometry(baseRadius - 2, baseRadius + 60, 64);
             const dirtMat = new THREE.MeshLambertMaterial({ color: 0xbd9a6c });
             const dirt = new THREE.Mesh(dirtGeo, dirtMat);
-            dirt.rotation.x = -Math.PI / 2;
-            dirt.receiveShadow = true;
+            dirt.rotation.x = -Math.PI / 2; dirt.receiveShadow = true;
             trackGroup.add(dirt);
 
-            // Outer ground beyond track
-            const outerGeo = new THREE.RingGeometry(baseRadius + 60, baseRadius + 200, 64);
+            // Outer ground
+            const outerGeo = new THREE.RingGeometry(baseRadius + 60, baseRadius + 250, 64);
             const outerMat = new THREE.MeshLambertMaterial({ color: 0x5a9e4b });
             const outer = new THREE.Mesh(outerGeo, outerMat);
-            outer.rotation.x = -Math.PI / 2;
-            outer.position.y = -0.1;
+            outer.rotation.x = -Math.PI / 2; outer.position.y = -0.1;
             trackGroup.add(outer);
 
             // Rails
             const railMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-            const innerRailGeo = new THREE.TorusGeometry(baseRadius - 2, 0.5, 8, 64);
-            const innerRail = new THREE.Mesh(innerRailGeo, railMat);
+            const innerRail = new THREE.Mesh(new THREE.TorusGeometry(baseRadius - 2, 0.5, 8, 64), railMat);
             innerRail.rotation.x = -Math.PI / 2; innerRail.position.y = 2;
             trackGroup.add(innerRail);
-
-            const outerRailGeo = new THREE.TorusGeometry(baseRadius + 60, 0.5, 8, 64);
-            const outerRail = new THREE.Mesh(outerRailGeo, railMat);
+            const outerRail = new THREE.Mesh(new THREE.TorusGeometry(baseRadius + 60, 0.5, 8, 64), railMat);
             outerRail.rotation.x = -Math.PI / 2; outerRail.position.y = 2;
             trackGroup.add(outerRail);
 
-            // Finish line
-            const finishCanvas = document.createElement('canvas');
-            finishCanvas.width = 64; finishCanvas.height = 64;
-            const fctx = finishCanvas.getContext('2d');
-            const sq = 8;
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    fctx.fillStyle = (r + c) % 2 === 0 ? '#fff' : '#000';
-                    fctx.fillRect(c * sq, r * sq, sq, sq);
-                }
+            // Checkered finish line
+            const fc = document.createElement('canvas');
+            fc.width = 64; fc.height = 64;
+            const fctx = fc.getContext('2d');
+            for (let r = 0; r < 8; r++) for (let col = 0; col < 8; col++) {
+                fctx.fillStyle = (r + col) % 2 === 0 ? '#fff' : '#000';
+                fctx.fillRect(col * 8, r * 8, 8, 8);
             }
-            const finishTex = new THREE.CanvasTexture(finishCanvas);
-            const finishGeo = new THREE.PlaneGeometry(64, 4);
-            const finishMat = new THREE.MeshBasicMaterial({ map: finishTex });
-            const finishLine = new THREE.Mesh(finishGeo, finishMat);
+            const finishLine = new THREE.Mesh(
+                new THREE.PlaneGeometry(64, 4),
+                new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(fc) })
+            );
             finishLine.rotation.x = -Math.PI / 2; finishLine.rotation.z = Math.PI / 2;
             finishLine.position.set(0, 0.15, -(baseRadius + 29));
             trackGroup.add(finishLine);
@@ -269,170 +317,164 @@
         }
         createTrack();
 
-        // --- SMILEY JOCKEY TEXTURE (smaller face, forward-looking) ---
-        function createSmileyTexture() {
-            const c = document.createElement('canvas');
-            c.width = 128; c.height = 128;
-            const ctx = c.getContext('2d');
-            
-            // Yellow base
-            ctx.fillStyle = '#ffeb3b';
-            ctx.fillRect(0, 0, 128, 128);
-            
-            // Smaller, centered face features
-            ctx.fillStyle = '#000';
-            // Eyes — smaller, slightly higher
-            ctx.beginPath(); ctx.arc(48, 52, 6, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.arc(80, 52, 6, 0, Math.PI * 2); ctx.fill();
-            // Eye highlights
-            ctx.fillStyle = '#fff';
-            ctx.beginPath(); ctx.arc(50, 50, 2, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.arc(82, 50, 2, 0, Math.PI * 2); ctx.fill();
-            // Mouth — smaller smile
-            ctx.strokeStyle = '#000';
-            ctx.lineWidth = 4;
-            ctx.beginPath(); ctx.arc(64, 68, 14, 0.1 * Math.PI, 0.9 * Math.PI, false); ctx.stroke();
-            
-            return new THREE.CanvasTexture(c);
-        }
-        const globalSmileyTexture = createSmileyTexture();
-
-        // --- SADDLE TEXTURE ---
-        function createSaddleTexture(number, color) {
-            const c = document.createElement('canvas');
-            c.width = 128; c.height = 128;
-            const ctx = c.getContext('2d');
-            ctx.fillStyle = color; ctx.fillRect(0, 0, 128, 128);
-            ctx.strokeStyle = '#000'; ctx.lineWidth = 8; ctx.strokeRect(0, 0, 128, 128);
-            ctx.fillStyle = '#fff'; ctx.font = 'bold 70px "Press Start 2P", monospace'; 
-            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText(number, 64, 72);
-            ctx.lineWidth = 4; ctx.strokeText(number, 64, 72);
-            return new THREE.CanvasTexture(c);
-        }
-
-        // --- 3D HORSE BUILDER ---
-        function create3DHorse(colorHex, number) {
+        // --- 3D ZEBRA + MARSHMALLOW JOCKEY ---
+        function create3DZebra(colorHex, number) {
             const horseGroup = new THREE.Group();
             const bodyGroup = new THREE.Group();
             horseGroup.add(bodyGroup);
 
-            const brownMat = new THREE.MeshLambertMaterial({ color: 0x6B4226 });
-            const darkBrownMat = new THREE.MeshLambertMaterial({ color: 0x3a2212 });
-            const hoofMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
+            const zebraMat = new THREE.MeshLambertMaterial({ map: zebraTex });
+            const darkMat = new THREE.MeshLambertMaterial({ color: 0x222222 });
+            const whiteMat = new THREE.MeshLambertMaterial({ color: 0xeeeeee });
+            const hoofMat = new THREE.MeshLambertMaterial({ color: 0x111111 });
 
-            // Body
-            const bodyGeo = new THREE.BoxGeometry(12, 5, 5);
-            const body = new THREE.Mesh(bodyGeo, brownMat);
+            // Body - striped
+            const body = new THREE.Mesh(new THREE.BoxGeometry(12, 5, 5), zebraMat);
             body.position.y = 6; body.castShadow = true;
             bodyGroup.add(body);
 
-            // Saddlecloths
-            const saddleGeo = new THREE.PlaneGeometry(6, 4.5);
+            // Saddlecloths with number
             const saddleTex = createSaddleTexture(number.toString(), colorHex);
             const saddleMat = new THREE.MeshLambertMaterial({ map: saddleTex });
-            
-            const saddleR = new THREE.Mesh(saddleGeo, saddleMat);
+            const saddleR = new THREE.Mesh(new THREE.PlaneGeometry(6, 4.5), saddleMat);
             saddleR.position.set(0, 6, 2.6);
             bodyGroup.add(saddleR);
-
-            const saddleL = new THREE.Mesh(saddleGeo, saddleMat);
-            saddleL.position.set(0, 6, -2.6);
-            saddleL.rotation.y = Math.PI;
+            const saddleL = new THREE.Mesh(new THREE.PlaneGeometry(6, 4.5), saddleMat);
+            saddleL.position.set(0, 6, -2.6); saddleL.rotation.y = Math.PI;
             bodyGroup.add(saddleL);
 
-            // Neck
-            const neckGeo = new THREE.BoxGeometry(3, 7, 3.5);
-            const neck = new THREE.Mesh(neckGeo, brownMat);
-            neck.position.set(6, 9, 0);
-            neck.rotation.z = 0.4;
-            neck.castShadow = true;
+            // Neck - striped
+            const neck = new THREE.Mesh(new THREE.BoxGeometry(3, 7, 3.5), zebraMat);
+            neck.position.set(6, 9, 0); neck.rotation.z = 0.4; neck.castShadow = true;
             bodyGroup.add(neck);
 
-            // Head
-            const headGeo = new THREE.BoxGeometry(5, 3, 3);
-            const head = new THREE.Mesh(headGeo, brownMat);
+            // HEAD WITH HOOD (covers the face so we don't need detail)
+            // Hood is a colored piece that matches the saddlecloth
+            const hoodMat = new THREE.MeshLambertMaterial({ color: new THREE.Color(colorHex) });
+            
+            // Base head shape under the hood
+            const head = new THREE.Mesh(new THREE.BoxGeometry(5, 3.5, 3.5), darkMat);
             head.position.set(9, 12, 0); head.castShadow = true;
             bodyGroup.add(head);
 
-            // Snout
-            const snoutGeo = new THREE.BoxGeometry(3, 2, 2.5);
-            const snout = new THREE.Mesh(snoutGeo, new THREE.MeshLambertMaterial({ color: 0x7B5433 }));
-            snout.position.set(12, 11.5, 0);
-            bodyGroup.add(snout);
+            // Hood covering the head
+            const hood = new THREE.Mesh(new THREE.BoxGeometry(5.2, 3.7, 3.7), hoodMat);
+            hood.position.set(9, 12, 0);
+            bodyGroup.add(hood);
 
-            // Ears
-            const earGeo = new THREE.ConeGeometry(0.6, 2, 4);
-            const earL = new THREE.Mesh(earGeo, brownMat);
-            earL.position.set(8.5, 14, 1); earL.rotation.z = 0.2;
-            bodyGroup.add(earL);
-            const earR = new THREE.Mesh(earGeo, brownMat);
-            earR.position.set(8.5, 14, -1); earR.rotation.z = 0.2;
-            bodyGroup.add(earR);
-
-            // Eyes
-            const eyeGeo = new THREE.SphereGeometry(0.5, 8, 8);
-            const eyeMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
-            const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
-            eyeL.position.set(10.5, 12.5, 1.5);
+            // Eye holes in the hood (dark circles on the sides)
+            const eyeHoleGeo = new THREE.CircleGeometry(0.7, 8);
+            const eyeHoleMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+            const eyeL = new THREE.Mesh(eyeHoleGeo, eyeHoleMat);
+            eyeL.position.set(10, 12.5, 1.86); eyeL.rotation.y = 0;
             bodyGroup.add(eyeL);
-            const eyeR = new THREE.Mesh(eyeGeo, eyeMat);
-            eyeR.position.set(10.5, 12.5, -1.5);
+            const eyeR = new THREE.Mesh(eyeHoleGeo, eyeHoleMat);
+            eyeR.position.set(10, 12.5, -1.86); eyeR.rotation.y = Math.PI;
             bodyGroup.add(eyeR);
 
-            // Mane
-            const maneMat = new THREE.MeshLambertMaterial({ color: 0x1a0f00 });
-            for (let i = 0; i < 5; i++) {
-                const tuftGeo = new THREE.BoxGeometry(1, 2, 3.5);
-                const tuft = new THREE.Mesh(tuftGeo, maneMat);
-                tuft.position.set(5 + i * 1.2, 10 + i * 0.6, 0);
+            // Snout peeking out of hood
+            const snout = new THREE.Mesh(new THREE.BoxGeometry(2.5, 2, 2.5), whiteMat);
+            snout.position.set(12, 11.2, 0);
+            bodyGroup.add(snout);
+            // Nostrils
+            const nostrilMat = new THREE.MeshBasicMaterial({ color: 0x333333 });
+            const nostrilL = new THREE.Mesh(new THREE.SphereGeometry(0.3, 6, 6), nostrilMat);
+            nostrilL.position.set(13.3, 11.2, 0.6); bodyGroup.add(nostrilL);
+            const nostrilR = new THREE.Mesh(new THREE.SphereGeometry(0.3, 6, 6), nostrilMat);
+            nostrilR.position.set(13.3, 11.2, -0.6); bodyGroup.add(nostrilR);
+
+            // Ears poking through hood
+            const earGeo = new THREE.ConeGeometry(0.7, 2.5, 4);
+            const earL = new THREE.Mesh(earGeo, hoodMat);
+            earL.position.set(8.5, 14.5, 1.2); earL.rotation.z = 0.2;
+            bodyGroup.add(earL);
+            const earR = new THREE.Mesh(earGeo, hoodMat);
+            earR.position.set(8.5, 14.5, -1.2); earR.rotation.z = 0.2;
+            bodyGroup.add(earR);
+
+            // Mane (dark tufts between ears)
+            const maneMat = new THREE.MeshLambertMaterial({ color: 0x111111 });
+            for (let i = 0; i < 4; i++) {
+                const tuft = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 3), maneMat);
+                tuft.position.set(5 + i * 1.4, 10.5 + i * 0.6, 0);
                 tuft.rotation.z = 0.3 + i * 0.05;
                 bodyGroup.add(tuft);
             }
 
             // Tail
-            const tailGeo = new THREE.BoxGeometry(4, 1.5, 1.5);
-            const tail = new THREE.Mesh(tailGeo, maneMat);
-            tail.position.set(-8.5, 6.5, 0);
-            tail.rotation.z = -0.3;
+            const tail = new THREE.Mesh(new THREE.BoxGeometry(4, 1.5, 1.5), darkMat);
+            tail.position.set(-8.5, 6.5, 0); tail.rotation.z = -0.3;
             bodyGroup.add(tail);
 
-            // Legs (pivot at top)
+            // Legs (striped) with hooves
             const legGeo = new THREE.BoxGeometry(1.5, 5.5, 1.5);
             legGeo.translate(0, -2.75, 0);
             const legs = [];
-            const legPositions = [ [4, 4, 1.8], [4, 4, -1.8], [-4, 4, 1.8], [-4, 4, -1.8] ];
+            const legPositions = [[4,4,1.8],[4,4,-1.8],[-4,4,1.8],[-4,4,-1.8]];
             legPositions.forEach(pos => {
-                const leg = new THREE.Mesh(legGeo, darkBrownMat);
+                const leg = new THREE.Mesh(legGeo, zebraMat);
                 leg.position.set(pos[0], pos[1], pos[2]); leg.castShadow = true;
                 bodyGroup.add(leg);
-                // Hoof
-                const hoofGeo = new THREE.BoxGeometry(1.8, 1.2, 1.8);
-                const hoof = new THREE.Mesh(hoofGeo, hoofMat);
+                const hoof = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.2, 1.8), hoofMat);
                 hoof.position.set(0, -5.5, 0);
                 leg.add(hoof);
                 legs.push(leg);
             });
 
-            // Balloon Jockey — anchored to bodyGroup so it follows horse rotation
-            const balloonGroup = new THREE.Group();
-            balloonGroup.position.set(-1, 13, 0); 
-            bodyGroup.add(balloonGroup);
+            // --- MARSHMALLOW JOCKEY (chubby little guy sitting on the back) ---
+            const jockeyGroup = new THREE.Group();
+            jockeyGroup.position.set(-1, 9.5, 0);
+            bodyGroup.add(jockeyGroup);
 
-            const balloonGeo = new THREE.SphereGeometry(2.5, 32, 32);
-            const balloonMat = new THREE.MeshLambertMaterial({ map: globalSmileyTexture });
-            const balloon = new THREE.Mesh(balloonGeo, balloonMat);
-            // Face forward (+X is forward on the horse)
-            balloon.rotation.y = -Math.PI / 2;
-            balloonGroup.add(balloon);
-            
-            const stringGeo = new THREE.CylinderGeometry(0.08, 0.08, 3.5);
-            const stringMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-            const string = new THREE.Mesh(stringGeo, stringMat);
-            string.position.y = -2;
-            balloonGroup.add(string);
+            const marshmallowColor = 0xFFD54F; // Yellow
+            const mMat = new THREE.MeshLambertMaterial({ color: marshmallowColor });
 
-            return { root: horseGroup, bodyGroup, head, tail, legs, balloonGroup };
+            // Chubby body (squashed sphere)
+            const jBody = new THREE.Mesh(new THREE.SphereGeometry(2.8, 16, 16), mMat);
+            jBody.scale.set(0.85, 1, 0.85);
+            jBody.position.y = 2;
+            jockeyGroup.add(jBody);
+
+            // Head with face texture
+            const headFaceMat = new THREE.MeshLambertMaterial({ map: marshmallowFaceTex });
+            const jHead = new THREE.Mesh(new THREE.SphereGeometry(2, 16, 16), headFaceMat);
+            jHead.position.y = 5;
+            // Rotate so face points forward (+X direction on the horse)
+            jHead.rotation.y = -Math.PI / 2;
+            jockeyGroup.add(jHead);
+
+            // Stubby arms
+            const armGeo = new THREE.SphereGeometry(0.8, 8, 8);
+            armGeo.scale(1, 1.4, 1);
+            const armL = new THREE.Mesh(armGeo, mMat);
+            armL.position.set(0.8, 3.2, 2.2); armL.rotation.z = -0.6;
+            jockeyGroup.add(armL);
+            const armR = new THREE.Mesh(armGeo, mMat);
+            armR.position.set(0.8, 3.2, -2.2); armR.rotation.z = -0.6;
+            jockeyGroup.add(armR);
+
+            // Little sailor hat (like Stay Puft)
+            const hatBrim = new THREE.Mesh(
+                new THREE.CylinderGeometry(2.3, 2.3, 0.3, 16),
+                new THREE.MeshLambertMaterial({ color: 0xffffff })
+            );
+            hatBrim.position.y = 6.8;
+            jockeyGroup.add(hatBrim);
+            const hatTop = new THREE.Mesh(
+                new THREE.CylinderGeometry(1.6, 1.8, 1.2, 16),
+                new THREE.MeshLambertMaterial({ color: 0xffffff })
+            );
+            hatTop.position.y = 7.5;
+            jockeyGroup.add(hatTop);
+            // Hat band (colored to match saddlecloth)
+            const hatBand = new THREE.Mesh(
+                new THREE.CylinderGeometry(1.85, 1.85, 0.35, 16),
+                new THREE.MeshLambertMaterial({ color: new THREE.Color(colorHex) })
+            );
+            hatBand.position.y = 7.1;
+            jockeyGroup.add(hatBand);
+
+            return { root: horseGroup, bodyGroup, head, tail, legs, jockeyGroup, jHead };
         }
 
         // --- UI ---
@@ -442,11 +484,9 @@
             document.getElementById('lobby').classList.add('hidden');
             document.getElementById('main-title').classList.add('hidden');
             document.getElementById('tapping-phase').classList.remove('hidden');
-            
             let startTime = Date.now();
             let timerInterval = setInterval(() => {
-                let elapsed = (Date.now() - startTime) / 1000;
-                let remaining = (10 - elapsed).toFixed(1);
+                let remaining = (10 - (Date.now() - startTime) / 1000).toFixed(1);
                 if (remaining <= 0) { remaining = 0; clearInterval(timerInterval); start3DRace(); }
                 document.getElementById('timer-display').innerText = remaining;
             }, 100);
@@ -454,7 +494,7 @@
 
         document.getElementById('tap-zone').addEventListener('pointerdown', (e) => { e.preventDefault(); playerHorse.taps++; });
 
-        // --- RACE START ---
+        // --- RACE ---
         function start3DRace() {
             document.getElementById('tapping-phase').classList.add('hidden');
             document.getElementById('race-phase').classList.remove('hidden');
@@ -467,19 +507,19 @@
             gameHorses.sort(() => Math.random() - 0.5);
 
             gameHorses.forEach((horse, index) => {
-                horse.angle = -Math.PI / 2 - (0.05 + (index * 0.03)); 
-                horse.baseSpeed = 0.0010; 
-                horse.speedMultiplier = horse.baseSpeed + (horse.taps * 0.00001); 
+                horse.angle = START_ANGLE_OFFSET - (0.05 + (index * 0.03));
+                horse.baseSpeed = 0.0008;
+                horse.speedMultiplier = horse.baseSpeed + (horse.taps * 0.000008);
                 horse.radius = baseRadius + 10 + (index * laneWidth);
                 horse.finished = false;
 
-                const model = create3DHorse(horse.color, horse.number);
+                const model = create3DZebra(horse.color, horse.number);
                 scene.add(model.root);
                 horse.model = model;
             });
 
             updateLeaderboard();
-            animate(); 
+            animate();
         }
 
         function updateLeaderboard() {
@@ -491,7 +531,7 @@
             const list = document.getElementById('standings-list');
             list.innerHTML = '';
             sorted.forEach((horse, i) => {
-                let place = i === 0 ? '1ST' : i === 1 ? '2ND' : i === 2 ? '3RD' : `${i+1}TH`;
+                let place = ['1ST','2ND','3RD','4TH','5TH','6TH'][i];
                 list.innerHTML += `
                     <div class="leaderboard-row">
                         <span class="leaderboard-place">${place}</span>
@@ -513,19 +553,35 @@
 
         function animate() {
             if (!raceFinished) requestAnimationFrame(animate);
-            
+
             const time = clock.getElapsedTime();
             const gallopSpeed = 20;
 
             let activeLeader = null;
             let highestAngle = -999;
 
+            // Calculate laps for display
+            let leaderAngle = -999;
+            gameHorses.forEach(h => { if (h.angle > leaderAngle) leaderAngle = h.angle; });
+            const totalRace = FINISH_ANGLE - START_ANGLE_OFFSET; // 3*PI
+            const progress = (leaderAngle - START_ANGLE_OFFSET) / totalRace;
+            const currentLap = Math.min(Math.floor(progress * 1.5) + 1, 2); // 1 or 2
+            if (!raceFinished) {
+                const lapEl = document.getElementById('lap-display');
+                if (progress < 0.667) {
+                    lapEl.innerText = 'LAP 1 OF 1½';
+                } else {
+                    lapEl.innerText = 'FINAL LAP';
+                    lapEl.style.color = '#ff4444';
+                }
+            }
+
             gameHorses.forEach((horse, i) => {
-                horse.angle += horse.speedMultiplier + (Math.random() * 0.0005);
+                horse.angle += horse.speedMultiplier + (Math.random() * 0.0004);
 
                 const x = Math.cos(horse.angle) * horse.radius * trackScaleX;
                 const z = Math.sin(horse.angle) * horse.radius;
-                
+
                 const dx = -Math.sin(horse.angle) * horse.radius * trackScaleX;
                 const dz = Math.cos(horse.angle) * horse.radius;
                 const tangent = Math.atan2(-dz, dx);
@@ -536,7 +592,7 @@
                 // Gallop animation
                 const cycle = time * gallopSpeed + (i * 1.5);
                 horse.model.bodyGroup.position.y = Math.abs(Math.sin(cycle)) * 2;
-                horse.model.bodyGroup.rotation.z = Math.cos(cycle) * 0.12; 
+                horse.model.bodyGroup.rotation.z = Math.cos(cycle) * 0.12;
                 horse.model.head.rotation.z = -0.15 + Math.sin(cycle) * 0.15;
                 horse.model.tail.rotation.z = -0.3 + Math.sin(cycle) * 0.25;
 
@@ -546,12 +602,13 @@
                 horse.model.legs[1].rotation.z = legSwing * 0.8;
                 horse.model.legs[2].rotation.z = -legSwing;
                 horse.model.legs[3].rotation.z = -legSwing * 0.8;
-                
-                // Balloon bob (stays facing forward with bodyGroup, just bobs up/down)
-                horse.model.balloonGroup.position.y = 13 + Math.sin(time * 5 + i) * 0.8;
+
+                // Jockey bounce (the little chub bounces on the back)
+                horse.model.jockeyGroup.position.y = 9.5 + Math.abs(Math.sin(cycle)) * 1.2;
+                horse.model.jockeyGroup.rotation.z = Math.sin(cycle) * 0.08;
 
                 // Finish check
-                if (horse.angle >= (3 * Math.PI / 2) && !horse.finished) { 
+                if (horse.angle >= FINISH_ANGLE && !horse.finished) {
                     horse.finished = true;
                     finishOrder.push(horse);
                     let placeStr = finishOrder.length === 1 ? "WINS!" : finishOrder.length === 2 ? "takes 2nd!" : finishOrder.length === 3 ? "takes 3rd!" : "finishes.";
@@ -566,28 +623,26 @@
 
             updateLeaderboard();
 
-            // Broadcast camera — follows leader from outside rail
+            // Broadcast camera
             if (activeLeader) {
                 const camAngle = activeLeader.angle - 0.15;
                 const camRadius = activeLeader.radius + 65;
-                
                 const targetX = Math.cos(camAngle) * camRadius * trackScaleX;
                 const targetZ = Math.sin(camAngle) * camRadius;
-                
                 camera.position.lerp(new THREE.Vector3(targetX, 35, targetZ), 0.05);
-                
+
                 const lookAngle = activeLeader.angle + 0.08;
                 const lookX = Math.cos(lookAngle) * activeLeader.radius * trackScaleX;
                 const lookZ = Math.sin(lookAngle) * activeLeader.radius;
-                
                 cameraLookTarget.lerp(new THREE.Vector3(lookX, 3, lookZ), 0.05);
                 camera.lookAt(cameraLookTarget);
             }
 
-            // Finish
+            // End
             if (finishOrder.length === gameHorses.length && !raceFinished) {
                 raceFinished = true;
                 document.getElementById('race-status').innerText = "RACE COMPLETE!";
+                document.getElementById('lap-display').innerText = '';
                 setTimeout(() => {
                     const rList = document.getElementById('results-list');
                     finishOrder.forEach((h, i) => {
@@ -606,7 +661,7 @@
 
             renderer.render(scene, camera);
         }
-        
+
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
