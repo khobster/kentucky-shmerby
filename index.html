@@ -538,7 +538,7 @@ function animate(){
         const camAngle=packMid+0.06;
         // Pull back just enough to frame the pack; closer than before
         const camDist=45+Math.min(packSpread*50,30);
-        const camR=leader.radius+DIRT_W+camDist;
+        const camR=BASE_R+leader.laneOffset+DIRT_W+camDist;
         const camH=20+Math.min(packSpread*25,15); // lower = more dramatic
 
         const tx=Math.cos(camAngle)*camR*TRACK_SX;
