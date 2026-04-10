@@ -197,9 +197,6 @@ g.scale.set(TRACK_SX,1,1);scene.add(g);})();
 const loadingManager = new THREE.LoadingManager();
 const texLoader = new THREE.TextureLoader(loadingManager);
 
-// Log loading errors for debugging LT head
-loadingManager.onError = function(url) { console.error('Error loading:', url); };
-
 const HEAD_IMAGES = {
   liberty: "liberty-front.png",
   david: "david-front.png",
@@ -211,6 +208,7 @@ const HEAD_IMAGES = {
   yorick: "yorick-front.png",
 };
 
+// MULTI-ANGLE DEFINITIONS
 const LT_HEAD = { front: "lt-front.png", side: "lt-side.png", side_r: "lt-side-r.png", back: "lt-back.png" };
 const GEORGE_HEAD = { front: "george-front.png", side: "george-side.png", side_r: "george-side-r.png", back: "george-back.png" };
 
@@ -224,19 +222,15 @@ const georgeTextures = { front: texLoader.load(GEORGE_HEAD.front), side: texLoad
 function buildMascotHead(idx) {
     const name = HEAD_NAMES[idx % HEAD_NAMES.length];
     const g = new THREE.Group();
-    // Use alphaTest to help with cutout. Added color fallback to see if files are missing.
     const mat = new THREE.MeshBasicMaterial({ 
         transparent: true, 
         alphaTest: 0.5, 
-        side: THREE.DoubleSide,
-        depthTest: true,
-        depthWrite: true
+        side: THREE.DoubleSide
     });
     
     if (name === 'lt') {
         mat.map = ltTextures.front;
         g.userData.multiAngle = ltTextures;
-        if(!mat.map) mat.color.set(0xff00ff); // Magenta if image fails
     } else if (name === 'george') {
         mat.map = georgeTextures.front;
         g.userData.multiAngle = georgeTextures;
@@ -244,10 +238,11 @@ function buildMascotHead(idx) {
         mat.map = headTextures[name];
     }
     
-    const plane = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), mat);
-    // Push the plane slightly forward (z=1) so body parts don't poke through the face
-    plane.position.z = 1.0; 
+    // The Plane: Slightly oversized and moved FORWARD on its Z-axis to avoid body clipping
+    const plane = new THREE.Mesh(new THREE.PlaneGeometry(10.5, 10.5), mat);
+    plane.position.z = 1.2; // Move face in front of the stick-neck/arms
     g.add(plane);
+    
     g.userData.headMat = mat;
     g.userData.isHead = true;
     return g;
@@ -347,14 +342,29 @@ function createHorse(colorHex,number,mascotIdx){
 
     const jG=new THREE.Group(); jG.position.set(0,9.5,0); body.add(jG);
     const jm=toon({color:new THREE.Color(colorHex)});
-    // JOCKEY TORSO: Angled slightly back
-    const jTorso=new THREE.Mesh(new THREE.CylinderGeometry(.3,.4,2.2,6),jm); jTorso.position.y=0.8;jTorso.rotation.z=-.3;jG.add(jTorso);
+    
+    // Jockey Body parts moved further back (-0.5 on X) to stay behind the head plane
+    const jTorso=new THREE.Mesh(new THREE.CylinderGeometry(.3,.4,2.2,6),jm); 
+    jTorso.position.set(-0.5, 0.8, 0); 
+    jTorso.rotation.z=-0.35;
+    jG.add(jTorso);
+    
     for(let s of[-1,1]){
-        const arm=new THREE.Mesh(new THREE.CylinderGeometry(.12,.15,2,5),jm); arm.position.set(1,1,s*.8);arm.rotation.z=-.8;jG.add(arm);
-        const leg=new THREE.Mesh(new THREE.CylinderGeometry(.12,.15,2,5),toon({color:0xffffff})); leg.position.set(-.2,-.2,s*1);leg.rotation.z=.3;jG.add(leg);
+        const arm=new THREE.Mesh(new THREE.CylinderGeometry(.12,.15,2,5),jm); 
+        arm.position.set(0.5, 0.8, s*0.8);
+        arm.rotation.z=-0.8;
+        jG.add(arm);
+        
+        const leg=new THREE.Mesh(new THREE.CylinderGeometry(.12,.15,2,5),toon({color:0xffffff})); 
+        leg.position.set(-0.7, -0.2, s*1);
+        leg.rotation.z=0.3;
+        jG.add(leg);
     }
-    // Head Positioned higher and clear of torso
-    const mHead=buildMascotHead(mascotIdx); mHead.position.set(0,5.2,0); jG.add(mHead);
+    
+    const mHead=buildMascotHead(mascotIdx); 
+    mHead.position.set(0, 5.5, 0); // Lifted head up a bit more
+    jG.add(mHead);
+    
     return{root,body,tailG,legs,jG};
 }
 
