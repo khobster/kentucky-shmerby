@@ -272,11 +272,15 @@ function updateHeadAngle(horseRoot, jockeyGroup, cam) {
     if (!headGroup || !headGroup.userData.isHead) return;
     
     // --- BILLBOARD: make plane face camera properly in nested hierarchy ---
+    headGroup.updateWorldMatrix(true, false);
     headGroup.getWorldPosition(_headWorldPos);
     // Compute world-space quaternion that faces camera
-    _lookMatrix.lookAt(_headWorldPos, cam.position, THREE.Object3D.DefaultUp);
+    // lookAt(eye, target) points -z toward target. Plane faces +z.
+    // So lookAt(cam, head) makes -z toward head, +z toward cam = front faces camera
+    _lookMatrix.lookAt(cam.position, _headWorldPos, THREE.Object3D.DefaultUp);
     _targetQuat.setFromRotationMatrix(_lookMatrix);
     // Convert to local space by removing parent's world rotation
+    headGroup.parent.updateWorldMatrix(true, false);
     headGroup.parent.getWorldQuaternion(_parentWorldQuat);
     _parentWorldQuat.invert();
     headGroup.quaternion.copy(_targetQuat.premultiply(_parentWorldQuat));
@@ -286,10 +290,9 @@ function updateHeadAngle(horseRoot, jockeyGroup, cam) {
     const texSet = headGroup.userData.multiAngle;
     const mat = headGroup.userData.headMat;
     
-    // Horse forward direction in world space
-    horseRoot.getWorldQuaternion(_horseWorldQuat);
-    _horseForward.set(1, 0, 0).applyQuaternion(_horseWorldQuat);
-    _horseForward.y = 0; _horseForward.normalize();
+    // Horse forward direction from its Y rotation (simpler, more reliable)
+    const rotY = horseRoot.rotation.y;
+    _horseForward.set(Math.cos(rotY), 0, -Math.sin(rotY)).normalize();
     
     // Camera-to-head direction (horizontal)
     _camToHead.subVectors(cam.position, _headWorldPos);
@@ -396,12 +399,12 @@ function createHorse(colorHex,number,mascotIdx){
     body.add(jG);
     const jm=toon({color:new THREE.Color(colorHex)});
     // Simple stick torso
-    const jTorso=new THREE.Mesh(new THREE.CylinderGeometry(.4,.5,3,6),jm);
-    jTorso.position.y=1.5;jTorso.rotation.z=-.3;jG.add(jTorso);
+    const jTorso=new THREE.Mesh(new THREE.CylinderGeometry(.3,.4,2,6),jm);
+    jTorso.position.y=0.8;jTorso.rotation.z=-.3;jG.add(jTorso);
     // Stick arms reaching forward
     for(let s of[-1,1]){
-        const arm=new THREE.Mesh(new THREE.CylinderGeometry(.12,.15,2.5,5),jm);
-        arm.position.set(1.2,1.5,s*.8);arm.rotation.z=-.8;jG.add(arm);
+        const arm=new THREE.Mesh(new THREE.CylinderGeometry(.12,.15,2,5),jm);
+        arm.position.set(1,1,s*.8);arm.rotation.z=-.8;jG.add(arm);
     }
     // Stick legs
     const legMat=toon({color:0xffffff});
