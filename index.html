@@ -197,57 +197,47 @@ g.scale.set(TRACK_SX,1,1);scene.add(g);})();
 const loadingManager = new THREE.LoadingManager();
 const texLoader = new THREE.TextureLoader(loadingManager);
 
-const HEAD_IMAGES = {
-  liberty: "liberty-front.png",
-  david: "david-front.png",
-  george: "george-front.png",
-  christopher: "christopher-front.png",
-  lt: "lt-front.png",
-  maria: "maria-front.png",
-  mike: "mike-front.png",
-  yorick: "yorick-front.png",
-};
-
-// MULTI-ANGLE DEFINITIONS
+// MULTI-ANGLE DEFINITIONS (Files referenced must exist in folder)
 const LT_HEAD = { front: "lt-front.png", side: "lt-side.png", side_r: "lt-side-r.png", back: "lt-back.png" };
 const GEORGE_HEAD = { front: "george-front.png", side: "george-side.png", side_r: "george-side-r.png", back: "george-back.png" };
+const DAVID_HEAD = { front: "david-front.png", side: "david-side.png", side_r: "david-side-r.png", back: "david-back.png" };
 
-const HEAD_NAMES = Object.keys(HEAD_IMAGES);
-const headTextures = {};
-HEAD_NAMES.forEach(name => { headTextures[name] = texLoader.load(HEAD_IMAGES[name]); });
-
+// Textures loaded immediately for rapid use in buildMascotHead
 const ltTextures = { front: texLoader.load(LT_HEAD.front), side: texLoader.load(LT_HEAD.side), side_r: texLoader.load(LT_HEAD.side_r), back: texLoader.load(LT_HEAD.back) };
 const georgeTextures = { front: texLoader.load(GEORGE_HEAD.front), side: texLoader.load(GEORGE_HEAD.side), side_r: texLoader.load(GEORGE_HEAD.side_r), back: texLoader.load(GEORGE_HEAD.back) };
+const davidTextures = { front: texLoader.load(DAVID_HEAD.front), side: texLoader.load(DAVID_HEAD.side), side_r: texLoader.load(DAVID_HEAD.side_r), back: texLoader.load(DAVID_HEAD.back) };
+
+// Defines available multi-angle characters and maps indices to their texture sets
+const CHARACTER_SETS = [ltTextures, georgeTextures, davidTextures];
 
 function buildMascotHead(idx) {
-    const name = HEAD_NAMES[idx % HEAD_NAMES.length];
+    const textureSet = CHARACTER_SETS[idx % CHARACTER_SETS.length];
+    
     const g = new THREE.Group();
+    // Material configured for transparency and cutting out background based on texture
     const mat = new THREE.MeshBasicMaterial({ 
         transparent: true, 
-        alphaTest: 0.5, 
+        alphaTest: 0.5, // Standard tolerance for 1-bit alpha transparency
         side: THREE.DoubleSide
     });
     
-    if (name === 'lt') {
-        mat.map = ltTextures.front;
-        g.userData.multiAngle = ltTextures;
-    } else if (name === 'george') {
-        mat.map = georgeTextures.front;
-        g.userData.multiAngle = georgeTextures;
-    } else {
-        mat.map = headTextures[name];
-    }
+    // Set initial texture (will be swapped based on angle during animation)
+    mat.map = textureSet.front;
     
-    // The Plane: Slightly oversized and moved FORWARD on its Z-axis to avoid body clipping
+    // Create the 2D plane geometry and move it forward on its local Z-axis.
+    // This position.z ensures the plane stays completely IN FRONT of any jockey stick-figures
     const plane = new THREE.Mesh(new THREE.PlaneGeometry(10.5, 10.5), mat);
-    plane.position.z = 1.2; // Move face in front of the stick-neck/arms
+    plane.position.z = 1.2; 
     g.add(plane);
     
+    // Attach texture set for reference in animation loop
+    g.userData.multiAngle = textureSet;
     g.userData.headMat = mat;
     g.userData.isHead = true;
     return g;
 }
 
+// Temporary vectors for math calculations (reused to minimize memory allocation)
 const _headWorldPos = new THREE.Vector3();
 const _camToHead = new THREE.Vector3();
 const _horseForward = new THREE.Vector3();
@@ -255,10 +245,17 @@ const _parentWorldQuat = new THREE.Quaternion();
 const _targetQuat = new THREE.Quaternion();
 const _lookMatrix = new THREE.Matrix4();
 
+/**
+ * Calculates view angle between camera and horse to swap 2D mascot textures.
+ * Also handles billboarding (facing camera) within nested hierarchy.
+ */
 function updateHeadAngle(horseRoot, jockeyGroup, cam) {
+    // Heads are always the last child added to jG in createHorse
     const headGroup = jockeyGroup.children[jockeyGroup.children.length - 1];
     if (!headGroup || !headGroup.userData.isHead) return;
     
+    // 1. BILLBOARDING
+    // Calculate world position, have it look at camera, then convert to parent local space
     headGroup.updateWorldMatrix(true, false);
     headGroup.getWorldPosition(_headWorldPos);
     _lookMatrix.lookAt(cam.position, _headWorldPos, THREE.Object3D.DefaultUp);
@@ -268,20 +265,25 @@ function updateHeadAngle(horseRoot, jockeyGroup, cam) {
     _parentWorldQuat.invert();
     headGroup.quaternion.copy(_targetQuat.premultiply(_parentWorldQuat));
     
+    // 2. TEXTURE SWAPPING
     if (!headGroup.userData.multiAngle) return;
     const texSet = headGroup.userData.multiAngle;
     const mat = headGroup.userData.headMat;
     
+    // Calculate horse forward vector from its Y rotation
     const rotY = horseRoot.rotation.y;
     _horseForward.set(Math.cos(rotY), 0, -Math.sin(rotY)).normalize();
+    // Calculate camera direction horizontally relative to the head
     _camToHead.subVectors(cam.position, _headWorldPos);
     _camToHead.y = 0; _camToHead.normalize();
     
+    // Angle in radians (-PI to PI)
     const angle = Math.atan2(
         _horseForward.x * _camToHead.z - _horseForward.z * _camToHead.x,
         _horseForward.x * _camToHead.x + _horseForward.z * _camToHead.z
     );
     
+    // Convert to degrees and determine "view zone" (90-degree increments)
     const deg = angle * 180 / Math.PI;
     let zone;
     if (deg > -45 && deg < 45) zone = 'front';
@@ -290,6 +292,7 @@ function updateHeadAngle(horseRoot, jockeyGroup, cam) {
     else zone = 'back';
     
     const newTex = texSet[zone];
+    // Apply texture change only if it's actually a different image
     if (newTex && mat.map !== newTex) {
         mat.map = newTex;
         mat.needsUpdate = true;
@@ -343,18 +346,20 @@ function createHorse(colorHex,number,mascotIdx){
     const jG=new THREE.Group(); jG.position.set(0,9.5,0); body.add(jG);
     const jm=toon({color:new THREE.Color(colorHex)});
     
-    // Jockey Body parts moved further back (-0.5 on X) to stay behind the head plane
+    // Jockey Body parts adjusted further back (-0.5 on X) to prevent clipping through the head plane
     const jTorso=new THREE.Mesh(new THREE.CylinderGeometry(.3,.4,2.2,6),jm); 
     jTorso.position.set(-0.5, 0.8, 0); 
     jTorso.rotation.z=-0.35;
     jG.add(jTorso);
     
     for(let s of[-1,1]){
+        // Arms reaching further forward
         const arm=new THREE.Mesh(new THREE.CylinderGeometry(.12,.15,2,5),jm); 
         arm.position.set(0.5, 0.8, s*0.8);
         arm.rotation.z=-0.8;
         jG.add(arm);
         
+        // Legs adjusted to match new torso position
         const leg=new THREE.Mesh(new THREE.CylinderGeometry(.12,.15,2,5),toon({color:0xffffff})); 
         leg.position.set(-0.7, -0.2, s*1);
         leg.rotation.z=0.3;
@@ -362,7 +367,8 @@ function createHorse(colorHex,number,mascotIdx){
     }
     
     const mHead=buildMascotHead(mascotIdx); 
-    mHead.position.set(0, 5.5, 0); // Lifted head up a bit more
+    // Lifted slightly (to 5.5) so heads look more naturally attached to jockeys leaning forward
+    mHead.position.set(0, 5.5, 0); 
     jG.add(mHead);
     
     return{root,body,tailG,legs,jG};
@@ -511,6 +517,9 @@ function buildAndStartRace(rng){
     document.getElementById('race-phase').classList.remove('hidden');
     raceStartTime=Date.now();
     for(let i=gameHorses.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[gameHorses[i],gameHorses[j]]=[gameHorses[j],gameHorses[i]];}
+    
+    // Assign unique mascot textures to each horse based on the character count (LT, George, David)
+    // The buildMascotHead function uses modulo (%) to loop through available sets.
     const mi=[0,1,2,3,4,5,6,7];for(let i=mi.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[mi[i],mi[j]]=[mi[j],mi[i]];}
 
     gameHorses.forEach((h,i)=>{
@@ -584,6 +593,7 @@ function animate(){
             leg.shin.rotation.z=li<2?(.2+Math.max(0,-swing)*1.2):(-.1+Math.max(0,swing)*1);
         });
         h.model.jG.position.y=9.5+bound*.35;
+        // Calculate new viewing angle and update texture
         updateHeadAngle(h.model.root, h.model.jG, camera);
 
         if(h.angle>=FINISH_ANGLE&&!h.finished){
