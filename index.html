@@ -301,8 +301,8 @@ function createHorse(colorHex,number,mascotIdx){
     body.add(jG);
     const jm=toon({color:new THREE.Color(colorHex)});
     // Simple stick torso
-    const torso=new THREE.Mesh(new THREE.CylinderGeometry(.4,.5,3,6),jm);
-    torso.position.y=1.5;torso.rotation.z=-.3;jG.add(torso);
+    const jTorso=new THREE.Mesh(new THREE.CylinderGeometry(.4,.5,3,6),jm);
+    jTorso.position.y=1.5;jTorso.rotation.z=-.3;jG.add(jTorso);
     // Stick arms reaching forward
     for(let s of[-1,1]){
         const arm=new THREE.Mesh(new THREE.CylinderGeometry(.12,.15,2.5,5),jm);
