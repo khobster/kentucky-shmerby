@@ -414,13 +414,14 @@ document.getElementById('create-btn').addEventListener('click',async()=>{
             document.getElementById('join-msg').classList.remove('hidden');
             document.getElementById('join-msg').querySelector('p').textContent=`Opponent joined: #${d.p2Number} ${d.p2Name}`;
         }
-        if(d.status==='tapping'){
+        if(d.status==='tapping'&&!tappingDone){
             document.getElementById('lobby').classList.add('hidden');
             document.getElementById('main-title').classList.add('hidden');
             document.getElementById('tapping-phase').classList.remove('hidden');
             startTapping();
         }
         if(d.status==='racing'&&d.p1Taps!==null&&d.p2Taps!==null){
+            document.getElementById('tapping-phase').classList.add('hidden');
             startRaceFromData(d);
         }
     });
@@ -457,13 +458,14 @@ if(joinId){
         }
         unsubGame=gameDocRef.onSnapshot(snap2=>{
             const d2=snap2.data();if(!d2)return;
-            if(d2.status==='tapping'){
+            if(d2.status==='tapping'&&!tappingDone){
                 document.getElementById('lobby').classList.add('hidden');
                 document.getElementById('main-title').classList.add('hidden');
                 document.getElementById('tapping-phase').classList.remove('hidden');
                 startTapping();
             }
             if(d2.status==='racing'&&d2.p1Taps!==null&&d2.p2Taps!==null){
+                document.getElementById('tapping-phase').classList.add('hidden');
                 startRaceFromData(d2);
             }
         });
@@ -471,7 +473,7 @@ if(joinId){
 }
 
 // --- TAPPING ---
-let tapping=false;
+let tapping=false,tappingDone=false;
 function startTapping(){
     if(tapping)return;tapping=true;
     playerHorse.taps=0;
@@ -485,6 +487,7 @@ function startTapping(){
 document.getElementById('tap-zone').addEventListener('pointerdown',e=>{e.preventDefault();playerHorse.taps++;});
 
 async function endTapping(){
+    tappingDone=true;
     document.getElementById('tapping-phase').classList.add('hidden');
     if(isMultiplayer&&gameDocRef){
         const field=isPlayer1?'p1Taps':'p2Taps';
