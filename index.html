@@ -259,50 +259,73 @@ function buildMascotHead(idx) {
 }
 
 // Doom-style: billboard + swap texture based on camera angle
+const _headWorldPos = new THREE.Vector3();
+const _camToHead = new THREE.Vector3();
+const _horseForward = new THREE.Vector3();
+const _parentWorldQuat = new THREE.Quaternion();
+const _targetQuat = new THREE.Quaternion();
+const _lookMatrix = new THREE.Matrix4();
+const _horseWorldQuat = new THREE.Quaternion();
+
 function updateHeadAngle(horseRoot, jockeyGroup, cam) {
     const headGroup = jockeyGroup.children[jockeyGroup.children.length - 1];
     if (!headGroup || !headGroup.userData.isHead) return;
     
-    // Billboard: always face camera
-    headGroup.lookAt(cam.position);
+    // --- BILLBOARD: make plane face camera properly in nested hierarchy ---
+    headGroup.getWorldPosition(_headWorldPos);
+    // Compute world-space quaternion that faces camera
+    _lookMatrix.lookAt(_headWorldPos, cam.position, THREE.Object3D.DefaultUp);
+    _targetQuat.setFromRotationMatrix(_lookMatrix);
+    // Convert to local space by removing parent's world rotation
+    headGroup.parent.getWorldQuaternion(_parentWorldQuat);
+    _parentWorldQuat.invert();
+    headGroup.quaternion.copy(_targetQuat.premultiply(_parentWorldQuat));
     
-    // Swap texture if multi-angle
-    if (headGroup.userData.multiAngle) {
-        const texSet = headGroup.userData.multiAngle;
-        const mat = headGroup.userData.headMat;
-        
-        // Horse forward direction in world space
-        const horseDir = new THREE.Vector3(1, 0, 0);
-        horseDir.applyQuaternion(horseRoot.quaternion);
-        horseDir.y = 0; horseDir.normalize();
-        
-        // Camera direction relative to horse
-        const headPos = new THREE.Vector3();
-        headGroup.getWorldPosition(headPos);
-        const camDir = new THREE.Vector3();
-        camDir.subVectors(cam.position, headPos);
-        camDir.y = 0; camDir.normalize();
-        
-        // Dot product: >0 = camera in front, <0 = camera behind
-        const dot = horseDir.dot(camDir);
-        // Cross product sign: which side
-        const cross = horseDir.x * camDir.z - horseDir.z * camDir.x;
-        
-        let newTex;
-        if (dot > 0.5) {
-            newTex = texSet.front;
-        } else if (dot < -0.5) {
-            newTex = texSet.back;
-        } else if (cross > 0) {
-            newTex = texSet.side;
-        } else {
-            newTex = texSet.side_r;
-        }
-        
-        if (mat.map !== newTex) {
-            mat.map = newTex;
-            mat.needsUpdate = true;
-        }
+    // --- TEXTURE SWAP based on viewing angle ---
+    if (!headGroup.userData.multiAngle) return;
+    const texSet = headGroup.userData.multiAngle;
+    const mat = headGroup.userData.headMat;
+    
+    // Horse forward direction in world space
+    horseRoot.getWorldQuaternion(_horseWorldQuat);
+    _horseForward.set(1, 0, 0).applyQuaternion(_horseWorldQuat);
+    _horseForward.y = 0; _horseForward.normalize();
+    
+    // Camera-to-head direction (horizontal)
+    _camToHead.subVectors(cam.position, _headWorldPos);
+    _camToHead.y = 0; _camToHead.normalize();
+    
+    // Signed angle: atan2(cross, dot) gives -PI to PI
+    // 0 = camera in front of horse, PI = behind, PI/2 = left, -PI/2 = right
+    const angle = Math.atan2(
+        _horseForward.x * _camToHead.z - _horseForward.z * _camToHead.x,
+        _horseForward.x * _camToHead.x + _horseForward.z * _camToHead.z
+    );
+    
+    // Pick texture based on 4 quadrants (45° zones with 5° hysteresis buffer)
+    const deg = angle * 180 / Math.PI;
+    const prev = headGroup.userData.prevZone || 'front';
+    const hyst = 8; // degrees of hysteresis to prevent flickering
+    
+    let zone;
+    if (prev === 'front')     zone = (deg > -(45+hyst) && deg < (45+hyst)) ? 'front' : null;
+    if (prev === 'side')      zone = (deg >= (45-hyst) && deg < (135+hyst)) ? 'side' : null;
+    if (prev === 'side_r')    zone = (deg <= -(45-hyst) && deg > -(135+hyst)) ? 'side_r' : null;
+    if (prev === 'back')      zone = (Math.abs(deg) > (135-hyst)) ? 'back' : null;
+    
+    // If hysteresis didn't keep us in prev zone, pick fresh
+    if (!zone) {
+        if (deg > -45 && deg < 45) zone = 'front';
+        else if (deg >= 45 && deg < 135) zone = 'side';
+        else if (deg <= -45 && deg > -135) zone = 'side_r';
+        else zone = 'back';
+    }
+    
+    headGroup.userData.prevZone = zone;
+    const newTex = texSet[zone];
+    if (mat.map !== newTex) {
+        mat.map = newTex;
+        mat.needsUpdate = true;
     }
 }
 const mascotBuilders = []; // unused, kept for compat
