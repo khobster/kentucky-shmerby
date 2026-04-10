@@ -6,6 +6,8 @@
     <title>Kentucky Shmerby</title>
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         *{margin:0;padding:0;box-sizing:border-box;}
@@ -13,615 +15,642 @@
         .hidden{display:none!important;}
         #game-container{width:100vw;height:100vh;position:relative;display:flex;flex-direction:column;align-items:center;}
         #canvas-container{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;}
-        #lobby,#tapping-phase{position:relative;z-index:10;margin-top:50px;text-align:center;}
-        #lobby{background:rgba(0,0,0,0.6);padding:30px 40px;border-radius:12px;border:3px solid #ffd700;}
-        h1{color:#ffd700;font-size:24px;text-shadow:4px 4px 0 #000;margin:20px 0;position:relative;z-index:10;}
-        #tap-zone{width:90%;max-width:600px;height:280px;margin:20px auto;background:#e53935;border:8px solid #000;
+        .overlay{position:relative;z-index:10;text-align:center;}
+        h1{color:#ffd700;font-size:22px;text-shadow:4px 4px 0 #000;margin:18px 0;position:relative;z-index:10;}
+        .panel{background:rgba(0,0,0,0.7);padding:24px 32px;border-radius:12px;border:3px solid #ffd700;margin-top:40px;max-width:500px;width:90%;}
+        #tap-zone{width:90%;max-width:600px;height:260px;margin:16px auto;background:#e53935;border:8px solid #000;
             box-shadow:0 10px 0 #b71c1c;display:flex;align-items:center;justify-content:center;
-            font-size:14px;cursor:pointer;color:#fff;line-height:1.8;text-shadow:2px 2px 0 #000;border-radius:8px;}
+            font-size:13px;cursor:pointer;color:#fff;line-height:1.8;text-shadow:2px 2px 0 #000;border-radius:8px;}
         #tap-zone:active{transform:translateY(10px);box-shadow:0 0 0 #b71c1c;}
-        button{padding:15px 30px;font-size:14px;font-family:inherit;cursor:pointer;background:#ffeb3b;color:#000;
-            border:6px solid #000;box-shadow:0 6px 0 #f57f17;margin-top:20px;text-transform:uppercase;}
+        button{padding:12px 24px;font-size:12px;font-family:inherit;cursor:pointer;background:#ffeb3b;color:#000;
+            border:5px solid #000;box-shadow:0 5px 0 #f57f17;margin-top:14px;text-transform:uppercase;}
         button:hover{background:#fff176;}
+        .share-box{margin-top:14px;}
+        .share-box input{font-family:inherit;font-size:8px;padding:8px;width:100%;background:#222;color:#ffd700;border:2px solid #ffd700;border-radius:4px;margin-bottom:8px;}
+        .share-box button{font-size:10px;padding:8px 16px;}
+        .waiting{color:#ffd700;font-size:10px;margin-top:14px;animation:pulse 1.5s infinite;}
+        @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
         #notifications-container{position:absolute;top:80px;left:50%;transform:translateX(-50%);
             z-index:1000;display:flex;flex-direction:column;align-items:center;pointer-events:none;}
         .finish-notif{background:rgba(0,0,0,0.9);border:2px solid #ffd700;color:#fff;
-            padding:12px 24px;margin-bottom:8px;font-size:11px;border-radius:4px;
-            box-shadow:0 4px 15px rgba(0,0,0,0.6);transition:opacity 0.5s ease;}
-        #leaderboard{position:absolute;bottom:0;left:0;width:100%;height:55px;
+            padding:10px 20px;margin-bottom:6px;font-size:10px;border-radius:4px;transition:opacity 0.5s ease;}
+        #leaderboard{position:absolute;bottom:0;left:0;width:100%;height:52px;
             background:rgba(17,17,17,0.95);border-top:4px solid #ffd700;
-            display:flex;align-items:center;justify-content:center;z-index:100;padding:0 10px;}
-        #standings-list{display:flex;width:100%;max-width:1400px;justify-content:space-evenly;align-items:center;gap:6px;}
-        .lb-row{display:flex;align-items:center;flex:1;min-width:0;background:#333;padding:6px 8px;border-radius:4px;border:1px solid #555;}
-        .lb-place{color:#ffd700;margin-right:5px;font-size:9px;flex-shrink:0;}
-        .lb-color{width:10px;height:10px;border:2px solid #fff;margin-right:5px;display:inline-block;flex-shrink:0;}
-        .lb-name{white-space:nowrap;font-size:9px;overflow:hidden;text-overflow:ellipsis;min-width:0;flex-grow:1;text-align:left;}
+            display:flex;align-items:center;justify-content:center;z-index:100;padding:0 8px;}
+        #standings-list{display:flex;width:100%;max-width:1400px;justify-content:space-evenly;align-items:center;gap:5px;}
+        .lb-row{display:flex;align-items:center;flex:1;min-width:0;background:#333;padding:5px 7px;border-radius:4px;border:1px solid #555;}
+        .lb-place{color:#ffd700;margin-right:4px;font-size:8px;flex-shrink:0;}
+        .lb-color{width:9px;height:9px;border:2px solid #fff;margin-right:4px;display:inline-block;flex-shrink:0;}
+        .lb-name{white-space:nowrap;font-size:8px;overflow:hidden;text-overflow:ellipsis;min-width:0;flex-grow:1;text-align:left;}
         #results-modal{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-            background:rgba(0,0,0,0.95);border:6px solid #ffd700;padding:30px;
-            z-index:1000;text-align:left;width:90%;max-width:500px;display:none;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,0.8);}
-        .result-row{display:flex;align-items:center;margin:8px 0;font-size:11px;border-bottom:2px dashed #444;padding-bottom:8px;}
-        .result-place{width:55px;color:#ffd700;}
-        #timer-display{font-size:36px;color:#fff;text-shadow:4px 4px #000;position:relative;z-index:10;}
-        #race-header{position:absolute;top:12px;left:0;width:100%;z-index:100;text-align:center;padding:0 15px;}
-        #race-status{text-shadow:3px 3px #000;font-size:16px;line-height:1.4;}
-        #lap-display{font-size:12px;text-shadow:2px 2px #000;color:#ffd700;margin-top:3px;}
+            background:rgba(0,0,0,0.95);border:6px solid #ffd700;padding:24px;
+            z-index:1000;text-align:left;width:90%;max-width:480px;display:none;flex-direction:column;}
+        .result-row{display:flex;align-items:center;margin:6px 0;font-size:10px;border-bottom:2px dashed #444;padding-bottom:6px;}
+        .result-place{width:50px;color:#ffd700;}
+        #timer-display{font-size:34px;color:#fff;text-shadow:4px 4px #000;}
+        #race-header{position:absolute;top:10px;left:0;width:100%;z-index:100;text-align:center;padding:0 12px;}
+        #race-status{text-shadow:3px 3px #000;font-size:15px;}
+        #race-timer{position:absolute;top:10px;right:16px;z-index:100;font-size:12px;color:#fff;text-shadow:2px 2px #000;}
         #stretch-call{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-            z-index:500;font-size:26px;color:#fff;text-shadow:6px 6px 0 #000,-2px -2px 0 #ffd700;
+            z-index:500;font-size:24px;color:#fff;text-shadow:6px 6px 0 #000,-2px -2px 0 #ffd700;
             pointer-events:none;opacity:0;transition:opacity 0.4s;white-space:nowrap;text-align:center;line-height:1.5;}
         #stretch-call.show{opacity:1;}
-        #race-timer{position:absolute;top:12px;right:20px;z-index:100;font-size:14px;color:#fff;text-shadow:2px 2px #000;}
+        .you-tag{font-size:7px;color:#ffeb3b;background:#000;padding:1px 4px;border-radius:2px;margin-left:4px;}
     </style>
 </head>
 <body>
 <div id="game-container">
     <div id="canvas-container"></div>
     <h1 id="main-title">KENTUCKY SHMERBY</h1>
-    <div id="lobby">
-        <p style="font-size:11px;margin-bottom:10px;">Your Steed:</p>
-        <h2 id="player-horse-name" style="color:#ffeb3b;text-shadow:2px 2px #000;font-size:16px;margin:0 0 14px 0;">Loading...</h2>
-        <p style="font-size:9px;color:#ffd700;margin:0;">1¼ MILES • RUN FOR THE ROSES</p>
-        <button id="start-btn">ENTER DERBY</button>
+
+    <!-- LOBBY -->
+    <div id="lobby" class="overlay">
+        <div class="panel">
+            <p style="font-size:10px;margin-bottom:12px;">Your Steed:</p>
+            <h2 id="player-horse-name" style="color:#ffeb3b;text-shadow:2px 2px #000;font-size:14px;margin:0 0 10px 0;">Loading...</h2>
+            <p style="font-size:8px;color:#ffd700;margin:0 0 12px 0;">1¼ MILES • RUN FOR THE ROSES</p>
+            <button id="solo-btn">SOLO RACE</button>
+            <button id="create-btn">CREATE MULTIPLAYER</button>
+            <div id="share-area" class="share-box hidden">
+                <p style="font-size:8px;color:#fff;margin-bottom:8px;">Share this link:</p>
+                <input type="text" id="game-url" readonly>
+                <button id="copy-btn">COPY LINK</button>
+                <p class="waiting" id="waiting-msg">WAITING FOR OPPONENT...</p>
+            </div>
+            <div id="join-msg" class="hidden" style="margin-top:12px;">
+                <p style="font-size:9px;color:#4caf50;">Opponent found! Get ready...</p>
+                <button id="ready-btn">I'M READY</button>
+            </div>
+        </div>
     </div>
-    <div id="tapping-phase" class="hidden">
+
+    <!-- TAPPING -->
+    <div id="tapping-phase" class="overlay hidden">
         <h2 id="timer-display">10.0</h2>
         <div id="tap-zone">TAP HERE!<br><br>Speed, not force.<br>Your count is hidden!</div>
     </div>
+
+    <!-- RACE -->
     <div id="race-phase" class="hidden">
-        <div id="race-header"><h2 id="race-status">AND THEY'RE OFF!</h2><div id="lap-display"></div></div>
+        <div id="race-header"><h2 id="race-status">AND THEY'RE OFF!</h2></div>
         <div id="race-timer"></div>
         <div id="stretch-call"></div>
         <div id="notifications-container"></div>
         <div id="leaderboard"><div id="standings-list"></div></div>
     </div>
+
     <div id="results-modal">
-        <h2 id="results-title" style="text-align:center;margin-bottom:20px;"></h2>
+        <h2 id="results-title" style="text-align:center;margin-bottom:16px;"></h2>
         <div id="results-list"></div>
-        <button onclick="location.reload()" style="margin:20px auto 0;display:block;">Race Again</button>
+        <button onclick="location.reload()" style="margin:16px auto 0;display:block;">Race Again</button>
     </div>
 </div>
 <script>
+// --- FIREBASE ---
+firebase.initializeApp({
+    apiKey:"AIzaSyDicI1nKcrMDaaYkL_8q70yj1mM05tW5Ak",authDomain:"mookie-pig-challenge.firebaseapp.com",
+    projectId:"mookie-pig-challenge",storageBucket:"mookie-pig-challenge.appspot.com",
+    messagingSenderId:"96530997300",appId:"1:96530997300:web:96400cf87b98c8e19eaa61"
+});
+const db=firebase.firestore();
+let myPlayerId=localStorage.getItem('shmerbyId');
+if(!myPlayerId){myPlayerId=Math.random().toString(36).substr(2,9);localStorage.setItem('shmerbyId',myPlayerId);}
+let gameDocRef=null,unsubGame=null,isMultiplayer=false,isPlayer1=true;
+
+// --- NAMES ---
 const DW=["Affirmed","Agile","Alysheba","American","Pharoah","Animal","Kingdom","Apollo","Aristides","Assault","Authentic",
-"Barbaro","Behave","Black","Gold","Bold","Venture","Brokers","Tip","Bubbling","Over","Burgoo","King","California","Chrome",
-"Cannonade","Carry","Back","Cavalcade","Charismatic","Citation","Count","Fleet","Country","House","Dark","Star","Decidedly",
-"Donerail","Dust","Commander","Elwood","Exterminator","Ferdinand","Flying","Ebony","Foolish","Pleasure","Forward","Pass",
-"Funny","Cide","Fusaichi","Pegasus","Gallant","Fox","Genuine","Risk","Giacomo","Grindstone","Halma","Hindoo","Eminence",
-"Iron","Liege","Jet","Pilot","Johnstown","Justify","Kauai","Lawrin","Lucky","Debonair","Mage","Majestic","Prince",
-"Monarchos","Montrose","Mystik","Dan","Needles","Northern","Dancer","Nyquist","Omaha","Omar","Khayyam","Orb",
-"Pensive","Plaudit","Pleasant","Colony","Ponder","Proud","Clarion","Real","Quiet","Regret","Riva","Ridge","Sea","Hero",
-"Seattle","Slew","Secretariat","Silver","Charm","Smarty","Spectacular","Bid","Spend","Buck","Spokane","Sunday","Silence",
-"Super","Saver","Swale","Swaps","Thunder","Gulch","Typhoon","Unbridled","War","Admiral","Whirlaway","Winning","Colors","Zev"];
+"Barbaro","Black","Gold","Bold","Venture","Brokers","Tip","Bubbling","Over","Burgoo","King","California","Chrome",
+"Cannonade","Carry","Back","Cavalcade","Charismatic","Citation","Count","Fleet","Dark","Star","Decidedly",
+"Donerail","Dust","Commander","Elwood","Exterminator","Ferdinand","Flying","Ebony","Foolish","Pleasure",
+"Funny","Cide","Fusaichi","Pegasus","Gallant","Fox","Genuine","Risk","Giacomo","Grindstone","Hindoo",
+"Iron","Liege","Jet","Pilot","Justify","Lawrin","Lucky","Debonair","Mage","Majestic","Prince",
+"Monarchos","Mystik","Dan","Needles","Northern","Dancer","Nyquist","Omaha","Orb",
+"Pensive","Plaudit","Pleasant","Colony","Ponder","Real","Quiet","Regret","Riva","Ridge","Sea","Hero",
+"Seattle","Slew","Secretariat","Silver","Charm","Smarty","Spectacular","Bid","Spend","Buck",
+"Sunday","Silence","Super","Saver","Swale","Swaps","Thunder","Gulch","Unbridled","War","Admiral","Whirlaway","Zev"];
 function genName(){return DW[Math.floor(Math.random()*DW.length)]+' '+DW[Math.floor(Math.random()*DW.length)];}
+
+// Seeded random for deterministic races
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 
 let playerHorse={name:genName(),taps:0,isPlayer:true,color:"#e91e63",number:Math.floor(Math.random()*20)+1};
 let gameHorses=[],finishOrder=[],raceFinished=false,stretchCalled=false,raceStartTime=0;
 const botColors=["#2196f3","#4caf50","#ff9800","#9c27b0","#00bcd4"];
-
 const TRACK_SX=1.8,BASE_R=280,DIRT_W=75;
-const START_ANGLE=-Math.PI/2;
-const FINISH_ANGLE=START_ANGLE+2*Math.PI;
-const AVG_SPEED=0.000873;
-
-// Camera modes
-let camMode='broadcast'; // 'broadcast' or 'stretch'
+const START_ANGLE=-Math.PI/2,FINISH_ANGLE=START_ANGLE+2*Math.PI,AVG_SPEED=0.000873;
+let camMode='broadcast';
 
 // --- THREE.JS ---
-const scene=new THREE.Scene();
-scene.background=new THREE.Color(0x87CEEB);
-scene.fog=new THREE.Fog(0x87CEEB,600,1200);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x87CEEB);scene.fog=new THREE.Fog(0x87CEEB,600,1200);
 const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,1,3000);
 const camTarget=new THREE.Vector3();
 const renderer=new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(innerWidth,innerHeight);
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-renderer.shadowMap.enabled=true;
+renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;
 document.getElementById('canvas-container').appendChild(renderer.domElement);
 scene.add(new THREE.AmbientLight(0xffffff,0.6));
-const sun=new THREE.DirectionalLight(0xffffff,0.75);
-sun.position.set(150,300,80);sun.castShadow=true;
-sun.shadow.camera.top=500;sun.shadow.camera.bottom=-500;
-sun.shadow.camera.left=-600;sun.shadow.camera.right=600;
-scene.add(sun);
+const sun=new THREE.DirectionalLight(0xffffff,0.75);sun.position.set(150,300,80);sun.castShadow=true;
+sun.shadow.camera.top=500;sun.shadow.camera.bottom=-500;sun.shadow.camera.left=-600;sun.shadow.camera.right=600;scene.add(sun);
 
 // --- TEXTURES ---
-function mowedGrass(){
-    const c=document.createElement('canvas');c.width=512;c.height=512;const x=c.getContext('2d');
-    for(let i=0;i<18;i++){x.fillStyle=i%2?'#3d8a35':'#4da843';x.fillRect(0,i*28.4,512,28.4);}
-    const d=x.getImageData(0,0,512,512);
-    for(let j=0;j<d.data.length;j+=4){const n=(Math.random()-.5)*8;d.data[j]+=n;d.data[j+1]+=n;d.data[j+2]+=n;}
-    x.putImageData(d,0,0);
-    const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(6,6);return t;
-}
-function saddleTex(num,col){
-    const c=document.createElement('canvas');c.width=128;c.height=128;const x=c.getContext('2d');
-    x.fillStyle=col;x.fillRect(0,0,128,128);
-    x.strokeStyle='#000';x.lineWidth=6;x.strokeRect(0,0,128,128);
-    x.fillStyle='#fff';x.font='bold 64px "Press Start 2P",monospace';
-    x.textAlign='center';x.textBaseline='middle';x.fillText(num,64,68);
-    x.lineWidth=3;x.strokeText(num,64,68);
-    return new THREE.CanvasTexture(c);
-}
+function mowedGrass(){const c=document.createElement('canvas');c.width=512;c.height=512;const x=c.getContext('2d');
+for(let i=0;i<18;i++){x.fillStyle=i%2?'#3d8a35':'#4da843';x.fillRect(0,i*28.4,512,28.4);}
+const d=x.getImageData(0,0,512,512);for(let j=0;j<d.data.length;j+=4){const n=(Math.random()-.5)*8;d.data[j]+=n;d.data[j+1]+=n;d.data[j+2]+=n;}
+x.putImageData(d,0,0);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(6,6);return t;}
+
+function saddleTex(num,col){const c=document.createElement('canvas');c.width=128;c.height=128;const x=c.getContext('2d');
+x.fillStyle=col;x.fillRect(0,0,128,128);x.strokeStyle='#000';x.lineWidth=6;x.strokeRect(0,0,128,128);
+x.fillStyle='#fff';x.font='bold 64px "Press Start 2P",monospace';x.textAlign='center';x.textBaseline='middle';
+x.fillText(num,64,68);x.lineWidth=3;x.strokeText(num,64,68);return new THREE.CanvasTexture(c);}
 
 // --- TRACK ---
-(function buildTrack(){
-    const g=new THREE.Group();
-    const grass=new THREE.Mesh(new THREE.CircleGeometry(BASE_R-3,80),new THREE.MeshLambertMaterial({map:mowedGrass()}));
-    grass.rotation.x=-Math.PI/2;grass.receiveShadow=true;g.add(grass);
-    const dirt=new THREE.Mesh(new THREE.RingGeometry(BASE_R-3,BASE_R+DIRT_W,80),new THREE.MeshLambertMaterial({color:0xbd9a6c}));
-    dirt.rotation.x=-Math.PI/2;dirt.receiveShadow=true;g.add(dirt);
-    const out=new THREE.Mesh(new THREE.RingGeometry(BASE_R+DIRT_W,BASE_R+400,80),new THREE.MeshLambertMaterial({color:0x5a9e4b}));
-    out.rotation.x=-Math.PI/2;out.position.y=-0.1;g.add(out);
-    // Rails
-    const rm=new THREE.MeshBasicMaterial({color:0xffffff});
-    const ir=new THREE.Mesh(new THREE.TorusGeometry(BASE_R-3,.6,8,80),rm);ir.rotation.x=-Math.PI/2;ir.position.y=2;g.add(ir);
-    const or2=new THREE.Mesh(new THREE.TorusGeometry(BASE_R+DIRT_W,.6,8,80),rm);or2.rotation.x=-Math.PI/2;or2.position.y=2;g.add(or2);
-    // Fence posts along inner rail
-    for(let i=0;i<40;i++){
-        const a=(i/40)*Math.PI*2;
-        const px=Math.cos(a)*(BASE_R-3);const pz=Math.sin(a)*(BASE_R-3);
-        const post=new THREE.Mesh(new THREE.CylinderGeometry(.2,.2,4,4),new THREE.MeshLambertMaterial({color:0xdddddd}));
-        post.position.set(px,2,pz);g.add(post);
-    }
-    // Finish line
-    const fc=document.createElement('canvas');fc.width=64;fc.height=64;const fx=fc.getContext('2d');
-    for(let r=0;r<8;r++)for(let c2=0;c2<8;c2++){fx.fillStyle=(r+c2)%2?'#000':'#fff';fx.fillRect(c2*8,r*8,8,8);}
-    const fl=new THREE.Mesh(new THREE.PlaneGeometry(DIRT_W+6,5),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(fc)}));
-    fl.rotation.x=-Math.PI/2;fl.rotation.z=Math.PI/2;
-    fl.position.set(0,.2,-(BASE_R+DIRT_W/2));g.add(fl);
-    // Finish poles
-    for(let off of[BASE_R-3,BASE_R+DIRT_W]){
-        const p=new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,22,8),new THREE.MeshLambertMaterial({color:0xffffff}));
-        p.position.set(0,11,-off);g.add(p);
-        // Pole top
-        const ball=new THREE.Mesh(new THREE.SphereGeometry(1.2,8,8),new THREE.MeshLambertMaterial({color:0xffd700}));
-        ball.position.set(0,22.5,-off);g.add(ball);
-    }
-    g.scale.set(TRACK_SX,1,1);scene.add(g);
-})();
-
-// Initial render
+(function(){const g=new THREE.Group();
+const grassMesh=new THREE.Mesh(new THREE.CircleGeometry(BASE_R-3,80),new THREE.MeshLambertMaterial({map:mowedGrass()}));grassMesh.rotation.x=-Math.PI/2;grassMesh.receiveShadow=true;g.add(grassMesh);
+const dirt=new THREE.Mesh(new THREE.RingGeometry(BASE_R-3,BASE_R+DIRT_W,80),new THREE.MeshLambertMaterial({color:0xbd9a6c}));dirt.rotation.x=-Math.PI/2;dirt.receiveShadow=true;g.add(dirt);
+const out=new THREE.Mesh(new THREE.RingGeometry(BASE_R+DIRT_W,BASE_R+400,80),new THREE.MeshLambertMaterial({color:0x5a9e4b}));out.rotation.x=-Math.PI/2;out.position.y=-.1;g.add(out);
+const rm=new THREE.MeshBasicMaterial({color:0xffffff});
+[BASE_R-3,BASE_R+DIRT_W].forEach(r=>{const t=new THREE.Mesh(new THREE.TorusGeometry(r,.6,8,80),rm);t.rotation.x=-Math.PI/2;t.position.y=2;g.add(t);});
+for(let i=0;i<40;i++){const a=(i/40)*Math.PI*2;const p=new THREE.Mesh(new THREE.CylinderGeometry(.2,.2,4,4),new THREE.MeshLambertMaterial({color:0xddd}));p.position.set(Math.cos(a)*(BASE_R-3),2,Math.sin(a)*(BASE_R-3));g.add(p);}
+const fc=document.createElement('canvas');fc.width=64;fc.height=64;const fx=fc.getContext('2d');
+for(let r=0;r<8;r++)for(let c=0;c<8;c++){fx.fillStyle=(r+c)%2?'#000':'#fff';fx.fillRect(c*8,r*8,8,8);}
+const fl=new THREE.Mesh(new THREE.PlaneGeometry(DIRT_W+6,5),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(fc)}));
+fl.rotation.x=-Math.PI/2;fl.rotation.z=Math.PI/2;fl.position.set(0,.2,-(BASE_R+DIRT_W/2));g.add(fl);
+[BASE_R-3,BASE_R+DIRT_W].forEach(off=>{const p=new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,22,8),new THREE.MeshLambertMaterial({color:0xfff}));p.position.set(0,11,-off);g.add(p);
+const b=new THREE.Mesh(new THREE.SphereGeometry(1.2,8,8),new THREE.MeshLambertMaterial({color:0xffd700}));b.position.set(0,22.5,-off);g.add(b);});
+g.scale.set(TRACK_SX,1,1);scene.add(g);})();
 camera.position.set(0,350,-50);camera.lookAt(0,0,0);renderer.render(scene,camera);
 
 // --- MASCOT HEADS ---
-function buildLiberty(){
-    const g=new THREE.Group();
-    const copper=new THREE.MeshLambertMaterial({color:0x6dbfa1});
-    const face=new THREE.MeshLambertMaterial({color:0x8dd4b8});
-    // Head
-    const head=new THREE.Mesh(new THREE.SphereGeometry(2,12,12),face);
-    g.add(head);
-    // Crown base
-    const crownBase=new THREE.Mesh(new THREE.CylinderGeometry(2.2,2,1,10),copper);
-    crownBase.position.y=1.8;g.add(crownBase);
-    // Crown spikes - taller, pointier
-    for(let i=0;i<7;i++){
-        const spike=new THREE.Mesh(new THREE.ConeGeometry(.3,3,4),copper);
-        const a=(i/7)*Math.PI*2;
-        spike.position.set(Math.cos(a)*1.7,3.8,Math.sin(a)*1.7);
-        g.add(spike);
-    }
-    // Eyes
-    const em=new THREE.MeshBasicMaterial({color:0x333});
-    for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.SphereGeometry(.3,6,6),em);e.position.set(s*.7,.3,1.7);g.add(e);}
-    // Nose
-    const nose=new THREE.Mesh(new THREE.SphereGeometry(.25,6,6),copper);nose.position.set(0,-.2,1.9);g.add(nose);
-    // Slight smile
-    return g;
-}
-function buildBunny(){
-    const g=new THREE.Group(),pk=new THREE.MeshLambertMaterial({color:0xffc0cb}),wh=new THREE.MeshLambertMaterial({color:0xffffff});
-    g.add(new THREE.Mesh(new THREE.SphereGeometry(2.2,12,12),wh));
-    for(let s of[-1,1]){
-        const e=new THREE.Mesh(new THREE.CylinderGeometry(.6,.8,4.5,8),wh);e.position.set(s*1,4,0);e.rotation.z=s*(-.15);g.add(e);
-        const ie=new THREE.Mesh(new THREE.CylinderGeometry(.3,.5,3.5,8),pk);ie.position.set(s*1,4.2,.1);ie.rotation.z=s*(-.15);g.add(ie);
-    }
-    const em=new THREE.MeshBasicMaterial({color:0x222});
-    for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.SphereGeometry(.35,6,6),em);e.position.set(s*.8,.4,1.8);g.add(e);}
-    const n=new THREE.Mesh(new THREE.SphereGeometry(.4,6,6),pk);n.position.set(0,-.2,2);g.add(n);
-    return g;
-}
-function buildMouse(){
-    const g=new THREE.Group(),dk=new THREE.MeshLambertMaterial({color:0x333});
-    g.add(new THREE.Mesh(new THREE.SphereGeometry(2,12,12),dk));
-    for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.SphereGeometry(1.8,12,12),dk);e.position.set(s*2,2.5,0);e.scale.set(1,1,.3);g.add(e);}
-    const sn=new THREE.Mesh(new THREE.SphereGeometry(1,10,10),new THREE.MeshLambertMaterial({color:0xddccbb}));
-    sn.position.set(0,-.3,1.5);sn.scale.set(1,.7,.8);g.add(sn);
-    const ns=new THREE.Mesh(new THREE.SphereGeometry(.4,6,6),new THREE.MeshLambertMaterial({color:0x111}));ns.position.set(0,0,2.2);g.add(ns);
-    const wm=new THREE.MeshBasicMaterial({color:0xffffff});
-    for(let s of[-1,1]){
-        const ew=new THREE.Mesh(new THREE.SphereGeometry(.6,8,8),wm);ew.position.set(s*.9,.7,1.6);ew.scale.set(.8,1,.5);g.add(ew);
-        const p=new THREE.Mesh(new THREE.SphereGeometry(.3,6,6),new THREE.MeshBasicMaterial({color:0x000}));p.position.set(s*.9,.7,1.9);g.add(p);
-    }
-    return g;
-}
-function buildTennis(){
-    const g=new THREE.Group();
-    // Just a fuzzy tennis ball with the seam painted on via texture
-    const c=document.createElement('canvas');c.width=256;c.height=256;
-    const ctx=c.getContext('2d');
-    ctx.fillStyle='#c8e620';ctx.fillRect(0,0,256,256);
-    // Draw the classic curved seam
-    ctx.strokeStyle='#ffffff';ctx.lineWidth=5;
-    ctx.beginPath();ctx.arc(80,128,80,-.8,.8);ctx.stroke();
-    ctx.beginPath();ctx.arc(176,128,80,Math.PI-.8,Math.PI+.8);ctx.stroke();
-    // Fuzzy noise
-    const id=ctx.getImageData(0,0,256,256);
-    for(let j=0;j<id.data.length;j+=4){const n=(Math.random()-.5)*15;id.data[j]+=n;id.data[j+1]+=n;id.data[j+2]+=n;}
-    ctx.putImageData(id,0,0);
-    const tex=new THREE.CanvasTexture(c);
-    const ball=new THREE.Mesh(new THREE.SphereGeometry(2.5,20,20),new THREE.MeshLambertMaterial({map:tex}));
-    g.add(ball);
-    // Sunglasses
-    const gm=new THREE.MeshBasicMaterial({color:0x111});
-    for(let s of[-1,1]){const l=new THREE.Mesh(new THREE.BoxGeometry(1.1,.6,.3),gm);l.position.set(s*.8,.3,2.3);g.add(l);}
-    const br=new THREE.Mesh(new THREE.BoxGeometry(.5,.12,.3),gm);br.position.set(0,.3,2.3);g.add(br);
-    return g;
-}
+function buildLiberty(){const g=new THREE.Group(),cp=new THREE.MeshLambertMaterial({color:0x6dbfa1}),fc=new THREE.MeshLambertMaterial({color:0x8dd4b8});
+g.add(new THREE.Mesh(new THREE.SphereGeometry(2,12,12),fc));
+const cb=new THREE.Mesh(new THREE.CylinderGeometry(2.2,2,1,10),cp);cb.position.y=1.8;g.add(cb);
+for(let i=0;i<7;i++){const s=new THREE.Mesh(new THREE.ConeGeometry(.3,3,4),cp);const a=(i/7)*Math.PI*2;s.position.set(Math.cos(a)*1.7,3.8,Math.sin(a)*1.7);g.add(s);}
+const em=new THREE.MeshBasicMaterial({color:0x333});
+for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.SphereGeometry(.3,6,6),em);e.position.set(s*.7,.3,1.7);g.add(e);}
+return g;}
+
+function buildBunny(){const g=new THREE.Group(),pk=new THREE.MeshLambertMaterial({color:0xffc0cb}),wh=new THREE.MeshLambertMaterial({color:0xfff});
+g.add(new THREE.Mesh(new THREE.SphereGeometry(2.2,12,12),wh));
+for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.CylinderGeometry(.6,.8,4.5,8),wh);e.position.set(s*1,4,0);e.rotation.z=s*(-.15);g.add(e);
+const ie=new THREE.Mesh(new THREE.CylinderGeometry(.3,.5,3.5,8),pk);ie.position.set(s*1,4.2,.1);ie.rotation.z=s*(-.15);g.add(ie);}
+const em=new THREE.MeshBasicMaterial({color:0x222});
+for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.SphereGeometry(.35,6,6),em);e.position.set(s*.8,.4,1.8);g.add(e);}
+const bNose=new THREE.Mesh(new THREE.SphereGeometry(.4,6,6),pk);bNose.position.set(0,-.2,2);g.add(bNose);
+return g;}
+
+function buildMouse(){const g=new THREE.Group(),dk=new THREE.MeshLambertMaterial({color:0x333});
+g.add(new THREE.Mesh(new THREE.SphereGeometry(2,12,12),dk));
+for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.SphereGeometry(1.8,12,12),dk);e.position.set(s*2,2.5,0);e.scale.set(1,1,.3);g.add(e);}
+const sn=new THREE.Mesh(new THREE.SphereGeometry(1,10,10),new THREE.MeshLambertMaterial({color:0xddccbb}));sn.position.set(0,-.3,1.5);sn.scale.set(1,.7,.8);g.add(sn);
+const ns=new THREE.Mesh(new THREE.SphereGeometry(.4,6,6),new THREE.MeshLambertMaterial({color:0x111}));ns.position.set(0,0,2.2);g.add(ns);
+const wm=new THREE.MeshBasicMaterial({color:0xffffff});
+for(let s of[-1,1]){const ew=new THREE.Mesh(new THREE.SphereGeometry(.6,8,8),wm);ew.position.set(s*.9,.7,1.6);ew.scale.set(.8,1,.5);g.add(ew);
+const p=new THREE.Mesh(new THREE.SphereGeometry(.3,6,6),new THREE.MeshBasicMaterial({color:0x000}));p.position.set(s*.9,.7,1.9);g.add(p);}
+return g;}
+
+function buildTennis(){const g=new THREE.Group();
+const c=document.createElement('canvas');c.width=256;c.height=256;const ctx=c.getContext('2d');
+ctx.fillStyle='#c8e620';ctx.fillRect(0,0,256,256);ctx.strokeStyle='#fff';ctx.lineWidth=5;
+ctx.beginPath();ctx.arc(80,128,80,-.8,.8);ctx.stroke();ctx.beginPath();ctx.arc(176,128,80,Math.PI-.8,Math.PI+.8);ctx.stroke();
+const id=ctx.getImageData(0,0,256,256);for(let j=0;j<id.data.length;j+=4){const n=(Math.random()-.5)*15;id.data[j]+=n;id.data[j+1]+=n;id.data[j+2]+=n;}
+ctx.putImageData(id,0,0);
+g.add(new THREE.Mesh(new THREE.SphereGeometry(2.5,20,20),new THREE.MeshLambertMaterial({map:new THREE.CanvasTexture(c)})));
+const gm=new THREE.MeshBasicMaterial({color:0x111});
+for(let s of[-1,1]){const l=new THREE.Mesh(new THREE.BoxGeometry(1.1,.6,.3),gm);l.position.set(s*.8,.3,2.3);g.add(l);}
+const br=new THREE.Mesh(new THREE.BoxGeometry(.5,.12,.3),gm);br.position.set(0,.3,2.3);g.add(br);
+return g;}
+
+// IMPROVED GIANTS HELMET
 function buildHelmet(){
-    const g=new THREE.Group(),hm=new THREE.MeshLambertMaterial({color:0x0033a0});
-    const sh=new THREE.Mesh(new THREE.SphereGeometry(2.5,14,14),hm);sh.scale.set(1,1.05,1.1);g.add(sh);
-    const bm=new THREE.MeshLambertMaterial({color:0xaaa});
-    for(let j=0;j<3;j++){const b=new THREE.Mesh(new THREE.CylinderGeometry(.1,.1,3,6),bm);b.rotation.z=Math.PI/2;b.position.set(0,-.3+j*.7,2.3);g.add(b);}
-    const vb=new THREE.Mesh(new THREE.CylinderGeometry(.1,.1,2,6),bm);vb.position.set(0,.4,2.3);g.add(vb);
-    const st=new THREE.Mesh(new THREE.BoxGeometry(.5,.2,5),new THREE.MeshLambertMaterial({color:0xffffff}));st.position.y=2.6;g.add(st);
-    const fc=new THREE.Mesh(new THREE.SphereGeometry(1.5,10,10),new THREE.MeshLambertMaterial({color:0xddb89a}));fc.position.set(0,-.2,.8);g.add(fc);
-    const em=new THREE.MeshBasicMaterial({color:0x222});
-    for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.SphereGeometry(.25,6,6),em);e.position.set(s*.55,.2,2);g.add(e);}
-    return g;
-}
-function buildTiger(){
-    const g=new THREE.Group(),om=new THREE.MeshLambertMaterial({color:0xff8c00}),wm=new THREE.MeshLambertMaterial({color:0xffeedd}),bk=new THREE.MeshLambertMaterial({color:0x222});
-    g.add(new THREE.Mesh(new THREE.SphereGeometry(2.3,14,14),om));
-    const mz=new THREE.Mesh(new THREE.SphereGeometry(1.2,10,10),wm);mz.position.set(0,-.5,1.5);mz.scale.set(1.2,.8,.8);g.add(mz);
-    const ns=new THREE.Mesh(new THREE.SphereGeometry(.4,6,6),new THREE.MeshLambertMaterial({color:0xff5555}));ns.position.set(0,0,2.1);g.add(ns);
-    for(let s of[-1,1]){const ea=new THREE.Mesh(new THREE.SphereGeometry(.8,8,8),om);ea.position.set(s*1.7,2,-.3);ea.scale.set(1,1,.4);g.add(ea);}
-    for(let i=-1;i<=1;i++){const st=new THREE.Mesh(new THREE.BoxGeometry(.25,1.2,.3),bk);st.position.set(i*.7,1.8,1.6);st.rotation.x=-.3;g.add(st);}
-    const ym=new THREE.MeshLambertMaterial({color:0xffee77}),em=new THREE.MeshBasicMaterial({color:0x222});
-    for(let s of[-1,1]){
-        const ew=new THREE.Mesh(new THREE.SphereGeometry(.5,8,8),ym);ew.position.set(s*.9,.6,1.7);ew.scale.set(1,.7,.5);g.add(ew);
-        const ep=new THREE.Mesh(new THREE.SphereGeometry(.25,6,6),em);ep.position.set(s*.9,.6,2);g.add(ep);
+    const g=new THREE.Group();
+    // Blue shell
+    const hm=new THREE.MeshLambertMaterial({color:0x0044cc});
+    const shell=new THREE.Mesh(new THREE.SphereGeometry(2.5,16,16),hm);
+    shell.scale.set(1.1,1.05,1.15);g.add(shell);
+    // Red stripe on top
+    const stripeGeo=new THREE.BoxGeometry(.6,.15,5.5);
+    const redStripe=new THREE.Mesh(stripeGeo,new THREE.MeshLambertMaterial({color:0xcc0000}));
+    redStripe.position.y=2.6;g.add(redStripe);
+    // White facemask - more bars, proper cage shape
+    const bm=new THREE.MeshLambertMaterial({color:0xeeeeee});
+    // Horizontal bars
+    for(let j=0;j<4;j++){
+        const b=new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,2.8,6),bm);
+        b.rotation.z=Math.PI/2;b.position.set(0,-.6+j*.55,2.4);g.add(b);
     }
+    // Vertical bars
+    for(let s of[-.8,0,.8]){
+        const v=new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,2.2,6),bm);
+        v.position.set(s,.3,2.4);g.add(v);
+    }
+    // Curved cage connectors (side bars connecting to helmet)
+    for(let s of[-1,1]){
+        const side=new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,1.5,6),bm);
+        side.position.set(s*1.3,.3,1.8);side.rotation.y=s*.4;g.add(side);
+    }
+    // Chin guard
+    const chin=new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,2.2,6),bm);
+    chin.rotation.z=Math.PI/2;chin.position.set(0,-.8,2.1);g.add(chin);
+    // "SHMERBY" text on side via texture
+    const tc=document.createElement('canvas');tc.width=256;tc.height=128;const tx=tc.getContext('2d');
+    tx.fillStyle='#0044cc';tx.fillRect(0,0,256,128);
+    tx.fillStyle='#ffffff';tx.font='bold 36px sans-serif';tx.textAlign='center';tx.textBaseline='middle';
+    tx.fillText('SHMERBY',128,64);
+    const textTex=new THREE.CanvasTexture(tc);
+    // Side panels
+    for(let s of[-1,1]){
+        const panel=new THREE.Mesh(new THREE.PlaneGeometry(2.8,1.2),new THREE.MeshBasicMaterial({map:textTex,transparent:true}));
+        panel.position.set(0,.5,s*2.6);panel.rotation.y=s<0?Math.PI:0;g.add(panel);
+    }
+    // Face/visor area (dark tint)
+    const visor=new THREE.Mesh(new THREE.SphereGeometry(1.8,10,10),new THREE.MeshLambertMaterial({color:0x334455,transparent:true,opacity:.4}));
+    visor.position.set(0,0,1);visor.scale.set(.8,.7,.5);g.add(visor);
     return g;
 }
+
+function buildTiger(){const g=new THREE.Group(),om=new THREE.MeshLambertMaterial({color:0xff8c00}),wm=new THREE.MeshLambertMaterial({color:0xffeedd}),bk=new THREE.MeshLambertMaterial({color:0x222});
+g.add(new THREE.Mesh(new THREE.SphereGeometry(2.3,14,14),om));
+const mz=new THREE.Mesh(new THREE.SphereGeometry(1.2,10,10),wm);mz.position.set(0,-.5,1.5);mz.scale.set(1.2,.8,.8);g.add(mz);
+const ns=new THREE.Mesh(new THREE.SphereGeometry(.4,6,6),new THREE.MeshLambertMaterial({color:0xff5555}));ns.position.set(0,0,2.1);g.add(ns);
+for(let s of[-1,1]){const ea=new THREE.Mesh(new THREE.SphereGeometry(.8,8,8),om);ea.position.set(s*1.7,2,-.3);ea.scale.set(1,1,.4);g.add(ea);}
+for(let i=-1;i<=1;i++){const st=new THREE.Mesh(new THREE.BoxGeometry(.25,1.2,.3),bk);st.position.set(i*.7,1.8,1.6);st.rotation.x=-.3;g.add(st);}
+const ym=new THREE.MeshLambertMaterial({color:0xffee77}),em=new THREE.MeshBasicMaterial({color:0x222});
+for(let s of[-1,1]){const ew=new THREE.Mesh(new THREE.SphereGeometry(.5,8,8),ym);ew.position.set(s*.9,.6,1.7);ew.scale.set(1,.7,.5);g.add(ew);
+const ep=new THREE.Mesh(new THREE.SphereGeometry(.25,6,6),em);ep.position.set(s*.9,.6,2);g.add(ep);}
+return g;}
 const mascotBuilders=[buildLiberty,buildBunny,buildMouse,buildTennis,buildHelmet,buildTiger];
 
-// --- HORSE ---
+// --- HORSE (improved neck, legs, jockey) ---
 function createHorse(colorHex,number,mascotIdx){
     const root=new THREE.Group(),body=new THREE.Group();root.add(body);
     const brown=new THREE.MeshLambertMaterial({color:0x6B4226});
-    const ltBrown=new THREE.MeshLambertMaterial({color:0x8B6B4A});
-    const dkBrown=new THREE.MeshLambertMaterial({color:0x3a2212});
+    const ltBr=new THREE.MeshLambertMaterial({color:0x8B6B4A});
+    const dkBr=new THREE.MeshLambertMaterial({color:0x3a2212});
     const hoofM=new THREE.MeshLambertMaterial({color:0x1a1a1a});
     const maneM=new THREE.MeshLambertMaterial({color:0x1a0f00});
     const hoodC=new THREE.MeshLambertMaterial({color:new THREE.Color(colorHex)});
 
-    // BODY - elongated sphere + rump
-    const torso=new THREE.Mesh(new THREE.SphereGeometry(1,14,10),brown);
-    torso.scale.set(7,2.8,2.8);torso.position.y=6;torso.castShadow=true;body.add(torso);
-    const rump=new THREE.Mesh(new THREE.SphereGeometry(3.2,10,10),brown);
-    rump.position.set(-5,6.5,0);rump.castShadow=true;body.add(rump);
-    // Chest/shoulder
-    const chest=new THREE.Mesh(new THREE.SphereGeometry(2.8,10,10),brown);
-    chest.position.set(5,6.5,0);chest.castShadow=true;body.add(chest);
+    // Body
+    const torso=new THREE.Mesh(new THREE.SphereGeometry(1,14,10),brown);torso.scale.set(6.5,2.6,2.6);torso.position.y=6.5;torso.castShadow=true;body.add(torso);
+    const rump=new THREE.Mesh(new THREE.SphereGeometry(3,10,10),brown);rump.position.set(-4.5,7,0);body.add(rump);
+    const chest=new THREE.Mesh(new THREE.SphereGeometry(2.6,10,10),brown);chest.position.set(4.5,7,0);body.add(chest);
 
     // Saddlecloths
-    const st=saddleTex(number.toString(),colorHex);const sm=new THREE.MeshLambertMaterial({map:st});
-    const sR=new THREE.Mesh(new THREE.PlaneGeometry(6,4.5),sm);sR.position.set(-1,6.5,2.9);body.add(sR);
-    const sL=new THREE.Mesh(new THREE.PlaneGeometry(6,4.5),sm);sL.position.set(-1,6.5,-2.9);sL.rotation.y=Math.PI;body.add(sL);
+    const st=saddleTex(number.toString(),colorHex),sm=new THREE.MeshLambertMaterial({map:st});
+    const sR=new THREE.Mesh(new THREE.PlaneGeometry(5.5,4),sm);sR.position.set(-.5,7,2.7);body.add(sR);
+    const sL=new THREE.Mesh(new THREE.PlaneGeometry(5.5,4),sm);sL.position.set(-.5,7,-2.7);sL.rotation.y=Math.PI;body.add(sL);
 
-    // NECK - chain of spheres curving up from chest to head (no cylinder!)
-    const neckSpheres=5;
-    for(let i=0;i<neckSpheres;i++){
-        const t=i/neckSpheres;
-        const nx=5+t*5; // 5 to 10
-        const ny=7+t*6; // 7 to 13
-        const r=2.2-t*.7; // taper from thick to thin
-        const ns=new THREE.Mesh(new THREE.SphereGeometry(r,8,8),brown);
-        ns.position.set(nx,ny,0);ns.castShadow=true;body.add(ns);
-    }
+    // NECK: smooth tube using TubeGeometry
+    const neckCurve=new THREE.QuadraticBezierCurve3(new THREE.Vector3(5,7.5,0),new THREE.Vector3(7,11,0),new THREE.Vector3(9.5,13.5,0));
+    const neckGeo=new THREE.TubeGeometry(neckCurve,12,1.6,8,false);
+    const neck=new THREE.Mesh(neckGeo,brown);neck.castShadow=true;body.add(neck);
 
-    // HEAD - elongated sphere (horse skull)
-    const skull=new THREE.Mesh(new THREE.SphereGeometry(1,12,10),brown);
-    skull.scale.set(3.5,1.6,1.6);skull.position.set(11,13.5,0);body.add(skull);
-
-    // Muzzle
-    const muzzle=new THREE.Mesh(new THREE.SphereGeometry(1,10,8),ltBrown);
-    muzzle.scale.set(1.8,1.2,1.3);muzzle.position.set(14,12.8,0);body.add(muzzle);
-
-    // Nostrils
+    // HEAD
+    const skull=new THREE.Mesh(new THREE.SphereGeometry(1,12,10),brown);skull.scale.set(3.2,1.5,1.5);skull.position.set(11,14,0);body.add(skull);
+    const muzzle=new THREE.Mesh(new THREE.SphereGeometry(1,10,8),ltBr);muzzle.scale.set(1.6,1.1,1.2);muzzle.position.set(13.5,13.3,0);body.add(muzzle);
     const nm=new THREE.MeshBasicMaterial({color:0x333});
-    for(let s of[-1,1]){const n=new THREE.Mesh(new THREE.SphereGeometry(.3,6,6),nm);n.position.set(15.5,12.8,s*.7);body.add(n);}
-
-    // HOOD over skull
-    const hoodMesh=new THREE.Mesh(new THREE.SphereGeometry(1,12,10),hoodC);
-    hoodMesh.scale.set(3.7,1.75,1.75);hoodMesh.position.set(11,13.5,0);body.add(hoodMesh);
-
-    // Eye holes
+    for(let s of[-1,1]){const n=new THREE.Mesh(new THREE.SphereGeometry(.3,6,6),nm);n.position.set(15,13.3,s*.6);body.add(n);}
+    // Hood
+    const hoodMesh=new THREE.Mesh(new THREE.SphereGeometry(1,12,10),hoodC);hoodMesh.scale.set(3.4,1.65,1.65);hoodMesh.position.set(11,14,0);body.add(hoodMesh);
     const ehm=new THREE.MeshBasicMaterial({color:0x111});
-    for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.CircleGeometry(.7,8),ehm);e.position.set(13,14,s*1.77);if(s<0)e.rotation.y=Math.PI;body.add(e);}
-
-    // Ears through hood
-    for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.ConeGeometry(.6,2.5,6),hoodC);e.position.set(10,16,s*1);e.rotation.z=.15;body.add(e);}
+    for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.CircleGeometry(.65,8),ehm);e.position.set(12.5,14.5,s*1.66);if(s<0)e.rotation.y=Math.PI;body.add(e);}
+    for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.ConeGeometry(.55,2.2,6),hoodC);e.position.set(10,16,s*.9);e.rotation.z=.15;body.add(e);}
 
     // Mane
-    for(let i=0;i<6;i++){const t=new THREE.Mesh(new THREE.SphereGeometry(.7,6,6),maneM);t.scale.set(1,1.3,2);
-        t.position.set(5+i*1.2,9+i*1,0);body.add(t);}
+    for(let i=0;i<5;i++){const t=new THREE.Mesh(new THREE.SphereGeometry(.6,6,6),maneM);t.scale.set(1,1.2,1.8);t.position.set(6+i*1.1,10+i*1,0);body.add(t);}
 
     // Tail
     const tailG=new THREE.Group();
-    const tail1=new THREE.Mesh(new THREE.SphereGeometry(.5,6,6),maneM);tail1.scale.set(1,3,1);tail1.position.set(0,-1.5,0);tailG.add(tail1);
-    const tail2=new THREE.Mesh(new THREE.SphereGeometry(.4,6,6),maneM);tail2.scale.set(1,2.5,1);tail2.position.set(-.5,-3,0);tailG.add(tail2);
-    tailG.position.set(-8,8,0);tailG.rotation.z=.6;body.add(tailG);
+    const tail1=new THREE.Mesh(new THREE.SphereGeometry(.4,6,6),maneM);tail1.scale.set(1,2.5,1);tail1.position.y=-1.2;tailG.add(tail1);
+    const tail2=new THREE.Mesh(new THREE.SphereGeometry(.35,6,6),maneM);tail2.scale.set(1,2,1);tail2.position.set(-.4,-2.5,0);tailG.add(tail2);
+    tailG.position.set(-7.5,8.5,0);tailG.rotation.z=.6;body.add(tailG);
 
-    // LEGS - upper + lower + hoof
+    // LEGS: upper thigh (angled) + shin (knee bend) + hoof
     const legs=[];
-    const legGeo=new THREE.CylinderGeometry(.55,.65,6,8);legGeo.translate(0,-3,0);
-    const positions=[[4.5,4.5,1.8],[4.5,4.5,-1.8],[-4.5,4.5,1.8],[-4.5,4.5,-1.8]];
-    positions.forEach(p=>{
-        const leg=new THREE.Mesh(legGeo,dkBrown);
-        leg.position.set(p[0],p[1],p[2]);leg.castShadow=true;body.add(leg);
-        const lowerGeo=new THREE.CylinderGeometry(.4,.5,4,6);lowerGeo.translate(0,-2,0);
-        const lower=new THREE.Mesh(lowerGeo,dkBrown);lower.position.y=-6;leg.add(lower);
-        const h=new THREE.Mesh(new THREE.CylinderGeometry(.6,.7,1,6),hoofM);h.position.y=-4;lower.add(h);
-        legs.push({upper:leg,lower});
+    // Thigh: wider at top, tapers
+    const thighGeo=new THREE.CylinderGeometry(.45,.6,5,8);thighGeo.translate(0,-2.5,0);
+    // Shin
+    const shinGeo=new THREE.CylinderGeometry(.35,.45,4.5,8);shinGeo.translate(0,-2.25,0);
+    const positions=[[4,5,1.7],[4,5,-1.7],[-4,5,1.7],[-4,5,-1.7]];
+    positions.forEach((p,idx)=>{
+        const thigh=new THREE.Mesh(thighGeo,dkBr);thigh.position.set(p[0],p[1],p[2]);thigh.castShadow=true;body.add(thigh);
+        const shin=new THREE.Mesh(shinGeo,dkBr);shin.position.y=-5;thigh.add(shin);
+        const hoof=new THREE.Mesh(new THREE.SphereGeometry(.5,6,6),hoofM);hoof.scale.set(1.2,.6,1);hoof.position.y=-4.5;shin.add(hoof);
+        legs.push({thigh,shin});
     });
 
-    // --- JOCKEY (sitting on the horse's back) ---
+    // JOCKEY: small, crouched forward, proper riding position
     const jG=new THREE.Group();
-    jG.position.set(-1,8.8,0); // sitting right on the back
+    jG.position.set(1,9.5,0); // forward on the withers
     body.add(jG);
-
     const jm=new THREE.MeshLambertMaterial({color:new THREE.Color(colorHex)});
-    // Torso - leaning forward like a real jockey
-    const jt=new THREE.Mesh(new THREE.CylinderGeometry(.6,.8,2.2,8),jm);
-    jt.position.y=1.2;jt.rotation.z=-.2;jG.add(jt);
-    // Arms reaching forward toward reins
+    // Torso - crouched forward
+    const jt=new THREE.Mesh(new THREE.SphereGeometry(1,8,8),jm);jt.scale.set(.7,.9,.6);jt.position.set(.5,1,0);jt.rotation.z=-.4;jG.add(jt);
+    // Arms forward+down (toward horse's head, holding reins)
     for(let s of[-1,1]){
-        const a=new THREE.Mesh(new THREE.CylinderGeometry(.2,.25,2.2,6),jm);
-        a.position.set(1,1.8,s*1.1);a.rotation.z=-.7;jG.add(a);
+        const a=new THREE.Mesh(new THREE.CylinderGeometry(.15,.18,2,6),jm);
+        a.position.set(1.8,.8,s*.7);a.rotation.z=-1;jG.add(a);
     }
-    // Legs tucked at sides
+    // Legs bent at sides (like stirrups)
     const pm=new THREE.MeshLambertMaterial({color:0xffffff});
     for(let s of[-1,1]){
-        const l=new THREE.Mesh(new THREE.CylinderGeometry(.22,.28,2,6),pm);
-        l.position.set(-.3,.2,s*1.4);l.rotation.z=.3;jG.add(l);
+        // Upper leg (horizontal along horse)
+        const ul=new THREE.Mesh(new THREE.CylinderGeometry(.15,.18,1.5,6),pm);
+        ul.position.set(-.3,.2,s*1.3);ul.rotation.z=.5;jG.add(ul);
+        // Boot
+        const b=new THREE.Mesh(new THREE.SphereGeometry(.22,6,6),new THREE.MeshLambertMaterial({color:0x222}));
+        b.position.set(-1,-.3,s*1.4);jG.add(b);
     }
-    // Boots
-    const bootM=new THREE.MeshLambertMaterial({color:0x222});
-    for(let s of[-1,1]){
-        const b=new THREE.Mesh(new THREE.SphereGeometry(.3,6,6),bootM);
-        b.position.set(-.8,-.8,s*1.5);jG.add(b);
-    }
-    // Mascot head
-    const mHead=mascotBuilders[mascotIdx]();
-    mHead.position.set(.3,3.8,0);mHead.scale.set(.7,.7,.7);mHead.rotation.y=Math.PI/2;
-    jG.add(mHead);
+    // Mascot head (slightly smaller for proportion)
+    const mHead=mascotBuilders[mascotIdx]();mHead.position.set(.3,3,0);mHead.scale.set(.65,.65,.65);mHead.rotation.y=Math.PI/2;jG.add(mHead);
 
     return{root,body,tailG,legs,jG};
 }
 
 // --- UI ---
 document.getElementById('player-horse-name').innerText=`#${playerHorse.number} ${playerHorse.name}`;
-document.getElementById('start-btn').addEventListener('click',()=>{
+
+// Solo play
+document.getElementById('solo-btn').addEventListener('click',()=>{
+    isMultiplayer=false;
     document.getElementById('lobby').classList.add('hidden');
     document.getElementById('main-title').classList.add('hidden');
     document.getElementById('tapping-phase').classList.remove('hidden');
-    let st=Date.now();
-    let ti=setInterval(()=>{
+    startTapping();
+});
+
+// Multiplayer: Create
+document.getElementById('create-btn').addEventListener('click',async()=>{
+    isMultiplayer=true;isPlayer1=true;
+    const seed=Math.floor(Math.random()*2147483647);
+    const doc=await db.collection('shmerbyGames').add({
+        p1Id:myPlayerId,p2Id:null,
+        p1Name:playerHorse.name,p1Number:playerHorse.number,p1Color:playerHorse.color,
+        p2Name:'',p2Number:0,p2Color:'',
+        p1Taps:null,p2Taps:null,seed,status:'waiting',created:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    gameDocRef=doc;
+    const url=location.origin+location.pathname+'?gameId='+doc.id;
+    document.getElementById('game-url').value=url;
+    document.getElementById('share-area').classList.remove('hidden');
+    document.getElementById('create-btn').classList.add('hidden');
+    document.getElementById('solo-btn').classList.add('hidden');
+
+    // Listen for opponent
+    unsubGame=gameDocRef.onSnapshot(snap=>{
+        const d=snap.data();if(!d)return;
+        if(d.status==='ready'&&d.p2Id){
+            document.getElementById('waiting-msg').classList.add('hidden');
+            document.getElementById('join-msg').classList.remove('hidden');
+            document.getElementById('join-msg').querySelector('p').textContent=`Opponent joined: #${d.p2Number} ${d.p2Name}`;
+        }
+        if(d.status==='tapping'){
+            document.getElementById('lobby').classList.add('hidden');
+            document.getElementById('main-title').classList.add('hidden');
+            document.getElementById('tapping-phase').classList.remove('hidden');
+            startTapping();
+        }
+        if(d.status==='racing'&&d.p1Taps!==null&&d.p2Taps!==null){
+            startRaceFromData(d);
+        }
+    });
+});
+
+document.getElementById('copy-btn').addEventListener('click',()=>{
+    const inp=document.getElementById('game-url');inp.select();document.execCommand('copy');
+    document.getElementById('copy-btn').textContent='COPIED!';
+    setTimeout(()=>document.getElementById('copy-btn').textContent='COPY LINK',2000);
+});
+
+// Ready button
+document.getElementById('ready-btn').addEventListener('click',async()=>{
+    await gameDocRef.update({status:'tapping'});
+});
+
+// Join via URL
+const urlParams=new URLSearchParams(location.search);
+const joinId=urlParams.get('gameId');
+if(joinId){
+    isMultiplayer=true;isPlayer1=false;
+    document.getElementById('create-btn').classList.add('hidden');
+    document.getElementById('solo-btn').classList.add('hidden');
+    gameDocRef=db.collection('shmerbyGames').doc(joinId);
+    gameDocRef.get().then(async snap=>{
+        const d=snap.data();
+        if(d&&!d.p2Id){
+            await gameDocRef.update({
+                p2Id:myPlayerId,p2Name:playerHorse.name,p2Number:playerHorse.number,p2Color:playerHorse.color,status:'ready'
+            });
+            document.getElementById('join-msg').classList.remove('hidden');
+            document.getElementById('join-msg').querySelector('p').textContent='Waiting for host to start...';
+            document.getElementById('ready-btn').classList.add('hidden');
+        }
+        unsubGame=gameDocRef.onSnapshot(snap2=>{
+            const d2=snap2.data();if(!d2)return;
+            if(d2.status==='tapping'){
+                document.getElementById('lobby').classList.add('hidden');
+                document.getElementById('main-title').classList.add('hidden');
+                document.getElementById('tapping-phase').classList.remove('hidden');
+                startTapping();
+            }
+            if(d2.status==='racing'&&d2.p1Taps!==null&&d2.p2Taps!==null){
+                startRaceFromData(d2);
+            }
+        });
+    });
+}
+
+// --- TAPPING ---
+let tapping=false;
+function startTapping(){
+    if(tapping)return;tapping=true;
+    playerHorse.taps=0;
+    const st=Date.now();
+    const ti=setInterval(()=>{
         let r=(10-(Date.now()-st)/1000).toFixed(1);
-        if(r<=0){r=0;clearInterval(ti);startRace();}
+        if(r<=0){r=0;clearInterval(ti);endTapping();}
         document.getElementById('timer-display').innerText=r;
     },100);
-});
+}
 document.getElementById('tap-zone').addEventListener('pointerdown',e=>{e.preventDefault();playerHorse.taps++;});
 
-function startRace(){
+async function endTapping(){
     document.getElementById('tapping-phase').classList.add('hidden');
-    document.getElementById('race-phase').classList.remove('hidden');
-    raceStartTime=Date.now();
+    if(isMultiplayer&&gameDocRef){
+        const field=isPlayer1?'p1Taps':'p2Taps';
+        await gameDocRef.update({[field]:playerHorse.taps});
+        // Check if both submitted
+        const snap=await gameDocRef.get();const d=snap.data();
+        if(d.p1Taps!==null&&d.p2Taps!==null){
+            await gameDocRef.update({status:'racing'});
+        }
+        // Otherwise wait for snapshot listener to trigger race
+    } else {
+        startSoloRace();
+    }
+}
 
+// --- RACE ---
+let raceStarted=false;
+function startRaceFromData(d){
+    if(raceStarted)return;raceStarted=true;
+    // Build both human horses + 4 bots from seed
+    const rng=mulberry32(d.seed);
+    const p1Horse={name:d.p1Name,taps:d.p1Taps,isPlayer:isPlayer1,color:d.p1Color||'#e91e63',number:d.p1Number,isHuman:true,style:0};
+    const p2Horse={name:d.p2Name,taps:d.p2Taps,isPlayer:!isPlayer1,color:d.p2Color||'#2196f3',number:d.p2Number,isHuman:true,style:0};
+    gameHorses.push(p1Horse,p2Horse);
+    const usedNums=new Set([p1Horse.number,p2Horse.number]);
+    for(let i=0;i<4;i++){
+        let n;do{n=Math.floor(rng()*20)+1;}while(usedNums.has(n));usedNums.add(n);
+        const botTaps=Math.floor(rng()*45)+20;
+        const style=i<1?0:i<3?1:2;
+        gameHorses.push({name:genName(),taps:botTaps,isPlayer:false,color:botColors[i],number:n,style,isHuman:false});
+    }
+    buildAndStartRace(rng);
+}
+
+function startSoloRace(){
+    if(raceStarted)return;raceStarted=true;
+    const rng=mulberry32(Date.now());
     gameHorses.push(playerHorse);
     for(let i=0;i<5;i++){
-        let n;do{n=Math.floor(Math.random()*20)+1;}while(gameHorses.some(h=>h.number===n));
-        const botTaps=Math.floor(Math.random()*45)+20;
+        let n;do{n=Math.floor(rng()*20)+1;}while(gameHorses.some(h=>h.number===n));
+        const botTaps=Math.floor(rng()*45)+20;
         const style=i<2?0:i<4?1:2;
-        gameHorses.push({name:genName(),taps:botTaps,isPlayer:false,color:botColors[i],number:n,style});
+        gameHorses.push({name:genName(),taps:botTaps,isPlayer:false,color:botColors[i],number:n,style,isHuman:false});
     }
-    gameHorses.sort(()=>Math.random()-.5);
+    buildAndStartRace(rng);
+}
 
-    const mi=[0,1,2,3,4,5];for(let i=5;i>0;i--){const j=Math.floor(Math.random()*(i+1));[mi[i],mi[j]]=[mi[j],mi[i]];}
+function buildAndStartRace(rng){
+    document.getElementById('race-phase').classList.remove('hidden');
+    raceStartTime=Date.now();
+    // Shuffle order
+    for(let i=gameHorses.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[gameHorses[i],gameHorses[j]]=[gameHorses[j],gameHorses[i]];}
+    const mi=[0,1,2,3,4,5];for(let i=5;i>0;i--){const j=Math.floor(rng()*(i+1));[mi[i],mi[j]]=[mi[j],mi[i]];}
 
     gameHorses.forEach((h,i)=>{
         h.angle=START_ANGLE-(0.02+i*.015);
         const tapFactor=h.taps*0.0000065;
         h.baseSpeed=AVG_SPEED*.85+tapFactor;
         h.earlyMod=1;h.lateMod=1;
-        if(!h.isPlayer){
+        if(!h.isHuman||!h.isPlayer){
             if(h.style===0){h.earlyMod=1.08;h.lateMod=0.94;}
             else if(h.style===1){h.earlyMod=0.98;h.lateMod=1.04;}
             else{h.earlyMod=0.92;h.lateMod=1.12;}
         }
         h.energy=1;h.finished=false;
-        h.laneOffset=5+i*6;h.targetLane=3+Math.random()*4;
-
+        h.laneOffset=5+i*6;h.targetLane=3+rng()*4;
         const model=createHorse(h.color,h.number,mi[i]);
         scene.add(model.root);h.model=model;
     });
 
-    // Snap camera to starting gate
     const initR=BASE_R+DIRT_W+60;
-    camera.position.set(Math.cos(START_ANGLE+.06)*initR*TRACK_SX, 25, Math.sin(START_ANGLE+.06)*initR);
-    camTarget.set(Math.cos(START_ANGLE)*(BASE_R+15)*TRACK_SX, 5, Math.sin(START_ANGLE)*(BASE_R+15));
+    camera.position.set(Math.cos(START_ANGLE+.06)*initR*TRACK_SX,25,Math.sin(START_ANGLE+.06)*initR);
+    camTarget.set(Math.cos(START_ANGLE)*(BASE_R+15)*TRACK_SX,5,Math.sin(START_ANGLE)*(BASE_R+15));
     camera.lookAt(camTarget);
-
     updateLB();animate();
 }
 
 function updateLB(){
-    const sorted=[...gameHorses].sort((a,b)=>{
-        if(a.finished&&!b.finished)return-1;if(!a.finished&&b.finished)return 1;return b.angle-a.angle;});
+    const sorted=[...gameHorses].sort((a,b)=>{if(a.finished&&!b.finished)return-1;if(!a.finished&&b.finished)return 1;return b.angle-a.angle;});
     const list=document.getElementById('standings-list');list.innerHTML='';
     sorted.forEach((h,i)=>{
+        const youTag=h.isPlayer?'<span class="you-tag">YOU</span>':'';
         list.innerHTML+=`<div class="lb-row"><span class="lb-place">${['1ST','2ND','3RD','4TH','5TH','6TH'][i]}</span>
         <div class="lb-color" style="background:${h.color}"></div>
-        <span class="lb-name" style="color:${h.isPlayer?'#ffeb3b':'#fff'}">#${h.number} ${h.name}</span></div>`;
+        <span class="lb-name" style="color:${h.isPlayer?'#ffeb3b':'#fff'}">#${h.number} ${h.name}${youTag}</span></div>`;
     });
 }
-function showNotif(t){
-    const e=document.createElement('div');e.className='finish-notif';e.innerText=t;
-    document.getElementById('notifications-container').appendChild(e);
-    setTimeout(()=>{e.style.opacity=0;setTimeout(()=>e.remove(),500);},3000);
-}
+function showNotif(t){const e=document.createElement('div');e.className='finish-notif';e.innerText=t;
+document.getElementById('notifications-container').appendChild(e);setTimeout(()=>{e.style.opacity=0;setTimeout(()=>e.remove(),500);},3000);}
 
 // --- ANIMATE ---
 const clock=new THREE.Clock();
 function animate(){
     if(!raceFinished)requestAnimationFrame(animate);
-    const time=clock.getElapsedTime();
-    const gSpeed=18;
-
-    // Race timer
-    if(!raceFinished){
-        const elapsed=((Date.now()-raceStartTime)/1000);
-        const min=Math.floor(elapsed/60);
-        const sec=(elapsed%60).toFixed(1);
-        document.getElementById('race-timer').innerText=`${min}:${sec<10?'0':''}${sec}`;
-    }
-
-    let leader=null,leaderAngle=-999,lastAngle=999;
-    let maxA=-999;
+    const time=clock.getElapsedTime(),gSpeed=18;
+    if(!raceFinished){const el=((Date.now()-raceStartTime)/1000);const m=Math.floor(el/60);const s=(el%60).toFixed(1);
+        document.getElementById('race-timer').innerText=`${m}:${s<10?'0':''}${s}`;}
+    let leader=null,leaderAngle=-999,lastAngle=999,maxA=-999;
     gameHorses.forEach(h=>{if(h.angle>maxA)maxA=h.angle;});
     const progress=(maxA-START_ANGLE)/(FINISH_ANGLE-START_ANGLE);
-
-    // Stretch call at ~78% + camera switch
-    if(progress>.78&&!stretchCalled){
-        stretchCalled=true;
-        camMode='stretch';
-        const sc=document.getElementById('stretch-call');
-        sc.innerHTML="AND DOWN THE<br>STRETCH THEY COME!";
-        sc.classList.add('show');
-        setTimeout(()=>sc.classList.remove('show'),3500);
-    }
+    if(progress>.78&&!stretchCalled){stretchCalled=true;camMode='stretch';
+        const sc=document.getElementById('stretch-call');sc.innerHTML="AND DOWN THE<br>STRETCH THEY COME!";sc.classList.add('show');
+        setTimeout(()=>sc.classList.remove('show'),3500);}
 
     gameHorses.forEach((h,i)=>{
         const raceMod=progress<.5?h.earlyMod:h.lateMod;
-        h.energy+=(Math.random()-.5)*.003;
-        h.energy=Math.max(.93,Math.min(1.07,h.energy));
-        const frameSpeed=h.baseSpeed*raceMod*h.energy+(Math.random()-.0005)*.0001;
-        h.angle+=Math.max(frameSpeed,.0004);
-
+        h.energy+=(Math.random()-.5)*.003;h.energy=Math.max(.93,Math.min(1.07,h.energy));
+        h.angle+=Math.max(h.baseSpeed*raceMod*h.energy+(Math.random()-.0005)*.0001,.0004);
         const rank=gameHorses.filter(o=>o.angle>h.angle).length;
         h.targetLane=3+rank*4+Math.sin(time*.5+i)*1.5;
         h.laneOffset+=(h.targetLane-h.laneOffset)*.02;
-
         const r=BASE_R+h.laneOffset;
-        const x=Math.cos(h.angle)*r*TRACK_SX;
-        const z=Math.sin(h.angle)*r;
-        const dx=-Math.sin(h.angle)*r*TRACK_SX;
-        const dz=Math.cos(h.angle)*r;
-        const tang=Math.atan2(-dz,dx);
+        const x=Math.cos(h.angle)*r*TRACK_SX,z=Math.sin(h.angle)*r;
+        const tang=Math.atan2(-Math.cos(h.angle)*r,-Math.sin(h.angle)*r*TRACK_SX);
+        // Fix tangent calculation
+        const dx=-Math.sin(h.angle)*r*TRACK_SX,dz=Math.cos(h.angle)*r;
+        const tangent=Math.atan2(-dz,dx);
+        h.model.root.position.set(x,0,z);h.model.root.rotation.y=tangent;
 
-        h.model.root.position.set(x,0,z);
-        h.model.root.rotation.y=tang;
-
-        // Gallop
+        // GALLOP
         const c=time*gSpeed+i*1.7;
-        const bound=Math.max(0,Math.sin(c))*2.2;
-        h.model.body.position.y=bound;
-        h.model.body.rotation.z=Math.sin(c)*.08;
+        const bound=Math.max(0,Math.sin(c))*2;
+        h.model.body.position.y=bound;h.model.body.rotation.z=Math.sin(c)*.06;
 
-        // Front legs (offset phases for 4-beat)
-        const fl0=Math.sin(c)*.65;
-        const fl1=Math.sin(c+.8)*.65;
-        h.model.legs[0].upper.rotation.z=fl0;
-        h.model.legs[0].lower.rotation.z=Math.max(0,-fl0)*.8;
-        h.model.legs[1].upper.rotation.z=fl1;
-        h.model.legs[1].lower.rotation.z=Math.max(0,-fl1)*.8;
+        // Front legs: proper 4-beat with knee bend
+        const fl0=Math.sin(c)*.55;const fl1=Math.sin(c+.7)*.55;
+        h.model.legs[0].thigh.rotation.z=fl0;
+        h.model.legs[0].shin.rotation.z=.2+Math.max(0,-fl0)*1.2; // knee bends back on recovery
+        h.model.legs[1].thigh.rotation.z=fl1;
+        h.model.legs[1].shin.rotation.z=.2+Math.max(0,-fl1)*1.2;
         // Hind legs
-        const hl0=Math.sin(c+Math.PI)*.7;
-        const hl1=Math.sin(c+Math.PI+.8)*.7;
-        h.model.legs[2].upper.rotation.z=hl0;
-        h.model.legs[2].lower.rotation.z=Math.max(0,hl0)*.6;
-        h.model.legs[3].upper.rotation.z=hl1;
-        h.model.legs[3].lower.rotation.z=Math.max(0,hl1)*.6;
+        const hl0=Math.sin(c+Math.PI)*.6;const hl1=Math.sin(c+Math.PI+.7)*.6;
+        h.model.legs[2].thigh.rotation.z=hl0;
+        h.model.legs[2].shin.rotation.z=-.1+Math.max(0,hl0)*1;
+        h.model.legs[3].thigh.rotation.z=hl1;
+        h.model.legs[3].shin.rotation.z=-.1+Math.max(0,hl1)*1;
 
-        // Tail
-        h.model.tailG.rotation.z=.6+Math.sin(time*3+i)*.2;
-        h.model.tailG.rotation.y=Math.sin(time*4+i)*.15;
+        h.model.tailG.rotation.z=.6+Math.sin(time*3+i)*.2;h.model.tailG.rotation.y=Math.sin(time*4+i)*.15;
+        h.model.jG.position.y=9.5+bound*.3;h.model.jG.rotation.z=Math.sin(c)*.03;
 
-        // Jockey
-        h.model.jG.position.y=8.8+bound*.35;
-        h.model.jG.rotation.z=Math.sin(c)*.04;
-
-        // Finish
-        if(h.angle>=FINISH_ANGLE&&!h.finished){
-            h.finished=true;finishOrder.push(h);
+        if(h.angle>=FINISH_ANGLE&&!h.finished){h.finished=true;finishOrder.push(h);
             const ps=finishOrder.length===1?"WINS!":finishOrder.length===2?"takes 2nd!":finishOrder.length===3?"takes 3rd!":"finishes.";
-            showNotif(`🏁 #${h.number} ${h.name} ${ps}`);
-        }
-        if(!h.finished){
-            if(h.angle>leaderAngle){leaderAngle=h.angle;leader=h;}
-            if(h.angle<lastAngle)lastAngle=h.angle;
-        }
+            showNotif(`🏁 #${h.number} ${h.name} ${ps}`);}
+        if(!h.finished){if(h.angle>leaderAngle){leaderAngle=h.angle;leader=h;}if(h.angle<lastAngle)lastAngle=h.angle;}
     });
     updateLB();
 
-    // --- CAMERA ---
     if(leader){
         if(camMode==='broadcast'){
-            const packSpread=leaderAngle-lastAngle;
-            const packMid=(leaderAngle+lastAngle)/2;
-            const camAngle=packMid+0.06;
-            const camDist=45+Math.min(packSpread*50,30);
-            const camR=BASE_R+leader.laneOffset+DIRT_W+camDist;
-            const camH=20+Math.min(packSpread*25,15);
-            const tx=Math.cos(camAngle)*camR*TRACK_SX;
-            const tz=Math.sin(camAngle)*camR;
-            camera.position.lerp(new THREE.Vector3(tx,camH,tz),.08);
-            const lookR=BASE_R+15;
-            const lx=Math.cos(packMid)*lookR*TRACK_SX;
-            const lz=Math.sin(packMid)*lookR;
-            camTarget.lerp(new THREE.Vector3(lx,5,lz),.08);
+            const ps=leaderAngle-lastAngle,pm=(leaderAngle+lastAngle)/2;
+            const cd=45+Math.min(ps*50,30),cr=BASE_R+leader.laneOffset+DIRT_W+cd,ch=20+Math.min(ps*25,15);
+            camera.position.lerp(new THREE.Vector3(Math.cos(pm+.06)*cr*TRACK_SX,ch,Math.sin(pm+.06)*cr),.08);
+            camTarget.lerp(new THREE.Vector3(Math.cos(pm)*(BASE_R+15)*TRACK_SX,5,Math.sin(pm)*(BASE_R+15)),.08);
         } else {
-            // STRETCH CAM: Head-on from finish line, elevated, looking down the track
-            // Finish is at angle -PI/2 (top of oval), z = -(BASE_R + DIRT_W/2)
-            // Camera sits just past finish, high up, looking back at the oncoming horses
-            const finishZ=-(BASE_R+DIRT_W/2);
-            // Position: slightly outside the track, elevated, looking down the homestretch
-            const stretchCamPos=new THREE.Vector3(
-                80, // offset to the outside for that classic angle
-                55, // elevated
-                finishZ+15 // just past the finish line
-            );
-            camera.position.lerp(stretchCamPos,.04);
-
-            // Look at the pack coming toward us
-            const packMid=(leaderAngle+lastAngle)/2;
-            const lookR=BASE_R+20;
-            const lx=Math.cos(packMid)*lookR*TRACK_SX;
-            const lz=Math.sin(packMid)*lookR;
-            camTarget.lerp(new THREE.Vector3(lx,4,lz),.06);
+            const fz=-(BASE_R+DIRT_W/2);
+            camera.position.lerp(new THREE.Vector3(80,55,fz+15),.04);
+            const pm=(leaderAngle+lastAngle)/2;
+            camTarget.lerp(new THREE.Vector3(Math.cos(pm)*(BASE_R+20)*TRACK_SX,4,Math.sin(pm)*(BASE_R+20)),.06);
         }
         camera.lookAt(camTarget);
     }
 
-    // End
     if(finishOrder.length===gameHorses.length&&!raceFinished){
-        raceFinished=true;
-        document.getElementById('race-status').innerText="RACE COMPLETE!";
-        document.getElementById('lap-display').innerText='';
-        const elapsed=((Date.now()-raceStartTime)/1000);
-        const min=Math.floor(elapsed/60);
-        const sec=(elapsed%60).toFixed(1);
-        document.getElementById('race-timer').innerText=`FINAL: ${min}:${sec<10?'0':''}${sec}`;
+        raceFinished=true;document.getElementById('race-status').innerText="RACE COMPLETE!";
+        const el=((Date.now()-raceStartTime)/1000);const m=Math.floor(el/60);const s=(el%60).toFixed(1);
+        document.getElementById('race-timer').innerText=`FINAL: ${m}:${s<10?'0':''}${s}`;
         setTimeout(()=>{
             const rl=document.getElementById('results-list');
             finishOrder.forEach((h,i)=>{
                 const t=i===0?'WIN':i===1?'PLACE':i===2?'SHOW':`${i+1}TH`;
+                const youTag=h.isPlayer?' ⭐':'';
                 rl.innerHTML+=`<div class="result-row"><span class="result-place">${t}</span>
                 <div class="lb-color" style="background:${h.color}"></div>
-                <span style="color:${h.isPlayer?'#ffeb3b':'#fff'}">#${h.number} ${h.name}</span></div>`;
+                <span style="color:${h.isPlayer?'#ffeb3b':'#fff'}">#${h.number} ${h.name}${youTag}</span></div>`;
             });
-            document.getElementById('results-title').innerText=finishOrder[0].isPlayer?"DERBY CHAMPION!":"YOU LOST";
+            document.getElementById('results-title').innerText=finishOrder[0].isPlayer?"🏆 DERBY CHAMPION! 🏆":"YOU LOST";
+            document.getElementById('results-title').style.color=finishOrder[0].isPlayer?'#ffd700':'#fff';
             document.getElementById('results-modal').style.display='flex';
         },3000);
     }
