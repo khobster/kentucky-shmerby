@@ -16,7 +16,7 @@
         #game-container{width:100vw;height:100vh;position:relative;display:flex;flex-direction:column;align-items:center;}
         #canvas-container{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;}
         .overlay{position:relative;z-index:10;text-align:center;}
-        h1{color:#ffd700;font-size:22px;text-shadow:4px 4px 0 #000;margin:18px 0;}
+        h1{color:#ffd700;font-size:22px;text-shadow:4px 4px 0 #000;margin:18px 0;position:relative;z-index:10;}
         .panel{background:rgba(0,0,0,0.7);padding:24px 32px;border-radius:12px;border:3px solid #ffd700;margin-top:40px;max-width:500px;width:90%;}
         #tap-zone{width:90%;max-width:600px;height:260px;margin:16px auto;background:#e53935;border:8px solid #000;
             box-shadow:0 10px 0 #b71c1c;display:flex;align-items:center;justify-content:center;
@@ -30,7 +30,7 @@
         .share-box button{font-size:10px;padding:8px 16px;}
         .waiting{color:#ffd700;font-size:10px;margin-top:14px;animation:pulse 1.5s infinite;}
         @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
-        #notifications-container{position:absolute;top:100px;left:50%;transform:translateX(-50%);
+        #notifications-container{position:absolute;top:80px;left:50%;transform:translateX(-50%);
             z-index:1000;display:flex;flex-direction:column;align-items:center;pointer-events:none;}
         .finish-notif{background:rgba(0,0,0,0.9);border:2px solid #ffd700;color:#fff;
             padding:10px 20px;margin-bottom:6px;font-size:10px;border-radius:4px;transition:opacity 0.5s ease;}
@@ -48,15 +48,15 @@
         .result-row{display:flex;align-items:center;margin:6px 0;font-size:10px;border-bottom:2px dashed #444;padding-bottom:6px;}
         .result-place{width:50px;color:#ffd700;}
         #timer-display{font-size:34px;color:#fff;text-shadow:4px 4px #000;}
-        #race-header{position:absolute;top:20px;left:0;width:100%;z-index:100;text-align:center;padding:0 12px;}
-        #race-status{text-shadow:3px 3px #000;font-size:18px;color:#ffd700;}
+        #race-header{position:absolute;top:10px;left:0;width:100%;z-index:100;text-align:center;padding:0 12px;}
+        #race-status{text-shadow:3px 3px #000;font-size:15px;}
         #race-timer{position:absolute;top:10px;right:16px;z-index:100;font-size:12px;color:#fff;text-shadow:2px 2px #000;}
         #stretch-call{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
             z-index:500;font-size:24px;color:#fff;text-shadow:6px 6px 0 #000,-2px -2px 0 #ffd700;
             pointer-events:none;opacity:0;transition:opacity 0.4s;white-space:nowrap;text-align:center;line-height:1.5;}
         #stretch-call.show{opacity:1;}
         .you-tag{font-size:7px;color:#ffeb3b;background:#000;padding:1px 4px;border-radius:2px;margin-left:4px;}
-        #furlong-bar{position:absolute;top:60px;left:50%;transform:translateX(-50%);z-index:100;width:280px;}
+        #furlong-bar{position:absolute;top:45px;left:50%;transform:translateX(-50%);z-index:100;width:280px;}
         #furlong-track{width:100%;height:10px;background:rgba(0,0,0,.6);border:2px solid #ffd700;border-radius:5px;overflow:hidden;}
         #furlong-fill{height:100%;width:0%;background:linear-gradient(90deg,#4caf50,#ffeb3b,#ff5722);border-radius:3px;transition:width .3s;}
         #furlong-labels{display:flex;justify-content:space-between;font-size:6px;color:#ffd700;margin-top:2px;text-shadow:1px 1px #000;}
@@ -66,7 +66,6 @@
 <div id="game-container">
     <div id="canvas-container"></div>
     <h1 id="main-title">KENTUCKY SHMERBY</h1>
-
     <div id="lobby" class="overlay">
         <div class="panel">
             <p style="font-size:10px;margin-bottom:12px;">Your Steed:</p>
@@ -86,12 +85,10 @@
             </div>
         </div>
     </div>
-
     <div id="tapping-phase" class="overlay hidden">
         <h2 id="timer-display">10.0</h2>
         <div id="tap-zone">TAP HERE!<br><br>Speed, not force.<br>Your count is hidden!</div>
     </div>
-
     <div id="race-phase" class="hidden">
         <div id="race-header"><h2 id="race-status">AND THEY'RE OFF!</h2></div>
         <div id="furlong-bar">
@@ -103,16 +100,13 @@
         <div id="notifications-container"></div>
         <div id="leaderboard"><div id="standings-list"></div></div>
     </div>
-
     <div id="results-modal">
         <h2 id="results-title" style="text-align:center;margin-bottom:16px;"></h2>
         <div id="results-list"></div>
         <button onclick="location.reload()" style="margin:16px auto 0;display:block;">Race Again</button>
     </div>
 </div>
-
 <script>
-// --- FIREBASE & SETUP ---
 firebase.initializeApp({
     apiKey:"AIzaSyDicI1nKcrMDaaYkL_8q70yj1mM05tW5Ak",authDomain:"mookie-pig-challenge.firebaseapp.com",
     projectId:"mookie-pig-challenge",storageBucket:"mookie-pig-challenge.appspot.com",
@@ -123,7 +117,16 @@ let myPlayerId=localStorage.getItem('shmerbyId');
 if(!myPlayerId){myPlayerId=Math.random().toString(36).substr(2,9);localStorage.setItem('shmerbyId',myPlayerId);}
 let gameDocRef=null,unsubGame=null,isMultiplayer=false,isPlayer1=true;
 
-const DW=["Affirmed","Agile","Alysheba","American","Pharoah","Animal","Kingdom","Apollo","Aristides","Assault","Authentic","Barbaro","Black","Gold","Bold","Venture","Brokers","Tip","Bubbling","Over","Burgoo","King","California","Chrome","Cannonade","Carry","Back","Cavalcade","Charismatic","Citation","Count","Fleet","Dark","Star","Decidedly","Donerail","Dust","Commander","Elwood","Exterminator","Ferdinand","Flying","Ebony","Foolish","Pleasure","Funny","Cide","Fusaichi","Pegasus","Gallant","Fox","Genuine","Risk","Giacomo","Grindstone","Hindoo","Iron","Liege","Jet","Pilot","Justify","Lawrin","Lucky","Debonair","Mage","Majestic","Prince","Monarchos","Mystik","Dan","Needles","Northern","Dancer","Nyquist","Omaha","Orb","Pensive","Plaudit","Pleasant","Colony","Ponder","Real","Quiet","Regret","Riva","Ridge","Sea","Hero","Seattle","Slew","Secretariat","Silver","Charm","Smarty","Spectacular","Bid","Spend","Buck","Sunday","Silence","Super","Saver","Swale","Swaps","Thunder","Gulch","Unbridled","War","Admiral","Whirlaway","Zev"];
+const DW=["Affirmed","Agile","Alysheba","American","Pharoah","Animal","Kingdom","Apollo","Aristides","Assault","Authentic",
+"Barbaro","Black","Gold","Bold","Venture","Brokers","Tip","Bubbling","Over","Burgoo","King","California","Chrome",
+"Cannonade","Carry","Back","Cavalcade","Charismatic","Citation","Count","Fleet","Dark","Star","Decidedly",
+"Donerail","Dust","Commander","Elwood","Exterminator","Ferdinand","Flying","Ebony","Foolish","Pleasure",
+"Funny","Cide","Fusaichi","Pegasus","Gallant","Fox","Genuine","Risk","Giacomo","Grindstone","Hindoo",
+"Iron","Liege","Jet","Pilot","Justify","Lawrin","Lucky","Debonair","Mage","Majestic","Prince",
+"Monarchos","Mystik","Dan","Needles","Northern","Dancer","Nyquist","Omaha","Orb",
+"Pensive","Plaudit","Pleasant","Colony","Ponder","Real","Quiet","Regret","Riva","Ridge","Sea","Hero",
+"Seattle","Slew","Secretariat","Silver","Charm","Smarty","Spectacular","Bid","Spend","Buck",
+"Sunday","Silence","Super","Saver","Swale","Swaps","Thunder","Gulch","Unbridled","War","Admiral","Whirlaway","Zev"];
 function genName(){return DW[Math.floor(Math.random()*DW.length)]+' '+DW[Math.floor(Math.random()*DW.length)];}
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 
@@ -132,10 +135,9 @@ let gameHorses=[],finishOrder=[],raceFinished=false,stretchCalled=false,raceStar
 const botColors=["#2196f3","#4caf50","#ff9800","#9c27b0","#00bcd4"];
 const TRACK_SX=1.8,BASE_R=280,DIRT_W=75;
 const START_ANGLE=-Math.PI/2,FINISH_ANGLE=START_ANGLE+2*Math.PI;
-const AVG_SPEED=0.00063; 
+const AVG_SPEED=0.00062;
 let camMode='broadcast';
 
-// --- THREE.JS SCENE ---
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x87CEEB);scene.fog=new THREE.Fog(0x87CEEB,600,1200);
 const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,1,3000);
 const camTarget=new THREE.Vector3();
@@ -144,136 +146,278 @@ renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(deviceP
 document.getElementById('canvas-container').appendChild(renderer.domElement);
 scene.add(new THREE.AmbientLight(0xffffff,0.7));
 const sun=new THREE.DirectionalLight(0xffffff,0.9);sun.position.set(150,300,80);sun.castShadow=true;
-scene.add(sun);
+sun.shadow.camera.top=500;sun.shadow.camera.bottom=-500;sun.shadow.camera.left=-600;sun.shadow.camera.right=600;scene.add(sun);
 
-const gradMap=(function(){const c=document.createElement('canvas');c.width=4;c.height=1;const x=c.getContext('2d');x.fillStyle='#555';x.fillRect(0,0,1,1);x.fillStyle='#999';x.fillRect(1,0,1,1);x.fillStyle='#ccc';x.fillRect(2,0,1,1);x.fillStyle='#fff';x.fillRect(3,0,1,1);const t=new THREE.CanvasTexture(c);t.minFilter=t.magFilter=THREE.NearestFilter;return t;})();
+const gradCanvas=document.createElement('canvas');gradCanvas.width=4;gradCanvas.height=1;
+const gctx=gradCanvas.getContext('2d');
+gctx.fillStyle='#555';gctx.fillRect(0,0,1,1);gctx.fillStyle='#999';gctx.fillRect(1,0,1,1);
+gctx.fillStyle='#ccc';gctx.fillRect(2,0,1,1);gctx.fillStyle='#fff';gctx.fillRect(3,0,1,1);
+const gradMap=new THREE.CanvasTexture(gradCanvas);
+gradMap.minFilter=THREE.NearestFilter;gradMap.magFilter=THREE.NearestFilter;
 function toon(opts){return new THREE.MeshToonMaterial({...opts,gradientMap:gradMap});}
-function saddleTex(num,col){const c=document.createElement('canvas');c.width=128;c.height=128;const x=c.getContext('2d');x.fillStyle=col;x.fillRect(0,0,128,128);x.strokeStyle='#000';x.lineWidth=6;x.strokeRect(0,0,128,128);x.fillStyle='#fff';x.font='bold 64px "Press Start 2P",monospace';x.textAlign='center';x.textBaseline='middle';x.fillText(num,64,68);return new THREE.CanvasTexture(c);}
+
+function mowedGrass(){const c=document.createElement('canvas');c.width=512;c.height=512;const x=c.getContext('2d');
+for(let i=0;i<18;i++){x.fillStyle=i%2?'#3d8a35':'#4da843';x.fillRect(0,i*28.4,512,28.4);}
+const d=x.getImageData(0,0,512,512);for(let j=0;j<d.data.length;j+=4){const n=(Math.random()-.5)*8;d.data[j]+=n;d.data[j+1]+=n;d.data[j+2]+=n;}
+x.putImageData(d,0,0);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(6,6);return t;}
+
+function saddleTex(num,col){const c=document.createElement('canvas');c.width=128;c.height=128;const x=c.getContext('2d');
+x.fillStyle=col;x.fillRect(0,0,128,128);x.strokeStyle='#000';x.lineWidth=6;x.strokeRect(0,0,128,128);
+x.fillStyle='#fff';x.font='bold 64px "Press Start 2P",monospace';x.textAlign='center';x.textBaseline='middle';
+x.fillText(num,64,68);x.lineWidth=3;x.strokeText(num,64,68);return new THREE.CanvasTexture(c);}
 
 // --- TRACK ---
 (function(){const g=new THREE.Group();
-const grass=new THREE.Mesh(new THREE.CircleGeometry(BASE_R-3,80),toon({color:0x4da843}));grass.rotation.x=-Math.PI/2;g.add(grass);
-const dirt=new THREE.Mesh(new THREE.RingGeometry(BASE_R-3,BASE_R+DIRT_W,80),toon({color:0xbd9a6c}));dirt.rotation.x=-Math.PI/2;g.add(dirt);
+const grassMesh=new THREE.Mesh(new THREE.CircleGeometry(BASE_R-3,80),toon({map:mowedGrass()}));grassMesh.rotation.x=-Math.PI/2;grassMesh.receiveShadow=true;g.add(grassMesh);
+const dirt=new THREE.Mesh(new THREE.RingGeometry(BASE_R-3,BASE_R+DIRT_W,80),toon({color:0xbd9a6c}));dirt.rotation.x=-Math.PI/2;dirt.receiveShadow=true;g.add(dirt);
 const out=new THREE.Mesh(new THREE.RingGeometry(BASE_R+DIRT_W,BASE_R+400,80),toon({color:0x5a9e4b}));out.rotation.x=-Math.PI/2;out.position.y=-.1;g.add(out);
+const rm=new THREE.MeshBasicMaterial({color:0xffffff});
+[BASE_R-3,BASE_R+DIRT_W].forEach(r=>{const t=new THREE.Mesh(new THREE.TorusGeometry(r,.6,8,80),rm);t.rotation.x=-Math.PI/2;t.position.y=2;g.add(t);});
+for(let i=0;i<40;i++){const a=(i/40)*Math.PI*2;const p=new THREE.Mesh(new THREE.CylinderGeometry(.2,.2,4,4),toon({color:0xdddddd}));p.position.set(Math.cos(a)*(BASE_R-3),2,Math.sin(a)*(BASE_R-3));g.add(p);}
+const fc=document.createElement('canvas');fc.width=64;fc.height=64;const fx=fc.getContext('2d');
+for(let r=0;r<8;r++)for(let c=0;c<8;c++){fx.fillStyle=(r+c)%2?'#000':'#fff';fx.fillRect(c*8,r*8,8,8);}
+const fl=new THREE.Mesh(new THREE.PlaneGeometry(DIRT_W+6,5),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(fc)}));
+fl.rotation.x=-Math.PI/2;fl.rotation.z=Math.PI/2;fl.position.set(0,.2,-(BASE_R+DIRT_W/2));g.add(fl);
+[BASE_R-3,BASE_R+DIRT_W].forEach(off=>{const p=new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,22,8),toon({color:0xffffff}));p.position.set(0,11,-off);g.add(p);
+const b=new THREE.Mesh(new THREE.SphereGeometry(1.2,8,8),toon({color:0xffd700}));b.position.set(0,22.5,-off);g.add(b);});
 g.scale.set(TRACK_SX,1,1);scene.add(g);})();
 
-// --- MASCOT DEFINITIONS ---
-const texLoader = new THREE.TextureLoader();
-const CHARACTER_SETS = [
-    { name: 'lt', front: "lt-front.png", side: "lt-side.png", side_r: "lt-side-r.png", back: "lt-back.png" },
-    { name: 'george', front: "george-front.png", side: "george-side.png", side_r: "george-side-r.png", back: "george-back.png" },
-    { name: 'david', front: "david-front.png", side: "david-side-r.png", side_r: "david-side.png", back: "david-back.png" },
-    { name: 'liberty', front: "liberty-front.png", side: "liberty-side_r.png", side_r: "liberty-side.png", back: "liberty-back.png" },
-    { name: 'bunny', front: "bunny-front.png", side: "bunny-side_r.png", side_r: "bunny-side.png", back: "bunny-back.png" },
-    { name: 'tomato', front: "tomato-front.png", side: "tomato-side_r.png", side_r: "tomato-side.png", back: "tomato-back.png" }
-].map(s => ({
-    ...s, 
-    textures: { front: texLoader.load(s.front), side: texLoader.load(s.side), side_r: texLoader.load(s.side_r), back: texLoader.load(s.back) }
-}));
+// --- MASCOT SYSTEM ---
+const texLoader=new THREE.TextureLoader();
+const LT_SET={name:'lt',front:"lt-front.png",side:"lt-side.png",side_r:"lt-side-r.png",back:"lt-back.png"};
+const GEO_SET={name:'george',front:"george-front.png",side:"george-side.png",side_r:"george-side-r.png",back:"george-back.png"};
+const DAV_SET={name:'david',front:"david-front.png",side:"david-side.png",side_r:"david-side-r.png",back:"david-back.png"};
+const LIB_SET={name:'liberty',front:"liberty-front.png",side:"liberty-side.png",side_r:"liberty-side-r.png",back:"liberty-back.png"};
+const BUN_SET={name:'bunny',front:"bunny-front.png",side:"bunny-side.png",side_r:"bunny-side-r.png",back:"bunny-back.png"};
+const TOM_SET={name:'tomato',front:"tomato-front.png",side:"tomato-side.png",side_r:"tomato-side-r.png",back:"tomato-back.png"};
+const ALL_SETS=[LT_SET,GEO_SET,DAV_SET,LIB_SET,BUN_SET,TOM_SET];
+const loadedTextures=[];
+ALL_SETS.forEach(s=>{
+    loadedTextures.push({name:s.name,front:texLoader.load(s.front),side:texLoader.load(s.side),side_r:texLoader.load(s.side_r),back:texLoader.load(s.back)});
+});
 
-function buildMascotHead(idx) {
-    const charData = CHARACTER_SETS[idx % CHARACTER_SETS.length];
-    const g = new THREE.Group();
-    const mat = new THREE.MeshBasicMaterial({ transparent: true, alphaTest: 0.5, side: THREE.DoubleSide });
-    
-    let frontSize = 10.5, sideSize = 10.5;
-    if (charData.name === 'lt') { frontSize = 12.5; sideSize = 13.5; }
-    else if (charData.name === 'liberty') { frontSize = 14.5; sideSize = 12.0; }
-    
-    const geoFront = new THREE.PlaneGeometry(frontSize, frontSize);
-    const geoSide = new THREE.PlaneGeometry(sideSize, frontSize);
-    const plane = new THREE.Mesh(geoFront, mat);
-    plane.position.z = 1.4; 
+function buildMascotHead(idx){
+    const charData=loadedTextures[idx%loadedTextures.length];
+    const g=new THREE.Group();
+    const mat=new THREE.MeshBasicMaterial({transparent:true,alphaTest:0.5,side:THREE.DoubleSide});
+    let headSizeFront=10.5,headSizeSide=10.5;
+    if(charData.name==='lt'){headSizeFront=12;headSizeSide=13.5;}
+    else if(charData.name==='liberty'){headSizeFront=13.5;headSizeSide=11;}
+    const geoFront=new THREE.PlaneGeometry(headSizeFront,headSizeFront);
+    const geoSide=new THREE.PlaneGeometry(headSizeSide,headSizeFront);
+    const plane=new THREE.Mesh(geoFront,mat);
+    plane.position.z=1.3;
     g.add(plane);
-    
-    g.userData = { multiAngle: charData.textures, charName: charData.name, headMat: mat, headMesh: plane, frontGeo: geoFront, sideGeo: geoSide, isHead: true };
+    g.userData.multiAngle=charData;
+    g.userData.headMat=mat;
+    g.userData.headMesh=plane;
+    g.userData.isHead=true;
+    g.userData.sideGeo=geoSide;
+    g.userData.frontGeo=geoFront;
     return g;
 }
 
-const _headWorldPos = new THREE.Vector3(), _camToHead = new THREE.Vector3(), _horseForward = new THREE.Vector3(), _parentWorldQuat = new THREE.Quaternion(), _targetQuat = new THREE.Quaternion(), _lookMatrix = new THREE.Matrix4();
+const _headWorldPos=new THREE.Vector3();
+const _camToHead=new THREE.Vector3();
+const _horseForward=new THREE.Vector3();
+const _parentWorldQuat=new THREE.Quaternion();
+const _targetQuat=new THREE.Quaternion();
+const _lookMatrix=new THREE.Matrix4();
 
-function updateHeadAngle(horseRoot, headGroup, cam) {
-    if (!headGroup || !headGroup.userData.isHead) return;
-    headGroup.updateWorldMatrix(true, false);
+function updateHeadAngle(horseRoot,jockeyGroup,cam){
+    const headGroup=jockeyGroup.children[jockeyGroup.children.length-1];
+    if(!headGroup||!headGroup.userData.isHead) return;
+
+    // Billboard: face camera in nested hierarchy
+    headGroup.updateWorldMatrix(true,false);
     headGroup.getWorldPosition(_headWorldPos);
-    _lookMatrix.lookAt(cam.position, _headWorldPos, THREE.Object3D.DefaultUp);
+    _lookMatrix.lookAt(cam.position,_headWorldPos,THREE.Object3D.DefaultUp);
     _targetQuat.setFromRotationMatrix(_lookMatrix);
-    headGroup.parent.updateWorldMatrix(true, false);
+    headGroup.parent.updateWorldMatrix(true,false);
     headGroup.parent.getWorldQuaternion(_parentWorldQuat);
     _parentWorldQuat.invert();
     headGroup.quaternion.copy(_targetQuat.premultiply(_parentWorldQuat));
-    
-    const texSet = headGroup.userData.multiAngle;
-    const rotY = horseRoot.rotation.y;
-    _horseForward.set(Math.cos(rotY), 0, -Math.sin(rotY)).normalize();
-    _camToHead.subVectors(cam.position, _headWorldPos);
-    _camToHead.y = 0; _camToHead.normalize();
-    const angle = Math.atan2(_horseForward.x*_camToHead.z - _horseForward.z*_camToHead.x, _horseForward.x*_camToHead.x + _horseForward.z*_camToHead.z);
-    const deg = angle * 180 / Math.PI;
-    let zone = (deg > -45 && deg < 45) ? 'front' : (deg >= 45 && deg < 135) ? 'side' : (deg <= -45 && deg > -135) ? 'side_r' : 'back';
-    
-    headGroup.userData.headMesh.geometry = (zone === 'front' || zone === 'back') ? headGroup.userData.frontGeo : headGroup.userData.sideGeo;
-    const newTex = texSet[zone];
-    if (newTex && headGroup.userData.headMat.map !== newTex) { headGroup.userData.headMat.map = newTex; }
+
+    // Texture swap
+    const texSet=headGroup.userData.multiAngle;
+    const mat=headGroup.userData.headMat;
+    const mesh=headGroup.userData.headMesh;
+
+    const rotY=horseRoot.rotation.y;
+    _horseForward.set(Math.cos(rotY),0,-Math.sin(rotY)).normalize();
+    _camToHead.subVectors(cam.position,_headWorldPos);
+    _camToHead.y=0;_camToHead.normalize();
+
+    const angle=Math.atan2(
+        _horseForward.x*_camToHead.z-_horseForward.z*_camToHead.x,
+        _horseForward.x*_camToHead.x+_horseForward.z*_camToHead.z
+    );
+    const deg=angle*180/Math.PI;
+
+    // FIX: side/side_r were swapped. +angle = camera on horse's left = show side_r (mirrored)
+    let zone;
+    if(deg>-45&&deg<45) zone='front';
+    else if(deg>=45&&deg<135) zone='side_r';
+    else if(deg<=-45&&deg>-135) zone='side';
+    else zone='back';
+
+    if(texSet.name==='liberty'||texSet.name==='lt'){
+        if(zone==='front'||zone==='back'){
+            if(mesh.geometry!==headGroup.userData.frontGeo) mesh.geometry=headGroup.userData.frontGeo;
+        } else {
+            if(mesh.geometry!==headGroup.userData.sideGeo) mesh.geometry=headGroup.userData.sideGeo;
+        }
+    }
+    const newTex=texSet[zone];
+    if(newTex&&mat.map!==newTex){mat.map=newTex;mat.needsUpdate=true;}
 }
 
-// --- HORSE & JOCKEY ---
-function createHorse(colorHex, number, mascotPoolIdx) {
-    const root=new THREE.Group(), body=new THREE.Group(); root.add(body);
-    const brown=toon({color:0x6B4226}), dkBr=toon({color:0x3a2212});
+// --- HORSE ---
+function createHorse(colorHex,number,mascotPoolIdx){
+    const root=new THREE.Group(),body=new THREE.Group();root.add(body);
+    const brown=toon({color:0x6B4226}),ltBr=toon({color:0x8B6B4A}),dkBr=toon({color:0x3a2212});
+    const hoofM=toon({color:0x1a1a1a}),maneM=toon({color:0x1a0f00}),hoodC=toon({color:new THREE.Color(colorHex)});
 
-    // Restore Horse Detail
-    const torso=new THREE.Mesh(new THREE.SphereGeometry(1,14,10),brown); torso.scale.set(6.5,2.6,2.6); torso.position.y=6.5; body.add(torso);
-    const st=saddleTex(number.toString(),colorHex), sm=toon({map:st});
-    const sR=new THREE.Mesh(new THREE.PlaneGeometry(5.5,4),sm); sR.position.set(-.5,7,2.7); body.add(sR);
-    const sL=new THREE.Mesh(new THREE.PlaneGeometry(5.5,4),sm); sL.position.set(-.5,7,-2.7); sL.rotation.y=Math.PI; body.add(sL);
-    
+    const torso=new THREE.Mesh(new THREE.SphereGeometry(1,14,10),brown);torso.scale.set(6.5,2.6,2.6);torso.position.y=6.5;torso.castShadow=true;body.add(torso);
+    const rump=new THREE.Mesh(new THREE.SphereGeometry(3,10,10),brown);rump.position.set(-4.5,7,0);body.add(rump);
+    const chest=new THREE.Mesh(new THREE.SphereGeometry(2.6,10,10),brown);chest.position.set(4.5,7,0);body.add(chest);
+
+    const st=saddleTex(number.toString(),colorHex),sm=toon({map:st});
+    const sR=new THREE.Mesh(new THREE.PlaneGeometry(5.5,4),sm);sR.position.set(-.5,7,2.7);body.add(sR);
+    const sL=new THREE.Mesh(new THREE.PlaneGeometry(5.5,4),sm);sL.position.set(-.5,7,-2.7);sL.rotation.y=Math.PI;body.add(sL);
+
     const neckCurve=new THREE.QuadraticBezierCurve3(new THREE.Vector3(5,7.5,0),new THREE.Vector3(7,11,0),new THREE.Vector3(9.5,13.5,0));
-    const neck=new THREE.Mesh(new THREE.TubeGeometry(neckCurve,12,1.6,8,false),brown); body.add(neck);
+    const neck=new THREE.Mesh(new THREE.TubeGeometry(neckCurve,12,1.6,8,false),brown);neck.castShadow=true;body.add(neck);
+
+    const skull=new THREE.Mesh(new THREE.SphereGeometry(1,12,10),brown);skull.scale.set(3.2,1.5,1.5);skull.position.set(11,14,0);body.add(skull);
+    const muzzle=new THREE.Mesh(new THREE.SphereGeometry(1,10,8),ltBr);muzzle.scale.set(1.6,1.1,1.2);muzzle.position.set(13.5,13.3,0);body.add(muzzle);
+    const nm=new THREE.MeshBasicMaterial({color:0x333333});
+    for(let s of[-1,1]){const n=new THREE.Mesh(new THREE.SphereGeometry(.3,6,6),nm);n.position.set(15,13.3,s*.6);body.add(n);}
+    const hoodMesh=new THREE.Mesh(new THREE.SphereGeometry(1,12,10),hoodC);hoodMesh.scale.set(3.4,1.65,1.65);hoodMesh.position.set(11,14,0);body.add(hoodMesh);
+    const ehm=new THREE.MeshBasicMaterial({color:0x111111});
+    for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.CircleGeometry(.65,8),ehm);e.position.set(12.5,14.5,s*1.66);if(s<0)e.rotation.y=Math.PI;body.add(e);}
+    for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.ConeGeometry(.55,2.2,6),hoodC);e.position.set(10,16,s*.9);e.rotation.z=.15;body.add(e);}
+
+    for(let i=0;i<5;i++){const t=new THREE.Mesh(new THREE.SphereGeometry(.6,6,6),maneM);t.scale.set(1,1.2,1.8);t.position.set(6+i*1.1,10+i*1,0);body.add(t);}
+    const tailG=new THREE.Group();
+    const tail1=new THREE.Mesh(new THREE.SphereGeometry(.4,6,6),maneM);tail1.scale.set(1,2.5,1);tail1.position.y=-1.2;tailG.add(tail1);
+    const tail2=new THREE.Mesh(new THREE.SphereGeometry(.35,6,6),maneM);tail2.scale.set(1,2,1);tail2.position.set(-.4,-2.5,0);tailG.add(tail2);
+    tailG.position.set(-7.5,8.5,0);tailG.rotation.z=.6;body.add(tailG);
 
     const legs=[];
-    const thighGeo=new THREE.CylinderGeometry(.45,.6,5,8); thighGeo.translate(0,-2.5,0);
-    const shinGeo=new THREE.CylinderGeometry(.35,.45,4.5,8); shinGeo.translate(0,-2.25,0);
-    const positions=[[4,5,1.7],[4,5,-1.7],[-4,5,1.7],[-4,5,-1.7]];
-    positions.forEach(p=>{
-        const thigh=new THREE.Mesh(thighGeo,dkBr); thigh.position.set(p[0],p[1],p[2]); body.add(thigh);
-        const shin=new THREE.Mesh(shinGeo,dkBr); shin.position.y=-5; thigh.add(shin);
+    const thighGeo=new THREE.CylinderGeometry(.45,.6,5,8);thighGeo.translate(0,-2.5,0);
+    const shinGeo=new THREE.CylinderGeometry(.35,.45,4.5,8);shinGeo.translate(0,-2.25,0);
+    [[4,5,1.7],[4,5,-1.7],[-4,5,1.7],[-4,5,-1.7]].forEach(p=>{
+        const thigh=new THREE.Mesh(thighGeo,dkBr);thigh.position.set(p[0],p[1],p[2]);thigh.castShadow=true;body.add(thigh);
+        const shin=new THREE.Mesh(shinGeo,dkBr);shin.position.y=-5;thigh.add(shin);
+        const hoof=new THREE.Mesh(new THREE.SphereGeometry(.5,6,6),hoofM);hoof.scale.set(1.2,.6,1);hoof.position.y=-4.5;shin.add(hoof);
         legs.push({thigh,shin});
     });
 
-    // JOCKEY Restored Body Mass
-    const jG=new THREE.Group(); jG.position.set(0,9.5,0); body.add(jG);
+    // FIX: Simple jockey - just a colored cone body + head on top. No arms/legs clutter.
+    const jG=new THREE.Group();jG.position.set(0,9.5,0);body.add(jG);
     const jm=toon({color:new THREE.Color(colorHex)});
-    const jTorso=new THREE.Mesh(new THREE.SphereGeometry(1.4, 8, 8), jm); 
-    jTorso.scale.set(1.6, 1, 1.3); jTorso.position.set(-0.8, 1.5, 0); jG.add(jTorso);
-    const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.6, 1.1, 3.2, 6), jm);
-    jNeck.position.set(0.6, 3.8, 0); jNeck.rotation.z = -0.7; jG.add(jNeck);
+    // Cone body sitting on horse back
+    const jBody=new THREE.Mesh(new THREE.ConeGeometry(1.2,3.5,8),jm);
+    jBody.position.y=1.8;
+    jBody.rotation.z=-0.15; // slight forward lean
+    jG.add(jBody);
 
-    for(let s of[-1,1]){
-        const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.3, 4, 6), jm);
-        arm.position.set(1.4, 1.2, s*1.1); arm.rotation.z = -1.4; jG.add(arm);
-        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.4, 2.5, 6), toon({color:0xffffff})); 
-        leg.position.set(-1.2, -0.2, s*1.2); leg.rotation.z=0.4; jG.add(leg);
-    }
-    
-    const mHead=buildMascotHead(mascotPoolIdx); 
-    mHead.position.set(1.6, 5.2, 0); 
+    // Head on top
+    const mHead=buildMascotHead(mascotPoolIdx);
+    mHead.position.set(0.2,5.5,0);
     jG.add(mHead);
 
-    return{root,body,legs, jG, head:mHead};
+    return{root,body,tailG,legs,jG};
 }
 
-// --- LOGIC & UI ---
+// --- UI ---
 document.getElementById('player-horse-name').innerText=`#${playerHorse.number} ${playerHorse.name}`;
+
 document.getElementById('solo-btn').addEventListener('click',()=>{
-    isMultiplayer=false; document.getElementById('lobby').classList.add('hidden');
-    document.getElementById('tapping-phase').classList.remove('hidden'); startTapping();
+    isMultiplayer=false;
+    document.getElementById('lobby').classList.add('hidden');
+    document.getElementById('main-title').classList.add('hidden');
+    document.getElementById('tapping-phase').classList.remove('hidden');
+    startTapping();
 });
+
+document.getElementById('create-btn').addEventListener('click',async()=>{
+    isMultiplayer=true;isPlayer1=true;
+    const seed=Math.floor(Math.random()*2147483647);
+    const doc=await db.collection('shmerbyGames').add({
+        p1Id:myPlayerId,p2Id:null,p1Name:playerHorse.name,p1Number:playerHorse.number,p1Color:playerHorse.color,
+        p2Name:'',p2Number:0,p2Color:'',p1Taps:null,p2Taps:null,seed,status:'waiting',created:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    gameDocRef=doc;
+    document.getElementById('game-url').value=location.origin+location.pathname+'?gameId='+doc.id;
+    document.getElementById('share-area').classList.remove('hidden');
+    document.getElementById('create-btn').classList.add('hidden');
+    document.getElementById('solo-btn').classList.add('hidden');
+    unsubGame=gameDocRef.onSnapshot(snap=>{
+        const d=snap.data();if(!d)return;
+        if(d.status==='ready'&&d.p2Id){
+            document.getElementById('waiting-msg').classList.add('hidden');
+            document.getElementById('join-msg').classList.remove('hidden');
+            document.getElementById('join-msg').querySelector('p').textContent=`Opponent joined: #${d.p2Number} ${d.p2Name}`;
+        }
+        if(d.status==='tapping'&&!tappingDone){
+            document.getElementById('lobby').classList.add('hidden');
+            document.getElementById('main-title').classList.add('hidden');
+            document.getElementById('tapping-phase').classList.remove('hidden');
+            startTapping();
+        }
+        if(d.status==='racing'&&d.p1Taps!==null&&d.p2Taps!==null){
+            document.getElementById('tapping-phase').classList.add('hidden');
+            startRaceFromData(d);
+        }
+    });
+});
+
+document.getElementById('copy-btn').addEventListener('click',()=>{
+    const inp=document.getElementById('game-url');inp.select();document.execCommand('copy');
+    document.getElementById('copy-btn').textContent='COPIED!';
+    setTimeout(()=>document.getElementById('copy-btn').textContent='COPY LINK',2000);
+});
+
 document.getElementById('ready-btn').addEventListener('click',async()=>await gameDocRef.update({status:'tapping'}));
 
+const urlParams=new URLSearchParams(location.search);
+const joinId=urlParams.get('gameId');
+if(joinId){
+    isMultiplayer=true;isPlayer1=false;
+    document.getElementById('create-btn').classList.add('hidden');
+    document.getElementById('solo-btn').classList.add('hidden');
+    gameDocRef=db.collection('shmerbyGames').doc(joinId);
+    gameDocRef.get().then(async snap=>{
+        const d=snap.data();
+        if(d&&!d.p2Id){
+            await gameDocRef.update({p2Id:myPlayerId,p2Name:playerHorse.name,p2Number:playerHorse.number,p2Color:playerHorse.color,status:'ready'});
+            document.getElementById('join-msg').classList.remove('hidden');
+            document.getElementById('join-msg').querySelector('p').textContent='Waiting for host to start...';
+            document.getElementById('ready-btn').classList.add('hidden');
+        }
+        unsubGame=gameDocRef.onSnapshot(snap2=>{
+            const d2=snap2.data();if(!d2)return;
+            if(d2.status==='tapping'&&!tappingDone){
+                document.getElementById('lobby').classList.add('hidden');
+                document.getElementById('main-title').classList.add('hidden');
+                document.getElementById('tapping-phase').classList.remove('hidden');
+                startTapping();
+            }
+            if(d2.status==='racing'&&d2.p1Taps!==null&&d2.p2Taps!==null){
+                document.getElementById('tapping-phase').classList.add('hidden');
+                startRaceFromData(d2);
+            }
+        });
+    });
+}
+
+// --- TAPPING ---
 let tapping=false,tappingDone=false;
 function startTapping(){
-    if(tapping)return; tapping=true; playerHorse.taps=0; const st=Date.now();
+    if(tapping)return;tapping=true;playerHorse.taps=0;
+    const st=Date.now();
     const ti=setInterval(()=>{
         let r=(10-(Date.now()-st)/1000).toFixed(1);
         if(r<=0){r=0;clearInterval(ti);endTapping();}
@@ -281,114 +425,134 @@ function startTapping(){
     },100);
 }
 document.getElementById('tap-zone').addEventListener('pointerdown',e=>{e.preventDefault();playerHorse.taps++;});
+
 async function endTapping(){
-    tappingDone=true; document.getElementById('tapping-phase').classList.add('hidden');
+    tappingDone=true;
+    document.getElementById('tapping-phase').classList.add('hidden');
     if(isMultiplayer&&gameDocRef){
-        const field=isPlayer1?'p1Taps':'p2Taps'; await gameDocRef.update({[field]:playerHorse.taps});
-        const snap=await gameDocRef.get(); const d=snap.data();
+        const field=isPlayer1?'p1Taps':'p2Taps';
+        await gameDocRef.update({[field]:playerHorse.taps});
+        const snap=await gameDocRef.get();const d=snap.data();
         if(d.p1Taps!==null&&d.p2Taps!==null) await gameDocRef.update({status:'racing'});
     } else { startSoloRace(); }
 }
 
-function startSoloRace(){
-    if(raceStarted)return; raceStarted=true; const rng=mulberry32(Date.now());
-    gameHorses.push(playerHorse);
-    for(let i=0;i<5;i++){
-        let n; do{n=Math.floor(rng()*20)+1;}while(gameHorses.some(h=>h.number===n));
-        gameHorses.push({name:genName(),taps:Math.floor(rng()*45)+20,isPlayer:false,color:botColors[i],number:n,isHuman:false});
+// --- RACE ---
+let raceStarted=false;
+function startRaceFromData(d){
+    if(raceStarted)return;raceStarted=true;
+    const rng=mulberry32(d.seed);
+    gameHorses.push(
+        {name:d.p1Name,taps:d.p1Taps,isPlayer:isPlayer1,color:d.p1Color||'#e91e63',number:d.p1Number,isHuman:true,style:0},
+        {name:d.p2Name,taps:d.p2Taps,isPlayer:!isPlayer1,color:d.p2Color||'#2196f3',number:d.p2Number,isHuman:true,style:0}
+    );
+    const usedNums=new Set([gameHorses[0].number,gameHorses[1].number]);
+    for(let i=0;i<4;i++){
+        let n;do{n=Math.floor(rng()*20)+1;}while(usedNums.has(n));usedNums.add(n);
+        gameHorses.push({name:genName(),taps:Math.floor(rng()*45)+20,isPlayer:false,color:botColors[i],number:n,style:Math.floor(rng()*3),isHuman:false});
     }
     buildAndStartRace(rng);
 }
 
-let raceStarted=false;
+function startSoloRace(){
+    if(raceStarted)return;raceStarted=true;
+    const rng=mulberry32(Date.now());
+    gameHorses.push(playerHorse);
+    for(let i=0;i<5;i++){
+        let n;do{n=Math.floor(rng()*20)+1;}while(gameHorses.some(h=>h.number===n));
+        gameHorses.push({name:genName(),taps:Math.floor(rng()*45)+20,isPlayer:false,color:botColors[i],number:n,style:Math.floor(rng()*3),isHuman:false});
+    }
+    buildAndStartRace(rng);
+}
+
 function buildAndStartRace(rng){
+    // FIX: Hide title so it doesn't overlap race UI
     document.getElementById('main-title').classList.add('hidden');
     document.getElementById('race-phase').classList.remove('hidden');
     raceStartTime=Date.now();
     for(let i=gameHorses.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[gameHorses[i],gameHorses[j]]=[gameHorses[j],gameHorses[i]];}
-    const mascotPool = [0,1,2,3,4,5];
+    const mascotPool=[0,1,2,3,4,5];
     for(let i=mascotPool.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[mascotPool[i],mascotPool[j]]=[mascotPool[j],mascotPool[i]];}
 
     gameHorses.forEach((h,i)=>{
-        h.angle=START_ANGLE-(0.02+i*.015); h.baseSpeed=AVG_SPEED*.85+(h.taps*0.000004);
-        h.finished=false; h.laneOffset=5+i*8;
-        const model=createHorse(h.color,h.number, mascotPool[i]);
-        scene.add(model.root); h.model=model;
+        h.angle=START_ANGLE-(0.02+i*.015);
+        h.baseSpeed=AVG_SPEED*.85+(h.taps*0.000004);
+        h.earlyMod=h.style===0?1.08:h.style===1?0.98:0.92;
+        h.lateMod=h.style===0?0.94:h.style===1?1.04:1.12;
+        h.energy=1;h.finished=false;h.laneOffset=5+i*8;
+        const model=createHorse(h.color,h.number,mascotPool[i]);
+        scene.add(model.root);h.model=model;
     });
-    animate();
+    updateLB();animate();
 }
 
 function updateLB(){
     const sorted=[...gameHorses].sort((a,b)=>{if(a.finished&&!b.finished)return-1;if(!a.finished&&b.finished)return 1;return b.angle-a.angle;});
-    const list=document.getElementById('standings-list'); list.innerHTML='';
+    const list=document.getElementById('standings-list');list.innerHTML='';
     sorted.forEach((h,i)=>{
+        const youTag=h.isPlayer?'<span class="you-tag">YOU</span>':'';
         list.innerHTML+=`<div class="lb-row"><span class="lb-place">${['1ST','2ND','3RD','4TH','5TH','6TH'][i]}</span>
         <div class="lb-color" style="background:${h.color}"></div>
-        <span class="lb-name" style="color:${h.isPlayer?'#ffeb3b':'#fff'}">#${h.number} ${h.name}${h.isPlayer?'<span class="you-tag">YOU</span>':''}</span></div>`;
+        <span class="lb-name" style="color:${h.isPlayer?'#ffeb3b':'#fff'}">#${h.number} ${h.name}${youTag}</span></div>`;
     });
 }
-
-function showNotif(t){
-    const e=document.createElement('div');e.className='finish-notif';e.innerText=t;
-    document.getElementById('notifications-container').appendChild(e);
-    setTimeout(()=>{e.style.opacity=0;setTimeout(()=>e.remove(),500);},3000);
-}
+function showNotif(t){const e=document.createElement('div');e.className='finish-notif';e.innerText=t;
+document.getElementById('notifications-container').appendChild(e);setTimeout(()=>{e.style.opacity=0;setTimeout(()=>e.remove(),500);},3000);}
 
 const clock=new THREE.Clock();
 function animate(){
-    if(raceFinished) return;
-    requestAnimationFrame(animate);
-    const time=clock.getElapsedTime(), gSpeed=18;
-    const el=((Date.now()-raceStartTime)/1000);
-    document.getElementById('race-timer').innerText=`${Math.floor(el/60)}:${(el%60).toFixed(1).padStart(4,'0')}`;
-    
-    let leader=null, leaderAngle=-999, maxA=-999;
-    gameHorses.forEach(h=>{ if(h.angle>maxA) maxA=h.angle; });
+    if(!raceFinished)requestAnimationFrame(animate);
+    const time=clock.getElapsedTime(),gSpeed=18;
+    if(!raceFinished){
+        const el=((Date.now()-raceStartTime)/1000);
+        document.getElementById('race-timer').innerText=`${Math.floor(el/60)}:${(el%60).toFixed(1).padStart(4,'0')}`;
+    }
+    let leader=null,leaderAngle=-999,maxA=-999;
+    gameHorses.forEach(h=>{if(h.angle>maxA)maxA=h.angle;});
     const progress=(maxA-START_ANGLE)/(FINISH_ANGLE-START_ANGLE);
     if(progress>.78&&!stretchCalled){
-        stretchCalled=true; camMode='stretch';
-        const sc=document.getElementById('stretch-call'); sc.innerHTML="AND DOWN THE<br>STRETCH THEY COME!"; sc.classList.add('show');
+        stretchCalled=true;camMode='stretch';
+        const sc=document.getElementById('stretch-call');sc.innerHTML="AND DOWN THE<br>STRETCH THEY COME!";sc.classList.add('show');
         setTimeout(()=>sc.classList.remove('show'),3500);
     }
     document.getElementById('furlong-fill').style.width=Math.min(100,progress*100)+'%';
 
     gameHorses.forEach((h,i)=>{
-        if(!h.model) return;
-        const energy=(0.95 + Math.random()*0.1);
-        h.angle+=Math.max(h.baseSpeed*energy, 0.0004);
-        
+        const raceMod=progress<.5?h.earlyMod:h.lateMod;
+        h.energy+=(Math.random()-.5)*.003;h.energy=Math.max(.93,Math.min(1.07,h.energy));
+        h.angle+=Math.max(h.baseSpeed*raceMod*h.energy+(Math.random()-.0005)*.0001,.0004);
         const rank=gameHorses.filter(o=>o.angle>h.angle).length;
-        const target=Math.max(5,Math.min(5+rank*5.5+Math.sin(time*.5+i)*2,DIRT_W-8));
-        
-        gameHorses.forEach((other, j) => {
-            if(i === j || !other.model) return;
-            if(Math.abs(h.angle - other.angle) < 0.045 && Math.abs(h.laneOffset - other.laneOffset) < 6.5) { 
-                if(h.laneOffset > other.laneOffset) h.laneOffset += 0.5; else h.laneOffset -= 0.5;
+        h.targetLane=Math.max(5,Math.min(5+rank*5.5+Math.sin(time*.5+i)*2,DIRT_W-8));
+        gameHorses.forEach((other,j)=>{
+            if(i===j)return;
+            const angleDist=Math.abs(h.angle-other.angle),laneDist=Math.abs(h.laneOffset-other.laneOffset);
+            if(angleDist<0.045&&laneDist<6){
+                const push=(6-laneDist)*0.1;
+                if(h.laneOffset>other.laneOffset) h.laneOffset+=push; else h.laneOffset-=push;
             }
         });
-
-        h.laneOffset+=(target-h.laneOffset)*.025;
-        const r=BASE_R+h.laneOffset, x=Math.cos(h.angle)*r*TRACK_SX,z=Math.sin(h.angle)*r;
+        h.laneOffset+=(h.targetLane-h.laneOffset)*.025;
+        const r=BASE_R+h.laneOffset;
+        const x=Math.cos(h.angle)*r*TRACK_SX,z=Math.sin(h.angle)*r;
         const dx=-Math.sin(h.angle)*r*TRACK_SX,dz=Math.cos(h.angle)*r;
-        h.model.root.position.set(x,0,z); h.model.root.rotation.y=Math.atan2(-dz,dx);
+        h.model.root.position.set(x,0,z);h.model.root.rotation.y=Math.atan2(-dz,dx);
 
-        const c=time*gSpeed+i*1.7, bound=Math.max(0,Math.sin(c))*2;
-        h.model.body.position.y=bound; h.model.body.rotation.z=Math.sin(c)*.06;
-        
-        // Gallop Animate
-        const fl0=Math.sin(c)*.55, fl1=Math.sin(c+.7)*.55;
-        h.model.legs[0].thigh.rotation.z=fl0; h.model.legs[0].shin.rotation.z=.2+Math.max(0,-fl0)*1.2;
-        h.model.legs[1].thigh.rotation.z=fl1; h.model.legs[1].shin.rotation.z=.2+Math.max(0,-fl1)*1.2;
-        const hl0=Math.sin(c+Math.PI)*.6, hl1=Math.sin(c+Math.PI+.7)*.6;
-        h.model.legs[2].thigh.rotation.z=hl0; h.model.legs[2].shin.rotation.z=-.1+Math.max(0,hl0)*1;
-        h.model.legs[3].thigh.rotation.z=hl1; h.model.legs[3].shin.rotation.z=-.1+Math.max(0,hl1)*1;
-
-        updateHeadAngle(h.model.root, h.model.head, camera);
+        const c=time*gSpeed+i*1.7,bound=Math.max(0,Math.sin(c))*2;
+        h.model.body.position.y=bound;h.model.body.rotation.z=Math.sin(c)*.06;
+        h.model.legs.forEach((leg,li)=>{
+            const offset=li<2?0:Math.PI;
+            const swing=Math.sin(c+offset+(li%2?0.7:0))*.55;
+            leg.thigh.rotation.z=swing;
+            leg.shin.rotation.z=li<2?(.2+Math.max(0,-swing)*1.2):(-.1+Math.max(0,swing)*1);
+        });
+        h.model.jG.position.y=9.5+bound*.35;
+        updateHeadAngle(h.model.root,h.model.jG,camera);
 
         if(h.angle>=FINISH_ANGLE&&!h.finished){
-            h.finished=true; finishOrder.push(h); showNotif(`🏁 #${h.number} ${h.name} finishes.`);
+            h.finished=true;finishOrder.push(h);
+            showNotif(`🏁 #${h.number} ${h.name} finishes.`);
         }
-        if(!h.finished&&h.angle>leaderAngle){leaderAngle=h.angle; leader=h;}
+        if(!h.finished&&h.angle>leaderAngle){leaderAngle=h.angle;leader=h;}
     });
     updateLB();
 
@@ -400,12 +564,13 @@ function animate(){
         camera.lookAt(camTarget);
     }
 
-    if(finishOrder.length===gameHorses.length && !raceFinished){
+    if(finishOrder.length===gameHorses.length&&!raceFinished){
         raceFinished=true;
         setTimeout(()=>{
             const rl=document.getElementById('results-list');
             finishOrder.forEach((h,i)=>{
-                rl.innerHTML+=`<div class="result-row"><span class="result-place">${i===0?'WIN':i===1?'PLACE':'SHOW'}</span><div class="lb-color" style="background:${h.color}"></div><span>#${h.number} ${h.name}</span></div>`;
+                const t=i===0?'WIN':i===1?'PLACE':i===2?'SHOW':`${i+1}TH`;
+                rl.innerHTML+=`<div class="result-row"><span class="result-place">${t}</span><div class="lb-color" style="background:${h.color}"></div><span style="color:${h.isPlayer?'#ffeb3b':'#fff'}">#${h.number} ${h.name}${h.isPlayer?' ⭐':''}</span></div>`;
             });
             document.getElementById('results-modal').style.display='flex';
         },2000);
