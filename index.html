@@ -165,8 +165,8 @@ const texLoader = new THREE.TextureLoader(loadingManager);
 const LT_SET = { name: 'lt', front: "lt-front.png", side: "lt-side.png", side_r: "lt-side-r.png", back: "lt-back.png" };
 const GEO_SET = { name: 'george', front: "george-front.png", side: "george-side.png", side_r: "george-side-r.png", back: "george-back.png" };
 const DAV_SET = { name: 'david', front: "david-front.png", side: "david-side-r.png", side_r: "david-side.png", back: "david-back.png" };
-const LIB_SET = { name: 'liberty', front: "liberty-front.png", side: "liberty-side_r.png", side_r: "liberty-side.png", back: "liberty-back.png" };
-const BUN_SET = { name: 'bunny', front: "bunny-front.png", side: "bunny-side_r.png", side_r: "bunny-side.png", back: "bunny-back.png" };
+const LIB_SET = { name: 'liberty', front: "liberty-front.png", side: "liberty-side.png", side_r: "liberty-side-r.png", back: "liberty-back.png" };
+const BUN_SET = { name: 'bunny', front: "bunny-front.png", side: "bunny-side-r.png", side_r: "bunny-side.png", back: "bunny-back.png" };
 const TOM_SET = { name: 'tomato', front: "tomato-front.png", side: "tomato-side_r.png", side_r: "tomato-side.png", back: "tomato-back.png" };
 
 const ALL_SETS = [LT_SET, GEO_SET, DAV_SET, LIB_SET, BUN_SET, TOM_SET];
@@ -180,7 +180,7 @@ function buildMascotHead(idx) {
     const mat = new THREE.MeshBasicMaterial({ transparent: true, alphaTest: 0.5, side: THREE.DoubleSide });
     
     let frontSize = 10.5, sideSize = 10.5;
-    if (charData.name === 'lt') { frontSize = 12.5; sideSize = 13.5; }
+    if (charData.name === 'lt') { frontSize = 12.0; sideSize = 13.5; }
     else if (charData.name === 'liberty') { frontSize = 14.5; sideSize = 12.0; }
     
     const geoFront = new THREE.PlaneGeometry(frontSize, frontSize);
@@ -229,7 +229,7 @@ function updateHeadAngle(horseRoot, jockeyGroup, cam) {
 // --- HORSE & JOCKEY ---
 function createHorse(colorHex, number, mascotPoolIdx) {
     const root=new THREE.Group(), body=new THREE.Group(); root.add(body);
-    const brown=toon({color:0x6B4226}), ltBr=toon({color:0x8B6B4A}), dkBr=toon({color:0x3a2212});
+    const brown=toon({color:0x6B4226});
 
     const torso=new THREE.Mesh(new THREE.SphereGeometry(1,14,10),brown); torso.scale.set(6.5,2.6,2.6); torso.position.y=6.5; body.add(torso);
     const st=saddleTex(number.toString(),colorHex), sm=toon({map:st});
@@ -239,26 +239,27 @@ function createHorse(colorHex, number, mascotPoolIdx) {
     const neckGeo=new THREE.CylinderGeometry(1.2, 2.2, 8, 8); neckGeo.rotateZ(-0.5); neckGeo.translate(6, 10, 0);
     body.add(new THREE.Mesh(neckGeo, brown));
 
-    // JOCKEY
+    // JOCKEY - Built as a solid crouching mass
     const jG=new THREE.Group(); jG.position.set(0,9.5,0); body.add(jG);
     const jm=toon({color:new THREE.Color(colorHex)});
 
-    // Solid Body Unit
+    // Solid body hunk
     const jTorso=new THREE.Mesh(new THREE.SphereGeometry(1.4, 8, 8), jm); 
-    jTorso.scale.set(1.5, 1, 1.2); jTorso.position.set(-0.8, 1.5, 0); jG.add(jTorso);
+    jTorso.scale.set(1.6, 1, 1.3); jTorso.position.set(-0.8, 1.5, 0); jG.add(jTorso);
     
-    const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.5, 1, 3, 6), jm);
-    jNeck.position.set(0.5, 3.8, 0); jNeck.rotation.z = -0.6; jG.add(jNeck);
+    // Physical neck anchor
+    const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.6, 1.1, 3.2, 6), jm);
+    jNeck.position.set(0.6, 3.8, 0); jNeck.rotation.z = -0.7; jG.add(jNeck);
 
     for(let s of[-1,1]){
-        const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.25, 4, 6), jm);
-        arm.position.set(1.2, 1.2, s*1.0); arm.rotation.z = -1.3; jG.add(arm);
-        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.35, 2.5, 6), toon({color:0xffffff})); 
-        leg.position.set(-1.2, -0.2, s*1.1); leg.rotation.z=0.4; jG.add(leg);
+        const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.3, 4, 6), jm);
+        arm.position.set(1.4, 1.2, s*1.1); arm.rotation.z = -1.4; jG.add(arm);
+        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.4, 2.5, 6), toon({color:0xffffff})); 
+        leg.position.set(-1.2, -0.2, s*1.2); leg.rotation.z=0.4; jG.add(leg);
     }
     
     const mHead=buildMascotHead(mascotPoolIdx); 
-    mHead.position.set(1.4, 5.0, 0); 
+    mHead.position.set(1.6, 5.2, 0); 
     jG.add(mHead);
 
     return{root,body,legs:[],tailG:new THREE.Group()};
@@ -401,8 +402,6 @@ function buildAndStartRace(rng){
     gameHorses.forEach((h,i)=>{
         h.angle=START_ANGLE-(0.02+i*.015);
         h.baseSpeed=AVG_SPEED*.85+(h.taps*0.000004);
-        h.earlyMod=h.style===0?1.08:h.style===1?0.98:0.92;
-        h.lateMod=h.style===0?0.94:h.style===1?1.04:1.12;
         h.energy=1;h.finished=false; h.laneOffset=5+i*8;
         const model=createHorse(h.color,h.number, mascotPool[i]);
         scene.add(model.root);h.model=model;
@@ -414,6 +413,7 @@ function updateLB(){
     const sorted=[...gameHorses].sort((a,b)=>{if(a.finished&&!b.finished)return-1;if(!a.finished&&b.finished)return 1;return b.angle-a.angle;});
     const list=document.getElementById('standings-list');list.innerHTML='';
     sorted.forEach((h,i)=>{
+        if(!h) return;
         list.innerHTML+=`<div class="lb-row"><span class="lb-place">${['1ST','2ND','3RD','4TH','5TH','6TH'][i]}</span>
         <div class="lb-color" style="background:${h.color}"></div>
         <span class="lb-name" style="color:${h.isPlayer?'#ffeb3b':'#fff'}">#${h.number} ${h.name}${h.isPlayer?'<span class="you-tag">YOU</span>':''}</span></div>`;
@@ -428,7 +428,7 @@ function showNotif(t){
 
 const clock=new THREE.Clock();
 function animate(){
-    if(!raceFinished)requestAnimationFrame(animate);
+    if(!raceFinished) requestAnimationFrame(animate);
     const time=clock.getElapsedTime(),gSpeed=18;
     if(!raceFinished){
         const el=((Date.now()-raceStartTime)/1000);
@@ -436,7 +436,7 @@ function animate(){
     }
     
     let leader=null,leaderAngle=-999,maxA=-999;
-    gameHorses.forEach(h=>{if(h.angle>maxA)maxA=h.angle;});
+    gameHorses.forEach(h=>{ if(h.angle>maxA) maxA=h.angle; });
     const progress=(maxA-START_ANGLE)/(FINISH_ANGLE-START_ANGLE);
     if(progress>.78&&!stretchCalled){
         stretchCalled=true;camMode='stretch';
@@ -446,15 +446,15 @@ function animate(){
     document.getElementById('furlong-fill').style.width=Math.min(100,progress*100)+'%';
 
     gameHorses.forEach((h,i)=>{
-        const raceMod=progress<.5?h.earlyMod:h.lateMod;
+        if(!h.model) return;
         h.energy+=(Math.random()-.5)*.003;h.energy=Math.max(.93,Math.min(1.07,h.energy));
-        h.angle+=Math.max(h.baseSpeed*raceMod*h.energy+(Math.random()-.0005)*.0001,.0004);
+        h.angle+=Math.max(h.baseSpeed*h.energy+(Math.random()-.0005)*.0001,.0004);
         
         const rank=gameHorses.filter(o=>o.angle>h.angle).length;
         h.targetLane=Math.max(5,Math.min(5+rank*5.5+Math.sin(time*.5+i)*2,DIRT_W-8));
         
         gameHorses.forEach((other, j) => {
-            if(i === j) return;
+            if(i === j || !other.model) return;
             const angleDist = Math.abs(h.angle - other.angle);
             const laneDist = Math.abs(h.laneOffset - other.laneOffset);
             if(angleDist < 0.045 && laneDist < 6.5) { 
@@ -471,8 +471,7 @@ function animate(){
 
         const c=time*gSpeed+i*1.7, bound=Math.max(0,Math.sin(c))*2;
         h.model.body.position.y=bound;h.model.body.rotation.z=Math.sin(c)*.06;
-        h.model.jG.position.y=9.5+bound*.35;
-        updateHeadAngle(h.model.root, h.model.jG, camera);
+        updateHeadAngle(h.model.root, h.model.root.children[0].children[h.model.root.children[0].children.length-1], camera);
 
         if(h.angle>=FINISH_ANGLE&&!h.finished){
             h.finished=true;finishOrder.push(h);
@@ -482,7 +481,7 @@ function animate(){
     });
     updateLB();
 
-    if(leader){
+    if(leader && leader.model){
         const r=BASE_R+leader.laneOffset+(camMode==='broadcast'?70:25);
         const camPos=camMode==='broadcast'?new THREE.Vector3(Math.cos(leader.angle+.06)*r*TRACK_SX,32,Math.sin(leader.angle+.06)*r):new THREE.Vector3(80,55,-(BASE_R+DIRT_W/2)+15);
         camera.position.lerp(camPos,.08);
