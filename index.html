@@ -16,7 +16,7 @@
         #game-container{width:100vw;height:100vh;position:relative;display:flex;flex-direction:column;align-items:center;}
         #canvas-container{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;}
         .overlay{position:relative;z-index:10;text-align:center;}
-        h1{color:#ffd700;font-size:22px;text-shadow:4px 4px 0 #000;margin:18px 0;position:relative;z-index:10;}
+        h1{color:#ffd700;font-size:22px;text-shadow:4px 4px 0 #000;margin:18px 0;}
         .panel{background:rgba(0,0,0,0.7);padding:24px 32px;border-radius:12px;border:3px solid #ffd700;margin-top:40px;max-width:500px;width:90%;}
         #tap-zone{width:90%;max-width:600px;height:260px;margin:16px auto;background:#e53935;border:8px solid #000;
             box-shadow:0 10px 0 #b71c1c;display:flex;align-items:center;justify-content:center;
@@ -112,7 +112,7 @@
 </div>
 
 <script>
-// --- CONFIG & FIREBASE ---
+// --- FIREBASE & SETUP ---
 firebase.initializeApp({
     apiKey:"AIzaSyDicI1nKcrMDaaYkL_8q70yj1mM05tW5Ak",authDomain:"mookie-pig-challenge.firebaseapp.com",
     projectId:"mookie-pig-challenge",storageBucket:"mookie-pig-challenge.appspot.com",
@@ -177,7 +177,7 @@ function buildMascotHead(idx) {
     const mat = new THREE.MeshBasicMaterial({ transparent: true, alphaTest: 0.5, side: THREE.DoubleSide });
     
     let frontSize = 10.5, sideSize = 10.5;
-    if (charData.name === 'lt') { frontSize = 12.0; sideSize = 13.5; }
+    if (charData.name === 'lt') { frontSize = 12.5; sideSize = 13.5; }
     else if (charData.name === 'liberty') { frontSize = 14.5; sideSize = 12.0; }
     
     const geoFront = new THREE.PlaneGeometry(frontSize, frontSize);
@@ -203,6 +203,7 @@ function updateHeadAngle(horseRoot, headGroup, cam) {
     _parentWorldQuat.invert();
     headGroup.quaternion.copy(_targetQuat.premultiply(_parentWorldQuat));
     
+    const texSet = headGroup.userData.multiAngle;
     const rotY = horseRoot.rotation.y;
     _horseForward.set(Math.cos(rotY), 0, -Math.sin(rotY)).normalize();
     _camToHead.subVectors(cam.position, _headWorldPos);
@@ -212,7 +213,7 @@ function updateHeadAngle(horseRoot, headGroup, cam) {
     let zone = (deg > -45 && deg < 45) ? 'front' : (deg >= 45 && deg < 135) ? 'side' : (deg <= -45 && deg > -135) ? 'side_r' : 'back';
     
     headGroup.userData.headMesh.geometry = (zone === 'front' || zone === 'back') ? headGroup.userData.frontGeo : headGroup.userData.sideGeo;
-    const newTex = headGroup.userData.multiAngle[zone];
+    const newTex = texSet[zone];
     if (newTex && headGroup.userData.headMat.map !== newTex) { headGroup.userData.headMat.map = newTex; }
 }
 
