@@ -79,7 +79,8 @@
                 <p style="font-size:8px;color:#fff;margin-bottom:8px;">Share this link:</p>
                 <input type="text" id="game-url" readonly>
                 <button id="copy-btn">COPY LINK</button>
-                <p class="waiting" id="waiting-msg">WAITING FOR OPPONENT...</p>
+                <p class="waiting" id="waiting-msg">WAITING FOR PLAYERS...</p>
+                <button id="start-race-btn" class="hidden">START RACE</button>
             </div>
             <div id="join-msg" class="hidden" style="margin-top:12px;">
                 <p style="font-size:9px;color:#4caf50;">Opponent found! Get ready...</p>
@@ -121,6 +122,7 @@ function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a
 
 let playerHorse={name:genName(),taps:0,isPlayer:true,color:"#e91e63",number:Math.floor(Math.random()*20)+1};
 let gameHorses=[],finishOrder=[],raceFinished=false,stretchCalled=false,raceStartTime=0;
+let tapping=false,tappingDone=false;
 const botColors=["#2196f3","#4caf50","#ff9800","#9c27b0","#00bcd4"];
 const TRACK_SX=1.8,BASE_R=280,DIRT_W=75;
 const START_ANGLE=-Math.PI/2,FINISH_ANGLE=START_ANGLE+2*Math.PI;
@@ -379,7 +381,7 @@ document.getElementById('copy-btn').addEventListener('click',()=>{
     setTimeout(()=>document.getElementById('copy-btn').textContent='COPY LINK',2000);
 });
 
-document.getElementById('start-race-btn').addEventListener('click',async()=>await gameDocRef.update({status:'tapping'}));
+const srb=document.getElementById('start-race-btn');if(srb)srb.addEventListener('click',async()=>await gameDocRef.update({status:'tapping'}));
 document.getElementById('ready-btn').addEventListener('click',async()=>await gameDocRef.update({status:'tapping'}));
 
 const urlParams=new URLSearchParams(location.search);
@@ -421,7 +423,6 @@ if(joinId){
 }
 
 // --- TAPPING ---
-let tapping=false,tappingDone=false;
 function startTapping(){
     if(tapping)return;tapping=true;playerHorse.taps=0;
     const st=Date.now();
