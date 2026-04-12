@@ -34,20 +34,22 @@
             z-index:1000;display:flex;flex-direction:column;align-items:center;pointer-events:none;}
         .finish-notif{background:rgba(0,0,0,0.9);border:2px solid #ffd700;color:#fff;
             padding:10px 20px;margin-bottom:6px;font-size:10px;border-radius:4px;transition:opacity 0.5s ease;}
-        #leaderboard{position:absolute;bottom:0;left:0;width:100%;height:52px;
-            background:rgba(17,17,17,0.95);border-top:4px solid #ffd700;
-            display:flex;align-items:center;justify-content:center;z-index:100;padding:0 8px;}
-        #standings-list{display:flex;width:100%;max-width:1400px;justify-content:space-evenly;align-items:center;gap:5px;}
-        .lb-row{display:flex;align-items:center;flex:1;min-width:0;background:#333;padding:5px 7px;border-radius:4px;border:1px solid #555;}
-        .lb-place{color:#ffd700;margin-right:4px;font-size:8px;flex-shrink:0;}
-        .lb-color{width:9px;height:9px;border:2px solid #fff;margin-right:4px;display:inline-block;flex-shrink:0;}
-        .lb-name{white-space:nowrap;font-size:8px;overflow:hidden;text-overflow:ellipsis;min-width:0;flex-grow:1;text-align:left;}
+        #leaderboard{position:absolute;bottom:20px;left:20px;z-index:100;background:rgba(245,245,245,0.95);
+            border:2px solid #333;border-radius:4px;padding:0;min-width:280px;font-family:Arial,sans-serif;}
+        #lb-header{background:#1a1a1a;color:#fff;padding:6px 10px;font-size:10px;font-weight:bold;letter-spacing:1px;font-family:'Press Start 2P',monospace;}
+        #standings-list{display:flex;flex-direction:column;}
+        .lb-row{display:flex;align-items:center;padding:4px 10px;border-bottom:1px solid #ddd;font-size:11px;color:#222;}
+        .lb-row:last-child{border-bottom:none;}
+        .lb-num{width:22px;color:#000;font-weight:bold;font-size:11px;}
+        .lb-color{width:18px;height:14px;border:1px solid #000;margin-right:8px;display:inline-block;flex-shrink:0;}
+        .lb-name{font-weight:bold;flex-grow:1;text-transform:uppercase;letter-spacing:.5px;}
+        .lb-row.you{background:#fff8c4;}
         #results-modal{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
             background:rgba(0,0,0,0.95);border:6px solid #ffd700;padding:24px;
             z-index:1000;text-align:left;width:90%;max-width:480px;display:none;flex-direction:column;}
         .result-row{display:flex;align-items:center;margin:6px 0;font-size:10px;border-bottom:2px dashed #444;padding-bottom:6px;}
         .result-place{width:50px;color:#ffd700;}
-        #timer-display{font-size:34px;color:#fff;text-shadow:4px 4px #000;}
+        #timer-display{font-size:34px;color:#fff;text-shadow:4px 4px #000;margin-top:60px;}
         #race-header{position:absolute;top:10px;left:0;width:100%;z-index:100;text-align:center;padding:0 12px;}
         #race-status{text-shadow:3px 3px #000;font-size:15px;}
         #race-timer{position:absolute;top:10px;right:16px;z-index:100;font-size:12px;color:#fff;text-shadow:2px 2px #000;}
@@ -91,14 +93,10 @@
     </div>
     <div id="race-phase" class="hidden">
         <div id="race-header"><h2 id="race-status">AND THEY'RE OFF!</h2></div>
-        <div id="furlong-bar">
-            <div id="furlong-track"><div id="furlong-fill"></div></div>
-            <div id="furlong-labels"><span>START</span><span>5F</span><span>FINISH</span></div>
-        </div>
         <div id="race-timer"></div>
         <div id="stretch-call"></div>
         <div id="notifications-container"></div>
-        <div id="leaderboard"><div id="standings-list"></div></div>
+        <div id="leaderboard"><div id="lb-header">KENTUCKY SHMERBY</div><div id="standings-list"></div></div>
     </div>
     <div id="results-modal">
         <h2 id="results-title" style="text-align:center;margin-bottom:16px;"></h2>
@@ -115,18 +113,9 @@ firebase.initializeApp({
 const db=firebase.firestore();
 let myPlayerId=localStorage.getItem('shmerbyId');
 if(!myPlayerId){myPlayerId=Math.random().toString(36).substr(2,9);localStorage.setItem('shmerbyId',myPlayerId);}
-let gameDocRef=null,unsubGame=null,isMultiplayer=false,isPlayer1=true;
+let gameDocRef=null,unsubGame=null,isMultiplayer=false,isHost=false,myPlayerSlot=0;
 
-const DW=["Affirmed","Agile","Alysheba","American","Pharoah","Animal","Kingdom","Apollo","Aristides","Assault","Authentic",
-"Barbaro","Black","Gold","Bold","Venture","Brokers","Tip","Bubbling","Over","Burgoo","King","California","Chrome",
-"Cannonade","Carry","Back","Cavalcade","Charismatic","Citation","Count","Fleet","Dark","Star","Decidedly",
-"Donerail","Dust","Commander","Elwood","Exterminator","Ferdinand","Flying","Ebony","Foolish","Pleasure",
-"Funny","Cide","Fusaichi","Pegasus","Gallant","Fox","Genuine","Risk","Giacomo","Grindstone","Hindoo",
-"Iron","Liege","Jet","Pilot","Justify","Lawrin","Lucky","Debonair","Mage","Majestic","Prince",
-"Monarchos","Mystik","Dan","Needles","Northern","Dancer","Nyquist","Omaha","Orb",
-"Pensive","Plaudit","Pleasant","Colony","Ponder","Real","Quiet","Regret","Riva","Ridge","Sea","Hero",
-"Seattle","Slew","Secretariat","Silver","Charm","Smarty","Spectacular","Bid","Spend","Buck",
-"Sunday","Silence","Super","Saver","Swale","Swaps","Thunder","Gulch","Unbridled","War","Admiral","Whirlaway","Zev"];
+const DW=["people","history","art","information","map","family","government","health","system","computer","music","person","reading","method","data","food","understanding","theory","law","bird","literature","problem","software","control","knowledge","power","ability","love","internet","television","science","library","nature","fact","product","idea","temperature","investment","area","society","activity","story","industry","media","thing","oven","community","definition","safety","quality","development","language","management","player","variety","video","week","security","country","exam","movie","organization","equipment","physics","analysis","policy","series","thought","basis","boyfriend","direction","strategy","technology","army","camera","freedom","paper","environment","child","instance","month","truth","marketing","university","writing","article","department","difference","goal","news","audience","fishing","growth","income","marriage","user","combination","failure","meaning","medicine","philosophy","teacher","communication","night","chemistry","disease","disk","energy","nation","road","role","soup","advertising","location","success","addition","apartment","education","math","moment","painting","politics","attention","decision","event","property","shopping","student","wood","competition","distribution","entertainment","office","population","president","unit","category","cigarette","context","introduction","opportunity","performance","driver","flight","length","magazine","newspaper","relationship","teaching","cell","dealer","finding","lake","member","message","phone","scene","appearance","association","concept","customer","death","discussion","housing","inflation","insurance","mood","woman","advice","blood","effort","expression","importance","opinion","payment","reality","responsibility","situation","skill","statement","wealth","application","city","county","depth","estate","foundation","grandmother","heart","perspective","photo","recipe","studio","topic","collection","depression","imagination","passion","percentage","resource","setting","ad","agency","college","connection","criticism","debt","description","memory","patience","secretary","solution","administration","aspect","attitude","director","personality","psychology","recommendation","response","selection","storage","version","alcohol","argument","complaint","contract","emphasis","highway","loss","membership","possession","preparation","steak","union","agreement","cancer","currency","employment","engineering","entry","interaction","mixture","preference","region","republic","tradition","virus","actor","classroom","delivery","device","difficulty","drama","election","engine","football","guidance","hotel","owner","priority","protection","suggestion","tension","variation","anxiety","atmosphere","awareness","bath","bread","candidate","climate","comparison","confusion","construction","elevator","emotion","employee","employer","guest","height","leadership","mall","manager","operation","recording","sample","transportation","charity","cousin","disaster","editor","efficiency","way","year","work","day","man","world","life","part","house","course","case","place","end","group","company","party","school","money","point","example","state","business","area","water","hand","order","john","side","home","power","council","use","service","room","market","court","lot","war","police","interest","car","road","form","face","policy","research","sort","body","question","book","level","society","minister","view","door","line","community","south","city","god","father","centre","effect","staff","position","kind","job","action","act","process","north","age","evidence","idea","west","support","moment","sense","report","mind","church","morning","death","change","land","care","century","range","table","back","trade","history","study","street","committee","rate","word","team","other","sir","section","air","authority","role","reason","price","town","class","nature","subject","department","union","bank","member","value","need","east","practice","type","paper","date","decision","figure","right","wife","friend","club","quality","voice","lord","stage","king","us","situation","light","tax","production","march","art","board","may","hospital","month","music","cost","field","award","issue","bed","project","chapter","girl","game","amount","basis","knowledge","approach","series","love","top","news","front","account","rest","labour","structure","hair","bill","heart","force","attention","movement","success","letter","agreement","capital","analysis","population","environment","performance","model","material","theory","growth","fire","chance","son","sea","record","size","property","space","term","plan","treatment","energy","st","peter","income","cup","scheme","design","response","association","choice","pressure","hall","couple","technology","defence","list","loss","contract","county","wall","paul","difference","army","hotel","sun","product","summer","set","village","colour","floor","season","unit","park","hour","investment","test","garden","husband","employment","style","science","look","deal","charge","help","economy","page","risk","advice","event","picture","commission","fish","college","oil","doctor","opportunity","film","conference","operation","application","press","extent","addition","station","window","shop","access","region","doubt","majority","degree","television","blood","statement","sound","election","parliament","site","mark","importance","title","species","increase","return","concern","public","competition","software","glass","lady","answer","earth","daughter","purpose","responsibility","leader","river","eye","ability","appeal","opposition","campaign","respect","task","instance","sale","whole","officer","method","division","source","piece","pattern","lack","disease","equipment","surface","oxford","demand","post","mouth","radio","provision","attempt","sector","firm","status","peace","variety","teacher","show","speaker","baby","arm","base","miss","safety","trouble","culture","direction","context","character","box","discussion","past","weight","organisation","start","brother","league","condition","machine","argument","sex","budget","english","transport","share","mum","cash","principle","exchange","aid","library","version","rule","tea","balance","afternoon","reference","protection","truth","district","turn","smith","review","minute","duty","survey","presence","influence","stone","dog","benefit","collection","executive","speech","function","queen","marriage","stock","failure","kitchen","student","effort","holiday","career","attack","length","horse","progress","plant","visit","relation","ball","memory","bar","opinion","quarter","impact","scale","race","image","trust","justice","edge","gas","railway","expression","advantage","gold","wood","network","text","forest","sister","chair","cause","foot","rise","half","winter","corner","insurance","step","damage","credit","pain","possibility","legislation","strength","speed","crime","hill","debate","will","supply","present","confidence","mary","patient","wind","solution","band","museum","farm","pound","henry","match","assessment","message","football","animal","skin","scene","article","stuff","introduction","play","fear","dad","proportion","island","contact","japan","claim","kingdom","video","tv","existence","telephone","move","traffic","distance","relief","cabinet","unemployment","reality","target","trial","rock","concept","spirit","accident","coffee","phone","distribution","train","sight","difficulty","factor","exercise","weekend","battle","prison","grant","aircraft","tree","bridge","strategy","contrast","communication","background","shape","wine","star","hope","selection","detail","user","path","client","search","master","rain","offer","goal","dinner","freedom","attitude","while","seat","manner","favour","fig","pair","crisis","smile","prince","danger","call","capacity","output","note","procedure","theatre","tour","recognition","middle","absence","sentence","package","track","card","sign","commitment","threat","weather","element","conflict","notice","victory","bottom","finance","fund","violence","file","profit","standard","jack","route","china","expenditure","second","discipline","congress","individual","lead","consideration","debt","option","payment","exhibition","reform","emphasis","spring","feature","touch","estate","assembly","volume","youth","curriculum","contribution","martin","tom","boat","institute","branch","bus","waste","heat","neck","object","captain","challenge","conversation","occasion","code","crown","birth","silence","faith","hell","entry","transfer","gentleman","bag","coal","investigation","leg","belief","total","major","document","description","murder","aim","manchester","conclusion","drug","pleasure","connection","owner","treaty","tony","alan","desire","professor","copy","ministry","acid","palace","address","institution","lunch","generation","partner","cross","reduction","welfare","definition","key","release","vote","examination","judge","sky","breath","creation","row","guide","milk","cover","screen","intention","jones","silver","journey","explanation","green","measure","brain","significance","phase","injury","run","coast","technique","valley","drink","potential","drive","revolution","bishop","settlement","christ","metal","motion","index","adult","sport","surprise","pension","factory","tape","flow","iron","trip","lane","pool","independence","hole","un","flat","content","pay","noise","session","appointment","fashion","consumer","accommodation","mike","religion","author","northern","assistance","interpretation","display","shoulder","agent","gallery","proposal","sequence","simon","ship","interview","vehicle","democracy","improvement","involvement","general","enterprise","van","meal","breakfast","motor","channel","impression","tone","sheet","pollution","bob","beauty","square","vision","spot","distinction","brown","crowd","fuel","desk","sum","decline","revenue","fall","diet","bedroom","soil","reader","shock","fruit","behalf","deputy","roof","nose","steel","co","artist","graham","plate","song","formation","grass","spokesman","ice","talk","program","link","ring","expert","establishment","plastic","rail","passage","joe","parish","ref","emergency","liability","identity","framework","strike","countryside","border","bottle","autumn","cat","agriculture","concentration","guy","dress","victim","mountain","editor","theme","error","loan","stress","recovery","electricity","recession","request","lewis","white","walk","focus","chief","parent","sleep","mass","jane","bush","hill","item","lifespan","lee","publication","decade","beach","sugar","writer","panel","struggle","dream","outcome","offence","resolution","reputation","specialist","taylor","pub","port","incident","representation","chain","initiative","clause","resistance","mistake","worker","advance","empire","notion","mirror","frank","average","expansion","block","alternative","chancellor","meat","store","self","break","corporation","convention","partnership","furniture","round","regime","inquiry","rugby","scope","gate","minority","intelligence","restaurant","consequence","mill","golf","retirement","plane","gun","gap","core","uncle","thatcher","fun","arrival","snow","command","abuse","limit"];
 function genName(){return DW[Math.floor(Math.random()*DW.length)]+' '+DW[Math.floor(Math.random()*DW.length)];}
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 
@@ -135,7 +124,7 @@ let gameHorses=[],finishOrder=[],raceFinished=false,stretchCalled=false,raceStar
 const botColors=["#2196f3","#4caf50","#ff9800","#9c27b0","#00bcd4"];
 const TRACK_SX=1.8,BASE_R=280,DIRT_W=75;
 const START_ANGLE=-Math.PI/2,FINISH_ANGLE=START_ANGLE+2*Math.PI;
-const AVG_SPEED=0.00062;
+const AVG_SPEED=0.0011;
 let camMode='broadcast';
 
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x87CEEB);scene.fog=new THREE.Fog(0x87CEEB,600,1200);
@@ -257,8 +246,8 @@ function updateHeadAngle(horseRoot,jockeyGroup,cam){
     // FIX: side/side_r were swapped. +angle = camera on horse's left = show side_r (mirrored)
     let zone;
     if(deg>-45&&deg<45) zone='front';
-    else if(deg>=45&&deg<135) zone='side_r';
-    else if(deg<=-45&&deg>-135) zone='side';
+    else if(deg>=45&&deg<135) zone='side';
+    else if(deg<=-45&&deg>-135) zone='side_r';
     else zone='back';
 
     if(texSet.name==='liberty'||texSet.name==='lt'){
@@ -314,18 +303,29 @@ function createHorse(colorHex,number,mascotPoolIdx){
         legs.push({thigh,shin});
     });
 
-    // FIX: Simple jockey - just a colored cone body + head on top. No arms/legs clutter.
-    const jG=new THREE.Group();jG.position.set(0,9.5,0);body.add(jG);
-    const jm=toon({color:new THREE.Color(colorHex)});
-    // Cone body sitting on horse back
-    const jBody=new THREE.Mesh(new THREE.ConeGeometry(1.2,3.5,8),jm);
-    jBody.position.y=1.8;
-    jBody.rotation.z=-0.15; // slight forward lean
-    jG.add(jBody);
-
-    // Head on top
+    // Jockey: white silk torso (universal), black helmet base, head on top
+    const jG=new THREE.Group();jG.position.set(-0.5,9.8,0);body.add(jG);
+    const whiteSilk=toon({color:0xffffff});
+    const blackBase=toon({color:0x222222});
+    // Torso - rounded box, leaning forward (real jockey position)
+    const jTorso=new THREE.Mesh(new THREE.SphereGeometry(1.3,8,6),whiteSilk);
+    jTorso.scale.set(1,1.5,0.9);
+    jTorso.position.set(0,1.5,0);
+    jTorso.rotation.z=-0.4;
+    jG.add(jTorso);
+    // Colored stripe across torso (silks color)
+    const stripe=new THREE.Mesh(new THREE.SphereGeometry(1.31,8,6),toon({color:new THREE.Color(colorHex)}));
+    stripe.scale.set(1.01,0.5,0.91);
+    stripe.position.set(0,1.5,0);
+    stripe.rotation.z=-0.4;
+    jG.add(stripe);
+    // Black neck base where head connects
+    const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.7,0.8,8),blackBase);
+    jNeck.position.set(0.6,3.2,0);
+    jG.add(jNeck);
+    // Head (lifted higher so it's clearly on top)
     const mHead=buildMascotHead(mascotPoolIdx);
-    mHead.position.set(0.2,5.5,0);
+    mHead.position.set(0.6,5.5,0);
     jG.add(mHead);
 
     return{root,body,tailG,legs,jG};
@@ -343,31 +343,30 @@ document.getElementById('solo-btn').addEventListener('click',()=>{
 });
 
 document.getElementById('create-btn').addEventListener('click',async()=>{
-    isMultiplayer=true;isPlayer1=true;
+    isMultiplayer=true;isHost=true;myPlayerSlot=0;
     const seed=Math.floor(Math.random()*2147483647);
     const doc=await db.collection('shmerbyGames').add({
-        p1Id:myPlayerId,p2Id:null,p1Name:playerHorse.name,p1Number:playerHorse.number,p1Color:playerHorse.color,
-        p2Name:'',p2Number:0,p2Color:'',p1Taps:null,p2Taps:null,seed,status:'waiting',created:firebase.firestore.FieldValue.serverTimestamp()
+        hostId:myPlayerId,seed,status:'waiting',
+        players:[{id:myPlayerId,name:playerHorse.name,number:playerHorse.number,color:playerHorse.color,taps:null}],
+        created:firebase.firestore.FieldValue.serverTimestamp()
     });
     gameDocRef=doc;
     document.getElementById('game-url').value=location.origin+location.pathname+'?gameId='+doc.id;
     document.getElementById('share-area').classList.remove('hidden');
     document.getElementById('create-btn').classList.add('hidden');
     document.getElementById('solo-btn').classList.add('hidden');
+    document.getElementById('start-race-btn').classList.remove('hidden');
     unsubGame=gameDocRef.onSnapshot(snap=>{
         const d=snap.data();if(!d)return;
-        if(d.status==='ready'&&d.p2Id){
-            document.getElementById('waiting-msg').classList.add('hidden');
-            document.getElementById('join-msg').classList.remove('hidden');
-            document.getElementById('join-msg').querySelector('p').textContent=`Opponent joined: #${d.p2Number} ${d.p2Name}`;
-        }
+        const count=(d.players||[]).length;
+        document.getElementById('waiting-msg').textContent=`PLAYERS: ${count}/6 - SHARE LINK`;
         if(d.status==='tapping'&&!tappingDone){
             document.getElementById('lobby').classList.add('hidden');
             document.getElementById('main-title').classList.add('hidden');
             document.getElementById('tapping-phase').classList.remove('hidden');
             startTapping();
         }
-        if(d.status==='racing'&&d.p1Taps!==null&&d.p2Taps!==null){
+        if(d.status==='racing'&&d.players&&d.players.every(p=>p.taps!==null)){
             document.getElementById('tapping-phase').classList.add('hidden');
             startRaceFromData(d);
         }
@@ -380,21 +379,29 @@ document.getElementById('copy-btn').addEventListener('click',()=>{
     setTimeout(()=>document.getElementById('copy-btn').textContent='COPY LINK',2000);
 });
 
+document.getElementById('start-race-btn').addEventListener('click',async()=>await gameDocRef.update({status:'tapping'}));
 document.getElementById('ready-btn').addEventListener('click',async()=>await gameDocRef.update({status:'tapping'}));
 
 const urlParams=new URLSearchParams(location.search);
 const joinId=urlParams.get('gameId');
 if(joinId){
-    isMultiplayer=true;isPlayer1=false;
+    isMultiplayer=true;isHost=false;
     document.getElementById('create-btn').classList.add('hidden');
     document.getElementById('solo-btn').classList.add('hidden');
     gameDocRef=db.collection('shmerbyGames').doc(joinId);
     gameDocRef.get().then(async snap=>{
         const d=snap.data();
-        if(d&&!d.p2Id){
-            await gameDocRef.update({p2Id:myPlayerId,p2Name:playerHorse.name,p2Number:playerHorse.number,p2Color:playerHorse.color,status:'ready'});
+        if(d&&d.status==='waiting'){
+            const players=d.players||[];
+            if(!players.some(p=>p.id===myPlayerId)&&players.length<6){
+                myPlayerSlot=players.length;
+                players.push({id:myPlayerId,name:playerHorse.name,number:playerHorse.number,color:playerHorse.color,taps:null});
+                await gameDocRef.update({players});
+            } else {
+                myPlayerSlot=players.findIndex(p=>p.id===myPlayerId);
+            }
             document.getElementById('join-msg').classList.remove('hidden');
-            document.getElementById('join-msg').querySelector('p').textContent='Waiting for host to start...';
+            document.getElementById('join-msg').querySelector('p').textContent='Waiting for host to start race...';
             document.getElementById('ready-btn').classList.add('hidden');
         }
         unsubGame=gameDocRef.onSnapshot(snap2=>{
@@ -405,7 +412,7 @@ if(joinId){
                 document.getElementById('tapping-phase').classList.remove('hidden');
                 startTapping();
             }
-            if(d2.status==='racing'&&d2.p1Taps!==null&&d2.p2Taps!==null){
+            if(d2.status==='racing'&&d2.players&&d2.players.every(p=>p.taps!==null)){
                 document.getElementById('tapping-phase').classList.add('hidden');
                 startRaceFromData(d2);
             }
@@ -430,10 +437,13 @@ async function endTapping(){
     tappingDone=true;
     document.getElementById('tapping-phase').classList.add('hidden');
     if(isMultiplayer&&gameDocRef){
-        const field=isPlayer1?'p1Taps':'p2Taps';
-        await gameDocRef.update({[field]:playerHorse.taps});
-        const snap=await gameDocRef.get();const d=snap.data();
-        if(d.p1Taps!==null&&d.p2Taps!==null) await gameDocRef.update({status:'racing'});
+        await db.runTransaction(async(t)=>{
+            const s=await t.get(gameDocRef);const d=s.data();
+            const players=(d.players||[]).slice();
+            if(players[myPlayerSlot]) players[myPlayerSlot].taps=playerHorse.taps;
+            const allDone=players.every(p=>p.taps!==null);
+            t.update(gameDocRef,{players,status:allDone?'racing':'tapping'});
+        });
     } else { startSoloRace(); }
 }
 
@@ -442,14 +452,15 @@ let raceStarted=false;
 function startRaceFromData(d){
     if(raceStarted)return;raceStarted=true;
     const rng=mulberry32(d.seed);
-    gameHorses.push(
-        {name:d.p1Name,taps:d.p1Taps,isPlayer:isPlayer1,color:d.p1Color||'#e91e63',number:d.p1Number,isHuman:true,style:0},
-        {name:d.p2Name,taps:d.p2Taps,isPlayer:!isPlayer1,color:d.p2Color||'#2196f3',number:d.p2Number,isHuman:true,style:0}
-    );
-    const usedNums=new Set([gameHorses[0].number,gameHorses[1].number]);
-    for(let i=0;i<4;i++){
+    const humans=d.players||[];
+    humans.forEach((p,idx)=>{
+        gameHorses.push({name:p.name,taps:p.taps,isPlayer:p.id===myPlayerId,color:p.color,number:p.number,isHuman:true,style:Math.floor(rng()*3)});
+    });
+    const usedNums=new Set(humans.map(p=>p.number));
+    const botsNeeded=6-humans.length;
+    for(let i=0;i<botsNeeded;i++){
         let n;do{n=Math.floor(rng()*20)+1;}while(usedNums.has(n));usedNums.add(n);
-        gameHorses.push({name:genName(),taps:Math.floor(rng()*45)+20,isPlayer:false,color:botColors[i],number:n,style:Math.floor(rng()*3),isHuman:false});
+        gameHorses.push({name:genName(),taps:Math.floor(rng()*45)+20,isPlayer:false,color:botColors[i%botColors.length],number:n,style:Math.floor(rng()*3),isHuman:false});
     }
     buildAndStartRace(rng);
 }
@@ -476,7 +487,7 @@ function buildAndStartRace(rng){
 
     gameHorses.forEach((h,i)=>{
         h.angle=START_ANGLE-(0.02+i*.015);
-        h.baseSpeed=AVG_SPEED*.85+(h.taps*0.000004);
+        h.baseSpeed=AVG_SPEED*.85+(h.taps*0.000007);
         h.earlyMod=h.style===0?1.08:h.style===1?0.98:0.92;
         h.lateMod=h.style===0?0.94:h.style===1?1.04:1.12;
         h.energy=1;h.finished=false;h.laneOffset=5+i*8;
@@ -490,10 +501,7 @@ function updateLB(){
     const sorted=[...gameHorses].sort((a,b)=>{if(a.finished&&!b.finished)return-1;if(!a.finished&&b.finished)return 1;return b.angle-a.angle;});
     const list=document.getElementById('standings-list');list.innerHTML='';
     sorted.forEach((h,i)=>{
-        const youTag=h.isPlayer?'<span class="you-tag">YOU</span>':'';
-        list.innerHTML+=`<div class="lb-row"><span class="lb-place">${['1ST','2ND','3RD','4TH','5TH','6TH'][i]}</span>
-        <div class="lb-color" style="background:${h.color}"></div>
-        <span class="lb-name" style="color:${h.isPlayer?'#ffeb3b':'#fff'}">#${h.number} ${h.name}${youTag}</span></div>`;
+        list.innerHTML+=`<div class="lb-row${h.isPlayer?' you':''}"><span class="lb-num">${h.number}</span><div class="lb-color" style="background:${h.color}"></div><span class="lb-name">${h.name}</span></div>`;
     });
 }
 function showNotif(t){const e=document.createElement('div');e.className='finish-notif';e.innerText=t;
@@ -502,7 +510,7 @@ document.getElementById('notifications-container').appendChild(e);setTimeout(()=
 const clock=new THREE.Clock();
 function animate(){
     if(!raceFinished)requestAnimationFrame(animate);
-    const time=clock.getElapsedTime(),gSpeed=18;
+    const time=clock.getElapsedTime(),gSpeed=24;
     if(!raceFinished){
         const el=((Date.now()-raceStartTime)/1000);
         document.getElementById('race-timer').innerText=`${Math.floor(el/60)}:${(el%60).toFixed(1).padStart(4,'0')}`;
@@ -515,7 +523,7 @@ function animate(){
         const sc=document.getElementById('stretch-call');sc.innerHTML="AND DOWN THE<br>STRETCH THEY COME!";sc.classList.add('show');
         setTimeout(()=>sc.classList.remove('show'),3500);
     }
-    document.getElementById('furlong-fill').style.width=Math.min(100,progress*100)+'%';
+    
 
     gameHorses.forEach((h,i)=>{
         const raceMod=progress<.5?h.earlyMod:h.lateMod;
