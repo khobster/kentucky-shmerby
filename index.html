@@ -22,6 +22,8 @@
             box-shadow:0 10px 0 #b71c1c;display:flex;align-items:center;justify-content:center;
             font-size:13px;cursor:pointer;color:#fff;line-height:1.8;text-shadow:2px 2px 0 #000;border-radius:8px;}
         #tap-zone:active{transform:translateY(10px);box-shadow:0 0 0 #b71c1c;}
+        #tap-zone.disabled{background:#6a6a6a;box-shadow:0 10px 0 #444;cursor:default;opacity:.72;}
+        #tap-status{font-size:10px;color:#ffd700;margin-top:14px;line-height:1.7;text-shadow:2px 2px 0 #000;min-height:34px;}
         button{padding:12px 24px;font-size:12px;font-family:inherit;cursor:pointer;background:#ffeb3b;color:#000;
             border:5px solid #000;box-shadow:0 5px 0 #f57f17;margin-top:14px;text-transform:uppercase;}
         button:hover{background:#fff176;}
@@ -91,6 +93,11 @@
     <div id="tapping-phase" class="overlay hidden">
         <h2 id="timer-display">10.0</h2>
         <div id="tap-zone">TAP HERE!<br><br>Speed, not force.<br>Your count is hidden!</div>
+        <div id="tap-prep" class="panel hidden" style="margin-top:14px;padding:16px 20px;max-width:420px;">
+            <p style="font-size:9px;line-height:1.7;">When you're ready, hit start.<br>Your 10-second burst begins on your tap.</p>
+            <button id="tap-start-btn">START TAPPING</button>
+        </div>
+        <div id="tap-status" class="hidden"></div>
     </div>
     <div id="race-phase" class="hidden">
         <div id="race-header"><h2 id="race-status">AND THEY'RE OFF!</h2></div>
@@ -161,7 +168,7 @@ function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a
 
 let playerHorse={name:genName(),taps:0,isPlayer:true,color:"#e91e63",number:Math.floor(Math.random()*20)+1};
 let gameHorses=[],finishOrder=[],raceFinished=false,stretchCalled=false,raceStartTime=0;
-let tapping=false,tappingDone=false;
+let tapping=false,tappingDone=false,tapCountdownStarted=false,tapInterval=null;
 const botColors=["#2196f3","#4caf50","#ff9800","#9c27b0","#00bcd4"];
 const TRACK_SX=1.8,BASE_R=280,DIRT_W=75;
 const START_ANGLE=-Math.PI/2,FINISH_ANGLE=START_ANGLE+2*Math.PI;
@@ -214,12 +221,12 @@ g.scale.set(TRACK_SX,1,1);scene.add(g);})();
 
 // --- MASCOT SYSTEM ---
 const texLoader=new THREE.TextureLoader();
-const LT_SET={name:'lt',front:"lt-front.png",side:"lt-side.png",side_r:"lt-side-r.png",back:"lt-back.png",frontSize:12,sideSize:13.5};
-const GEO_SET={name:'george',front:"george-front.png",side:"george-side.png",side_r:"george-side-r.png",back:"george-back.png"};
-const DAV_SET={name:'david',front:"david-front.png",side:"david-side.png",side_r:"david-side-r.png",back:"david-back.png",swapSideViews:true};
-const LIB_SET={name:'liberty',front:"liberty-front.png",side:"liberty-side.png",side_r:"liberty-side-r.png",back:"liberty-back.png",frontSize:12.6,sideSize:10.2,swapSideViews:true,headOffset:{x:0.28,y:1.35,z:0},bodyPeek:0.95};
-const BUN_SET={name:'bunny',front:"bunny-front.png",side:"bunny-side.png",side_r:"bunny-side-r.png",back:"bunny-back.png"};
-const TOM_SET={name:'tomato',front:"tomato-front.png",side:"tomato-side.png",side_r:"tomato-side-r.png",back:"tomato-back.png",swapSideViews:true};
+const LT_SET={name:'lt',front:"lt-front.png",side:"lt-side.png",side_r:"lt-side-r.png",back:"lt-back.png",frontSize:12,sideSize:13.5,bodyPeek:0.8,riderScale:1.02};
+const GEO_SET={name:'george',front:"george-front.png",side:"george-side.png",side_r:"george-side-r.png",back:"george-back.png",bodyPeek:1.1,riderScale:1.08,headLift:0.22};
+const DAV_SET={name:'david',front:"david-front.png",side:"david-side.png",side_r:"david-side-r.png",back:"david-back.png",swapSideViews:true,bodyPeek:1.18,riderScale:1.1,headLift:0.34};
+const LIB_SET={name:'liberty',front:"liberty-front.png",side:"liberty-side.png",side_r:"liberty-side-r.png",back:"liberty-back.png",frontSize:12.6,sideSize:10.2,swapSideViews:true,headOffset:{x:0.28,y:1.35,z:0},bodyPeek:1.18,riderScale:1.12,headLift:0.18};
+const BUN_SET={name:'bunny',front:"bunny-front.png",side:"bunny-side.png",side_r:"bunny-side-r.png",back:"bunny-back.png",bodyPeek:1.08,riderScale:1.08,headLift:0.2};
+const TOM_SET={name:'tomato',front:"tomato-front.png",side:"tomato-side.png",side_r:"tomato-side-r.png",back:"tomato-back.png",swapSideViews:true,bodyPeek:1.42,riderScale:1.16,headLift:0.56};
 const ALL_SETS=[LT_SET,GEO_SET,DAV_SET,LIB_SET,BUN_SET,TOM_SET];
 const loadedTextures=[];
 ALL_SETS.forEach(s=>{
@@ -295,12 +302,20 @@ function updateHeadAngle(horseRoot,jockeyGroup,cam){
 
     const riderBody=jockeyGroup.userData.riderBody;
     if(riderBody){
-        const bodyPeek=texSet.bodyPeek ?? 0.45;
+        const headSpan=Math.max(texSet.frontSize||10.5,texSet.sideSize||10.5);
+        const sizeBoost=Math.max(0,headSpan-10.5)*0.08;
+        const bodyPeek=(texSet.bodyPeek ?? 0.75)+sizeBoost;
+        const riderScale=texSet.riderScale ?? (1+sizeBoost*0.05);
         const sideSign=deg>=0?1:-1;
-        const targetZ=(zone==='front'||zone==='back') ? sideSign*(bodyPeek*0.42) : sideSign*bodyPeek;
-        const targetY=texSet.name==='liberty' ? -0.18 : 0;
+        const targetZ=(zone==='front'||zone==='back') ? sideSign*(bodyPeek*0.55) : sideSign*bodyPeek;
+        const targetY=(texSet.name==='liberty' ? -0.12 : 0) + (texSet.riderDrop||0);
+        const targetX=(zone==='front'||zone==='back') ? -0.05-sizeBoost*0.06 : -0.18-sizeBoost*0.08;
+        riderBody.position.x += (targetX-riderBody.position.x)*0.18;
         riderBody.position.z += (targetZ-riderBody.position.z)*0.22;
         riderBody.position.y += (targetY-riderBody.position.y)*0.22;
+        riderBody.scale.x += (riderScale-riderBody.scale.x)*0.18;
+        riderBody.scale.y += (riderScale-riderBody.scale.y)*0.18;
+        riderBody.scale.z += (riderScale-riderBody.scale.z)*0.18;
     }
 
     if(texSet.name==='liberty'||texSet.name==='lt'){
@@ -455,7 +470,7 @@ function createHorse(colorHex,number,mascotPoolIdx){
         jNeck.position.x+=0.18;
         jNeck.position.y+=0.45;
     }
-    mHead.position.set(1.18+(headOffset.x||0),5.1+(headOffset.y||0),(headOffset.z||0));
+    mHead.position.set(1.18+(headOffset.x||0),5.1+(headOffset.y||0)+(headMeta.headLift||0),(headOffset.z||0));
     jG.add(mHead);
 
     return{root,body,tailG,legs,jG};
@@ -467,9 +482,7 @@ bootstrapNamePool();
 
 document.getElementById('solo-btn').addEventListener('click',()=>{
     isMultiplayer=false;
-    document.getElementById('lobby').classList.add('hidden');
-    document.getElementById('main-title').classList.add('hidden');
-    document.getElementById('tapping-phase').classList.remove('hidden');
+    showTappingPhase(false);
     startTapping();
 });
 
@@ -492,12 +505,11 @@ document.getElementById('create-btn').addEventListener('click',async()=>{
         const count=(d.players||[]).length;
         document.getElementById('waiting-msg').textContent=`PLAYERS: ${count}/6 - SHARE LINK`;
         if(d.status==='tapping'&&!tappingDone){
-            document.getElementById('lobby').classList.add('hidden');
-            document.getElementById('main-title').classList.add('hidden');
-            document.getElementById('tapping-phase').classList.remove('hidden');
-            startTapping();
+            showTappingPhase(true);
         }
         if(d.status==='racing'&&d.players&&d.players.every(p=>p.taps!==null)){
+            document.getElementById('tap-prep').classList.add('hidden');
+            document.getElementById('tap-status').classList.add('hidden');
             document.getElementById('tapping-phase').classList.add('hidden');
             startRaceFromData(d);
         }
@@ -538,12 +550,11 @@ if(joinId){
         unsubGame=gameDocRef.onSnapshot(snap2=>{
             const d2=snap2.data();if(!d2)return;
             if(d2.status==='tapping'&&!tappingDone){
-                document.getElementById('lobby').classList.add('hidden');
-                document.getElementById('main-title').classList.add('hidden');
-                document.getElementById('tapping-phase').classList.remove('hidden');
-                startTapping();
+                showTappingPhase(true);
             }
             if(d2.status==='racing'&&d2.players&&d2.players.every(p=>p.taps!==null)){
+                document.getElementById('tap-prep').classList.add('hidden');
+                document.getElementById('tap-status').classList.add('hidden');
                 document.getElementById('tapping-phase').classList.add('hidden');
                 startRaceFromData(d2);
             }
@@ -552,29 +563,75 @@ if(joinId){
 }
 
 // --- TAPPING ---
+function setTapZoneEnabled(enabled){
+    const zone=document.getElementById('tap-zone');
+    zone.classList.toggle('disabled',!enabled);
+    zone.style.pointerEvents=enabled?'auto':'none';
+}
+
+function showTappingPhase(manualStart=false){
+    document.getElementById('lobby').classList.add('hidden');
+    document.getElementById('main-title').classList.add('hidden');
+    document.getElementById('tapping-phase').classList.remove('hidden');
+    const prep=document.getElementById('tap-prep');
+    const status=document.getElementById('tap-status');
+    if(!tappingDone){
+        document.getElementById('timer-display').innerText=tapCountdownStarted?'10.0':'READY';
+    }
+    document.getElementById('tap-zone').innerHTML='TAP HERE!<br><br>Speed, not force.<br>Your count is hidden!';
+    if(manualStart && !tapCountdownStarted && !tappingDone){
+        prep.classList.remove('hidden');
+        status.classList.add('hidden');
+        setTapZoneEnabled(false);
+    }else if(!tappingDone){
+        prep.classList.add('hidden');
+        status.classList.add('hidden');
+        setTapZoneEnabled(true);
+    }
+}
+
 function startTapping(){
-    if(tapping)return;tapping=true;playerHorse.taps=0;
+    if(tapping||tappingDone)return;
+    tapping=true;
+    tapCountdownStarted=true;
+    playerHorse.taps=0;
+    document.getElementById('tap-prep').classList.add('hidden');
+    document.getElementById('tap-status').classList.add('hidden');
+    setTapZoneEnabled(true);
+    document.getElementById('timer-display').innerText='10.0';
+    if(tapInterval) clearInterval(tapInterval);
     const st=Date.now();
-    const ti=setInterval(()=>{
+    tapInterval=setInterval(()=>{
         let r=(10-(Date.now()-st)/1000).toFixed(1);
-        if(r<=0){r=0;clearInterval(ti);endTapping();}
+        if(r<=0){r='0.0';clearInterval(tapInterval);tapInterval=null;endTapping();}
         document.getElementById('timer-display').innerText=r;
     },100);
 }
-document.getElementById('tap-zone').addEventListener('pointerdown',e=>{e.preventDefault();playerHorse.taps++;});
+document.getElementById('tap-zone').addEventListener('pointerdown',e=>{e.preventDefault();if(tapping) playerHorse.taps++;});
+document.getElementById('tap-start-btn').addEventListener('click',()=>startTapping());
 
 async function endTapping(){
+    tapping=false;
     tappingDone=true;
-    document.getElementById('tapping-phase').classList.add('hidden');
+    setTapZoneEnabled(false);
+    document.getElementById('tap-zone').innerHTML='TAPS LOCKED IN';
     if(isMultiplayer&&gameDocRef){
+        let allDone=false,remaining=0;
         await db.runTransaction(async(t)=>{
             const s=await t.get(gameDocRef);const d=s.data();
             const players=(d.players||[]).slice();
             if(players[myPlayerSlot]) players[myPlayerSlot].taps=playerHorse.taps;
-            const allDone=players.every(p=>p.taps!==null);
+            allDone=players.every(p=>p.taps!==null);
+            remaining=players.filter(p=>p.taps===null).length;
             t.update(gameDocRef,{players,status:allDone?'racing':'tapping'});
         });
-    } else { startSoloRace(); }
+        const status=document.getElementById('tap-status');
+        status.textContent=allDone?'LOCKED IN. BREAKING FROM THE GATE...':`TAPS LOCKED IN — WAITING FOR ${remaining} MORE...`;
+        status.classList.remove('hidden');
+    } else {
+        document.getElementById('tapping-phase').classList.add('hidden');
+        startSoloRace();
+    }
 }
 
 // --- RACE ---
@@ -615,11 +672,14 @@ function buildAndStartRace(rng){
     const mascotPool=[0,1,2,3,4,5];
     for(let i=mascotPool.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[mascotPool[i],mascotPool[j]]=[mascotPool[j],mascotPool[i]];}
 
+    const tapVals=gameHorses.map(h=>Number.isFinite(h.taps)?h.taps:0);
+    const minTap=Math.min(...tapVals),maxTap=Math.max(...tapVals),tapRange=Math.max(1,maxTap-minTap);
     gameHorses.forEach((h,i)=>{
         h.angle=START_ANGLE-(0.02+i*.015);
-        h.baseSpeed=AVG_SPEED*.85+(h.taps*0.000007);
-        h.earlyMod=h.style===0?1.08:h.style===1?0.98:0.92;
-        h.lateMod=h.style===0?0.94:h.style===1?1.04:1.12;
+        h.tapNorm=((Number.isFinite(h.taps)?h.taps:0)-minTap)/tapRange;
+        h.baseSpeed=0.0478+(h.tapNorm*0.0048)+((rng()-0.5)*0.0007);
+        h.earlyMod=h.style===0?1.04:h.style===1?0.995:0.965;
+        h.lateMod=h.style===0?0.975:h.style===1?1.02:1.055;
         h.energy=1;h.finished=false;h.laneOffset=5+i*8;
         const model=createHorse(h.color,h.number,mascotPool[i]);
         scene.add(model.root);h.model=model;
@@ -640,7 +700,8 @@ document.getElementById('notifications-container').appendChild(e);setTimeout(()=
 const clock=new THREE.Clock();
 function animate(){
     if(!raceFinished)requestAnimationFrame(animate);
-    const time=clock.getElapsedTime(),gSpeed=24;
+    const dt=Math.min(clock.getDelta(),0.05);
+    const time=clock.elapsedTime,gSpeed=26.5;
     if(!raceFinished){
         const el=((Date.now()-raceStartTime)/1000);
         document.getElementById('race-timer').innerText=`${Math.floor(el/60)}:${(el%60).toFixed(1).padStart(4,'0')}`;
@@ -657,8 +718,8 @@ function animate(){
 
     gameHorses.forEach((h,i)=>{
         const raceMod=progress<.5?h.earlyMod:h.lateMod;
-        h.energy+=(Math.random()-.5)*.003;h.energy=Math.max(.93,Math.min(1.07,h.energy));
-        h.angle+=Math.max(h.baseSpeed*raceMod*h.energy+(Math.random()-.0005)*.0001,.0004);
+        h.energy+=(Math.random()-.5)*.0015;h.energy=Math.max(.96,Math.min(1.04,h.energy));
+        h.angle+=Math.max((h.baseSpeed*raceMod*h.energy+((Math.random()-.5)*0.0009))*dt,0.018*dt);
         const rank=gameHorses.filter(o=>o.angle>h.angle).length;
         h.targetLane=Math.max(5,Math.min(5+rank*5.5+Math.sin(time*.5+i)*2,DIRT_W-8));
         gameHorses.forEach((other,j)=>{
