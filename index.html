@@ -217,9 +217,9 @@ const texLoader=new THREE.TextureLoader();
 const LT_SET={name:'lt',front:"lt-front.png",side:"lt-side.png",side_r:"lt-side-r.png",back:"lt-back.png",frontSize:12,sideSize:13.5};
 const GEO_SET={name:'george',front:"george-front.png",side:"george-side.png",side_r:"george-side-r.png",back:"george-back.png"};
 const DAV_SET={name:'david',front:"david-front.png",side:"david-side.png",side_r:"david-side-r.png",back:"david-back.png",swapSideViews:true};
-const LIB_SET={name:'liberty',front:"liberty-front.png",side:"liberty-side.png",side_r:"liberty-side-r.png",back:"liberty-back.png",frontSize:13.5,sideSize:11,swapSideViews:true};
+const LIB_SET={name:'liberty',front:"liberty-front.png",side:"liberty-side.png",side_r:"liberty-side-r.png",back:"liberty-back.png",frontSize:12.6,sideSize:10.2,swapSideViews:true,headOffset:{x:0.28,y:1.35,z:0},bodyPeek:0.95};
 const BUN_SET={name:'bunny',front:"bunny-front.png",side:"bunny-side.png",side_r:"bunny-side-r.png",back:"bunny-back.png"};
-const TOM_SET={name:'tomato',front:"tomato-front.png",side:"tomato-side.png",side_r:"tomato-side-r.png",back:"tomato-back.png"};
+const TOM_SET={name:'tomato',front:"tomato-front.png",side:"tomato-side.png",side_r:"tomato-side-r.png",back:"tomato-back.png",swapSideViews:true};
 const ALL_SETS=[LT_SET,GEO_SET,DAV_SET,LIB_SET,BUN_SET,TOM_SET];
 const loadedTextures=[];
 ALL_SETS.forEach(s=>{
@@ -293,6 +293,16 @@ function updateHeadAngle(horseRoot,jockeyGroup,cam){
     else if(deg>=45&&deg<135) zone=texSet.swapSideViews?'side_r':'side';
     else if(deg<=-45&&deg>-135) zone=texSet.swapSideViews?'side':'side_r';
 
+    const riderBody=jockeyGroup.userData.riderBody;
+    if(riderBody){
+        const bodyPeek=texSet.bodyPeek ?? 0.45;
+        const sideSign=deg>=0?1:-1;
+        const targetZ=(zone==='front'||zone==='back') ? sideSign*(bodyPeek*0.42) : sideSign*bodyPeek;
+        const targetY=texSet.name==='liberty' ? -0.18 : 0;
+        riderBody.position.z += (targetZ-riderBody.position.z)*0.22;
+        riderBody.position.y += (targetY-riderBody.position.y)*0.22;
+    }
+
     if(texSet.name==='liberty'||texSet.name==='lt'){
         const targetGeo=(zone==='front'||zone==='back') ? headGroup.userData.frontGeo : headGroup.userData.sideGeo;
         if(mesh.geometry!==targetGeo) mesh.geometry=targetGeo;
@@ -349,6 +359,8 @@ function createHorse(colorHex,number,mascotPoolIdx){
 
     // Jockey: simple crouched rider closer to your sketch
     const jG=new THREE.Group();jG.position.set(-0.35,9.5,0);body.add(jG);
+    const riderBody=new THREE.Group();jG.add(riderBody);
+    jG.userData.riderBody=riderBody;
     const silkColor=new THREE.Color(colorHex);
     const silk=toon({color:silkColor});
     const silkAccent=toon({color:silkColor.clone().lerp(new THREE.Color(0xffffff),0.42)});
@@ -365,24 +377,24 @@ function createHorse(colorHex,number,mascotPoolIdx){
     hips.scale.set(1.5,0.95,1.0);
     hips.position.set(-0.55,1.05,0);
     hips.rotation.z=-0.15;
-    jG.add(hips);
+    riderBody.add(hips);
 
     const chestSilk=new THREE.Mesh(new THREE.SphereGeometry(1.2,8,6),silk);
     chestSilk.scale.set(1.12,1.72,0.98);
     chestSilk.position.set(0.15,2.35,0);
     chestSilk.rotation.z=-0.72;
-    jG.add(chestSilk);
+    riderBody.add(chestSilk);
 
     const bellyPatch=new THREE.Mesh(new THREE.SphereGeometry(0.62,8,6),silkAccent);
     bellyPatch.scale.set(1.0,1.15,0.8);
     bellyPatch.position.set(0.35,2.05,0);
     bellyPatch.rotation.z=-0.72;
-    jG.add(bellyPatch);
+    riderBody.add(bellyPatch);
 
     const leftUpperArm=new THREE.Mesh(upperArmGeo,silk);
     leftUpperArm.position.set(0.7,2.55,0.55);
     leftUpperArm.rotation.z=-1.12;
-    jG.add(leftUpperArm);
+    riderBody.add(leftUpperArm);
     const leftLowerArm=new THREE.Mesh(lowerArmGeo,silk);
     leftLowerArm.position.set(0.55,-1.15,0);
     leftLowerArm.rotation.z=-0.28;
@@ -395,7 +407,7 @@ function createHorse(colorHex,number,mascotPoolIdx){
     const rightUpperArm=new THREE.Mesh(upperArmGeo,silk);
     rightUpperArm.position.set(0.7,2.55,-0.55);
     rightUpperArm.rotation.z=-1.12;
-    jG.add(rightUpperArm);
+    riderBody.add(rightUpperArm);
     const rightLowerArm=new THREE.Mesh(lowerArmGeo,silk);
     rightLowerArm.position.set(0.55,-1.15,0);
     rightLowerArm.rotation.z=-0.28;
@@ -408,7 +420,7 @@ function createHorse(colorHex,number,mascotPoolIdx){
     const leftThigh=new THREE.Mesh(thighRideGeo,pants);
     leftThigh.position.set(-0.35,1.2,0.55);
     leftThigh.rotation.z=1.08;
-    jG.add(leftThigh);
+    riderBody.add(leftThigh);
     const leftCalf=new THREE.Mesh(calfRideGeo,boots);
     leftCalf.position.set(-0.15,-1.55,0);
     leftCalf.rotation.z=-0.42;
@@ -421,7 +433,7 @@ function createHorse(colorHex,number,mascotPoolIdx){
     const rightThigh=new THREE.Mesh(thighRideGeo,pants);
     rightThigh.position.set(-0.35,1.2,-0.55);
     rightThigh.rotation.z=1.08;
-    jG.add(rightThigh);
+    riderBody.add(rightThigh);
     const rightCalf=new THREE.Mesh(calfRideGeo,boots);
     rightCalf.position.set(-0.15,-1.55,0);
     rightCalf.rotation.z=-0.42;
@@ -434,10 +446,16 @@ function createHorse(colorHex,number,mascotPoolIdx){
     const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.24,0.3,0.72,6),skin);
     jNeck.position.set(0.78,3.45,0);
     jNeck.rotation.z=-0.28;
-    jG.add(jNeck);
+    riderBody.add(jNeck);
 
     const mHead=buildMascotHead(mascotPoolIdx);
-    mHead.position.set(1.18,5.1,0);
+    const headMeta=mHead.userData.multiAngle||{};
+    const headOffset=headMeta.headOffset||{x:0,y:0,z:0};
+    if(headMeta.name==='liberty'){
+        jNeck.position.x+=0.18;
+        jNeck.position.y+=0.45;
+    }
+    mHead.position.set(1.18+(headOffset.x||0),5.1+(headOffset.y||0),(headOffset.z||0));
     jG.add(mHead);
 
     return{root,body,tailG,legs,jG};
