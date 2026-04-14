@@ -422,8 +422,8 @@ function createHorse(colorHex,number,mascotPoolIdx){
     });
 
     // Jockey: simple crouched rider closer to your sketch
-    const jG=new THREE.Group();jG.position.set(-0.55,9.15,0);body.add(jG);
-    const riderBody=new THREE.Group();jG.add(riderBody);
+    const jG=new THREE.Group();jG.position.set(-0.18,9.0,0);body.add(jG);
+    const riderBody=new THREE.Group();riderBody.position.set(-0.34,-0.18,0);riderBody.rotation.z=-0.42;jG.add(riderBody);
     jG.userData.riderBody=riderBody;
     const silkColor=new THREE.Color(colorHex);
     const silk=toon({color:silkColor});
@@ -439,24 +439,24 @@ function createHorse(colorHex,number,mascotPoolIdx){
 
     const hips=new THREE.Mesh(new THREE.SphereGeometry(1.0,8,6),pants);
     hips.scale.set(1.42,0.88,0.64);
-    hips.position.set(-0.6,0.95,0);
-    hips.rotation.z=-0.15;
+    hips.position.set(-0.9,0.88,0);
+    hips.rotation.z=-0.18;
     riderBody.add(hips);
 
     const chestSilk=new THREE.Mesh(new THREE.SphereGeometry(1.2,8,6),silk);
-    chestSilk.scale.set(1.0,1.62,0.54);
-    chestSilk.position.set(0.05,2.2,0);
-    chestSilk.rotation.z=-0.72;
+    chestSilk.scale.set(0.96,1.72,0.54);
+    chestSilk.position.set(0.28,2.05,0);
+    chestSilk.rotation.z=-0.94;
     riderBody.add(chestSilk);
 
 
     const leftUpperArm=new THREE.Mesh(upperArmGeo,silk);
-    leftUpperArm.position.set(0.56,2.42,0.28);
-    leftUpperArm.rotation.z=-1.12;
+    leftUpperArm.position.set(0.8,2.3,0.28);
+    leftUpperArm.rotation.z=-1.28;
     riderBody.add(leftUpperArm);
     const leftLowerArm=new THREE.Mesh(lowerArmGeo,silk);
-    leftLowerArm.position.set(0.55,-1.15,0);
-    leftLowerArm.rotation.z=-0.28;
+    leftLowerArm.position.set(0.5,-1.15,0);
+    leftLowerArm.rotation.z=-0.1;
     leftUpperArm.add(leftLowerArm);
     const leftHand=new THREE.Mesh(new THREE.SphereGeometry(0.22,6,6),skin);
     leftHand.scale.set(1.15,0.8,1);
@@ -464,12 +464,12 @@ function createHorse(colorHex,number,mascotPoolIdx){
     leftLowerArm.add(leftHand);
 
     const rightUpperArm=new THREE.Mesh(upperArmGeo,silk);
-    rightUpperArm.position.set(0.56,2.42,-0.28);
-    rightUpperArm.rotation.z=-1.12;
+    rightUpperArm.position.set(0.8,2.3,-0.28);
+    rightUpperArm.rotation.z=-1.28;
     riderBody.add(rightUpperArm);
     const rightLowerArm=new THREE.Mesh(lowerArmGeo,silk);
-    rightLowerArm.position.set(0.55,-1.15,0);
-    rightLowerArm.rotation.z=-0.28;
+    rightLowerArm.position.set(0.5,-1.15,0);
+    rightLowerArm.rotation.z=-0.1;
     rightUpperArm.add(rightLowerArm);
     const rightHand=new THREE.Mesh(new THREE.SphereGeometry(0.22,6,6),skin);
     rightHand.scale.set(1.15,0.8,1);
@@ -477,12 +477,12 @@ function createHorse(colorHex,number,mascotPoolIdx){
     rightLowerArm.add(rightHand);
 
     const leftThigh=new THREE.Mesh(thighRideGeo,pants);
-    leftThigh.position.set(-0.52,1.0,0.26);
-    leftThigh.rotation.z=1.08;
+    leftThigh.position.set(-0.78,0.86,0.26);
+    leftThigh.rotation.z=1.34;
     riderBody.add(leftThigh);
     const leftCalf=new THREE.Mesh(calfRideGeo,boots);
-    leftCalf.position.set(-0.15,-1.55,0);
-    leftCalf.rotation.z=-0.42;
+    leftCalf.position.set(-0.05,-1.48,0);
+    leftCalf.rotation.z=-0.92;
     leftThigh.add(leftCalf);
     const leftBoot=new THREE.Mesh(new THREE.SphereGeometry(0.28,6,6),boots);
     leftBoot.scale.set(1.55,0.65,0.9);
@@ -490,12 +490,12 @@ function createHorse(colorHex,number,mascotPoolIdx){
     leftCalf.add(leftBoot);
 
     const rightThigh=new THREE.Mesh(thighRideGeo,pants);
-    rightThigh.position.set(-0.52,1.0,-0.26);
-    rightThigh.rotation.z=1.08;
+    rightThigh.position.set(-0.78,0.86,-0.26);
+    rightThigh.rotation.z=1.34;
     riderBody.add(rightThigh);
     const rightCalf=new THREE.Mesh(calfRideGeo,boots);
-    rightCalf.position.set(-0.15,-1.55,0);
-    rightCalf.rotation.z=-0.42;
+    rightCalf.position.set(-0.05,-1.48,0);
+    rightCalf.rotation.z=-0.92;
     rightThigh.add(rightCalf);
     const rightBoot=new THREE.Mesh(new THREE.SphereGeometry(0.28,6,6),boots);
     rightBoot.scale.set(1.55,0.65,0.9);
@@ -503,8 +503,8 @@ function createHorse(colorHex,number,mascotPoolIdx){
     rightCalf.add(rightBoot);
 
     const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.26,0.68,6),skin);
-    jNeck.position.set(0.56,3.22,0);
-    jNeck.rotation.z=-0.28;
+    jNeck.position.set(0.86,3.0,0);
+    jNeck.rotation.z=-0.52;
     riderBody.add(jNeck);
 
     const mHead=buildMascotHead(mascotPoolIdx);
@@ -514,7 +514,7 @@ function createHorse(colorHex,number,mascotPoolIdx){
         jNeck.position.x+=0.18;
         jNeck.position.y+=0.45;
     }
-    mHead.position.set(1.42+(headOffset.x||0),5.35+(headOffset.y||0)+(headMeta.headLift||0),(headOffset.z||0));
+    mHead.position.set(1.52+(headOffset.x||0),4.9+(headOffset.y||0)+(headMeta.headLift||0),(headOffset.z||0));
     mHead.userData.basePos=mHead.position.clone();
     jG.add(mHead);
     riderBody.userData.parts={chestSilk,hips,leftUpperArm,rightUpperArm,leftThigh,rightThigh};
@@ -802,8 +802,8 @@ function animate(){
                 leg.shin.position.x=leg.baseShinX-swing*0.06;
             }
         });
-        h.model.jG.position.y=9.2+bound*.26;
-        h.model.jG.position.x=-0.52;
+        h.model.jG.position.y=9.02+bound*.22;
+        h.model.jG.position.x=-0.18;
         updateHeadAngle(h.model.root,h.model.jG,camera);
 
         if(h.angle>=FINISH_ANGLE&&!h.finished){
