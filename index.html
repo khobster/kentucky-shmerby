@@ -393,7 +393,18 @@ function createHorse(colorHex,number,mascotPoolIdx){
     [[4.25,5.55,1.42],[4.25,5.55,-1.42],[-4.45,5.45,1.42],[-4.45,5.45,-1.42]].forEach(p=>{
         const thigh=new THREE.Mesh(thighGeo,dkBr);thigh.position.set(p[0],p[1],p[2]);thigh.castShadow=true;body.add(thigh);
         const shin=new THREE.Mesh(shinGeo,dkBr);shin.position.y=-5.55;thigh.add(shin);
-        const hoof=new THREE.Mesh(new THREE.SphereGeometry(.48,6,6),hoofM);hoof.scale.set(1.25,.52,.92);hoof.position.y=-5.1;shin.add(hoof);
+        const hoof=new THREE.Group();
+        const hoofMain=new THREE.Mesh(new THREE.BoxGeometry(1.02,.42,.8),hoofM);
+        hoofMain.position.set(.08,-5.06,0);
+        hoofMain.rotation.z=.08;
+        hoofMain.castShadow=true;
+        hoof.add(hoofMain);
+        const hoofToe=new THREE.Mesh(new THREE.SphereGeometry(.28,6,6),hoofM);
+        hoofToe.scale.set(1.25,.62,.9);
+        hoofToe.position.set(.42,-5.04,0);
+        hoofToe.castShadow=true;
+        hoof.add(hoofToe);
+        shin.add(hoof);
         legs.push({thigh,shin});
     });
 
