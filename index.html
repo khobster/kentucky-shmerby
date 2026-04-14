@@ -359,7 +359,7 @@ function updateHeadAngle(horseRoot,jockeyGroup,cam){
 function createHorse(colorHex,number,mascotPoolIdx){
     const root=new THREE.Group(),body=new THREE.Group();root.add(body);
     const brown=toon({color:0x6B4226}),ltBr=toon({color:0x8B6B4A}),dkBr=toon({color:0x3a2212});
-    const hoofM=toon({color:0x1a1a1a}),maneM=toon({color:0x1a0f00}),hoodC=toon({color:new THREE.Color(colorHex)});
+    const hoofM=toon({color:0x161616}),maneM=toon({color:0x57331c}),tailM=toon({color:0x1a0f00}),hoodC=toon({color:new THREE.Color(colorHex)});
 
     const torso=new THREE.Mesh(new THREE.SphereGeometry(1,14,10),brown);torso.scale.set(7.25,2.2,2.1);torso.position.y=6.4;torso.castShadow=true;body.add(torso);
     const rump=new THREE.Mesh(new THREE.SphereGeometry(3,10,10),brown);rump.scale.set(0.98,0.9,0.96);rump.position.set(-5.0,6.95,0);body.add(rump);
@@ -381,31 +381,44 @@ function createHorse(colorHex,number,mascotPoolIdx){
     for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.CircleGeometry(.65,8),ehm);e.position.set(12.5,14.5,s*1.66);if(s<0)e.rotation.y=Math.PI;body.add(e);}
     for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.ConeGeometry(.48,2.35,6),hoodC);e.position.set(10.35,16.15,s*.82);e.rotation.z=.1;body.add(e);}
 
-    for(let i=0;i<5;i++){const t=new THREE.Mesh(new THREE.SphereGeometry(.6,6,6),maneM);t.scale.set(1,1.2,1.8);t.position.set(6+i*1.1,10+i*1,0);body.add(t);}
+    const maneStrip=new THREE.Mesh(new THREE.BoxGeometry(4.8,.38,.46),maneM);
+    maneStrip.position.set(8.25,12.15,0);
+    maneStrip.rotation.z=.93;
+    maneStrip.castShadow=true;
+    body.add(maneStrip);
     const tailG=new THREE.Group();
-    const tail1=new THREE.Mesh(new THREE.SphereGeometry(.4,6,6),maneM);tail1.scale.set(1,2.5,1);tail1.position.y=-1.2;tailG.add(tail1);
-    const tail2=new THREE.Mesh(new THREE.SphereGeometry(.35,6,6),maneM);tail2.scale.set(1,2,1);tail2.position.set(-.4,-2.5,0);tailG.add(tail2);
+    const tail1=new THREE.Mesh(new THREE.SphereGeometry(.4,6,6),tailM);tail1.scale.set(1,2.5,1);tail1.position.y=-1.2;tailG.add(tail1);
+    const tail2=new THREE.Mesh(new THREE.SphereGeometry(.35,6,6),tailM);tail2.scale.set(1,2,1);tail2.position.set(-.4,-2.5,0);tailG.add(tail2);
     tailG.position.set(-7.5,8.5,0);tailG.rotation.z=.6;body.add(tailG);
 
     const legs=[];
-    const thighGeo=new THREE.CylinderGeometry(.34,.48,5.7,8);thighGeo.translate(0,-2.85,0);
-    const shinGeo=new THREE.CylinderGeometry(.24,.34,5.2,8);shinGeo.translate(0,-2.6,0);
+    const thighGeo=new THREE.CylinderGeometry(.3,.54,5.7,8);thighGeo.translate(0,-2.85,0);
+    const shinGeo=new THREE.CylinderGeometry(.19,.31,4.95,8);shinGeo.translate(0,-2.48,0);
     [[4.25,5.55,1.42],[4.25,5.55,-1.42],[-4.45,5.45,1.42],[-4.45,5.45,-1.42]].forEach(p=>{
+        const isFront=p[0]>0, baseShinX=isFront?0.42:-0.28;
         const thigh=new THREE.Mesh(thighGeo,dkBr);thigh.position.set(p[0],p[1],p[2]);thigh.castShadow=true;body.add(thigh);
-        const shin=new THREE.Mesh(shinGeo,dkBr);shin.position.y=-5.55;thigh.add(shin);
+        const knee=new THREE.Mesh(new THREE.SphereGeometry(.44,7,7),dkBr);
+        knee.scale.set(1.05,.82,.95);
+        knee.position.set(isFront?.16:-.1,-5.18,0);
+        thigh.add(knee);
+        const shin=new THREE.Mesh(shinGeo,dkBr);shin.position.set(baseShinX,-5.35,0);thigh.add(shin);
+        const fetlock=new THREE.Mesh(new THREE.SphereGeometry(.24,6,6),dkBr);
+        fetlock.scale.set(1,.75,.9);
+        fetlock.position.set(isFront?.08:-.04,-4.72,0);
+        shin.add(fetlock);
         const hoof=new THREE.Group();
-        const hoofMain=new THREE.Mesh(new THREE.BoxGeometry(1.02,.42,.8),hoofM);
-        hoofMain.position.set(.08,-5.06,0);
-        hoofMain.rotation.z=.08;
+        const hoofMain=new THREE.Mesh(new THREE.BoxGeometry(1.34,.56,.96),hoofM);
+        hoofMain.position.set(.14,-4.92,0);
+        hoofMain.rotation.z=.1;
         hoofMain.castShadow=true;
         hoof.add(hoofMain);
-        const hoofToe=new THREE.Mesh(new THREE.SphereGeometry(.28,6,6),hoofM);
-        hoofToe.scale.set(1.25,.62,.9);
-        hoofToe.position.set(.42,-5.04,0);
+        const hoofToe=new THREE.Mesh(new THREE.SphereGeometry(.38,6,6),hoofM);
+        hoofToe.scale.set(1.42,.76,1.04);
+        hoofToe.position.set(.58,-4.9,0);
         hoofToe.castShadow=true;
         hoof.add(hoofToe);
         shin.add(hoof);
-        legs.push({thigh,shin});
+        legs.push({thigh,shin,isFront,baseShinX});
     });
 
     // Jockey: simple crouched rider closer to your sketch
@@ -734,7 +747,7 @@ const clock=new THREE.Clock();
 function animate(){
     if(!raceFinished)requestAnimationFrame(animate);
     const dt=Math.min(clock.getDelta(),0.05);
-    const time=clock.elapsedTime,gSpeed=26.5;
+    const time=clock.elapsedTime,gSpeed=25;
     if(!raceFinished){
         const el=((Date.now()-raceStartTime)/1000);
         document.getElementById('race-timer').innerText=`${Math.floor(el/60)}:${(el%60).toFixed(1).padStart(4,'0')}`;
@@ -769,15 +782,27 @@ function animate(){
         const dx=-Math.sin(h.angle)*r*TRACK_SX,dz=Math.cos(h.angle)*r;
         h.model.root.position.set(x,0,z);h.model.root.rotation.y=Math.atan2(-dz,dx);
 
-        const c=time*gSpeed+i*1.7,bound=Math.max(0,Math.sin(c))*2;
-        h.model.body.position.y=bound;h.model.body.rotation.z=Math.sin(c)*.06;
+        const c=time*gSpeed+i*1.7;
+        const bound=Math.max(0,Math.sin(c))*1.85;
+        h.model.body.position.y=bound;
+        h.model.body.rotation.z=Math.sin(c)*.045;
+        h.model.body.rotation.x=-0.02+Math.cos(c*2)*.012;
         h.model.legs.forEach((leg,li)=>{
-            const offset=li<2?0:Math.PI;
-            const swing=Math.sin(c+offset+(li%2?0.7:0))*.55;
-            leg.thigh.rotation.z=swing;
-            leg.shin.rotation.z=li<2?(.2+Math.max(0,-swing)*1.2):(-.1+Math.max(0,swing)*1);
+            const phaseGroup=(li===0||li===3)?0:Math.PI;
+            const phase=c+phaseGroup+(li%2?0.12:-0.12);
+            const swing=Math.sin(phase);
+            const tuck=Math.max(0,Math.sin(phase+0.45));
+            if(leg.isFront){
+                leg.thigh.rotation.z=0.16+swing*0.46;
+                leg.shin.rotation.z=0.38+Math.max(0,-swing)*0.96-Math.max(0,swing)*0.18+tuck*0.12;
+                leg.shin.position.x=leg.baseShinX+swing*0.08;
+            }else{
+                leg.thigh.rotation.z=-0.24+swing*0.42;
+                leg.shin.rotation.z=-0.14+Math.max(0,swing)*1.02+tuck*0.1;
+                leg.shin.position.x=leg.baseShinX-swing*0.06;
+            }
         });
-        h.model.jG.position.y=9.2+bound*.28;
+        h.model.jG.position.y=9.2+bound*.26;
         h.model.jG.position.x=-0.52;
         updateHeadAngle(h.model.root,h.model.jG,camera);
 
