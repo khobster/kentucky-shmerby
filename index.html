@@ -356,7 +356,120 @@ function updateHeadAngle(horseRoot,jockeyGroup,cam){
 }
 
 // --- HORSE ---
-function createHorse(colorHex,number,mascotPoolIdx){
+const BIRD_BREEDS=[
+    {name:'bunting',body:0x2ea6ff,head:0x62c0ff,belly:0xf0d5a6,accent:0x7b4a24,wing:0x1d88df,beak:0xe0b14a,eyeRing:0xffffff,crest:false,mask:false,cheek:false},
+    {name:'cardinal',body:0xc71f25,head:0xd62828,belly:0xc71f25,accent:0x111111,wing:0xa3161f,beak:0xe39b2e,eyeRing:0x111111,crest:true,mask:true,cheek:false},
+    {name:'goldfinch',body:0xf4d000,head:0xf8de2a,belly:0xf7e87b,accent:0x111111,wing:0x2b2b2b,beak:0xdca244,eyeRing:0x111111,crest:false,mask:true,cheek:false},
+    {name:'monk parakeet',body:0x7ccf64,head:0x96df7f,belly:0xd7d7d7,accent:0x4d8f42,wing:0x63b455,beak:0xe4bf68,eyeRing:0xffffff,crest:false,mask:false,cheek:false},
+    {name:'chickadee',body:0x9ea6ae,head:0xb9c0c8,belly:0xe8ecef,accent:0x111111,wing:0x727b83,beak:0x2f2f2f,eyeRing:0xffffff,crest:false,mask:true,cheek:true},
+    {name:'oriole',body:0xf68a1e,head:0xffa142,belly:0xffbf70,accent:0x111111,wing:0x1d1d1d,beak:0xd6a14a,eyeRing:0xffffff,crest:false,mask:true,cheek:false}
+];
+
+function createBirdRig(birdIdx=0){
+    const spec=BIRD_BREEDS[((birdIdx%BIRD_BREEDS.length)+BIRD_BREEDS.length)%BIRD_BREEDS.length];
+    const group=new THREE.Group();
+    const bodyM=toon({color:spec.body});
+    const headM=toon({color:spec.head});
+    const bellyM=toon({color:spec.belly});
+    const wingM=toon({color:spec.wing});
+    const accentM=toon({color:spec.accent});
+    const beakM=toon({color:spec.beak});
+
+    const body=new THREE.Mesh(new THREE.SphereGeometry(1.15,12,10),bodyM);
+    body.scale.set(1.35,0.88,0.95);
+    body.castShadow=true;
+    group.add(body);
+
+    const belly=new THREE.Mesh(new THREE.SphereGeometry(0.78,10,8),bellyM);
+    belly.scale.set(1.0,0.88,0.78);
+    belly.position.set(0.25,-0.08,0);
+    belly.castShadow=true;
+    group.add(belly);
+
+    const head=new THREE.Mesh(new THREE.SphereGeometry(0.72,10,8),headM);
+    head.position.set(1.22,0.18,0);
+    head.castShadow=true;
+    group.add(head);
+
+    const beak=new THREE.Mesh(new THREE.ConeGeometry(0.2,0.72,8),beakM);
+    beak.rotation.z=-Math.PI/2;
+    beak.position.set(1.92,0.08,0);
+    beak.castShadow=true;
+    group.add(beak);
+
+    const tail=new THREE.Mesh(new THREE.ConeGeometry(0.34,0.95,7),wingM);
+    tail.rotation.z=Math.PI/2;
+    tail.position.set(-1.46,0.08,0);
+    tail.castShadow=true;
+    group.add(tail);
+
+    const leftWing=new THREE.Mesh(new THREE.SphereGeometry(0.72,10,8),wingM);
+    leftWing.scale.set(1.06,0.22,0.78);
+    leftWing.position.set(-0.1,0.0,0.56);
+    leftWing.rotation.x=0.18;
+    leftWing.rotation.z=-0.4;
+    leftWing.castShadow=true;
+    group.add(leftWing);
+
+    const rightWing=new THREE.Mesh(new THREE.SphereGeometry(0.72,10,8),wingM);
+    rightWing.scale.set(1.06,0.22,0.78);
+    rightWing.position.set(-0.1,0.0,-0.56);
+    rightWing.rotation.x=-0.18;
+    rightWing.rotation.z=0.4;
+    rightWing.castShadow=true;
+    group.add(rightWing);
+
+    if(spec.crest){
+        for(let i=0;i<3;i++){
+            const crest=new THREE.Mesh(new THREE.ConeGeometry(0.08,0.46,5),bodyM);
+            crest.position.set(1.18+0.12*i,0.78-0.05*i,0);
+            crest.rotation.z=-0.65+0.18*i;
+            group.add(crest);
+        }
+    }
+    if(spec.mask){
+        const mask=new THREE.Mesh(new THREE.SphereGeometry(0.42,10,8),accentM);
+        mask.scale.set(1.18,0.78,0.82);
+        mask.position.set(1.42,0.1,0);
+        group.add(mask);
+        head.position.x=1.1;
+        beak.position.x=1.82;
+    }
+    if(spec.cheek){
+        const cheekL=new THREE.Mesh(new THREE.SphereGeometry(0.18,8,8),bellyM);
+        cheekL.position.set(1.36,0.03,0.26);
+        const cheekR=cheekL.clone();
+        cheekR.position.z=-0.26;
+        group.add(cheekL,cheekR);
+    }
+
+    for(let s of[-1,1]){
+        const eyeWhite=new THREE.Mesh(new THREE.SphereGeometry(0.11,8,8),new THREE.MeshBasicMaterial({color:spec.eyeRing}));
+        eyeWhite.position.set(1.4,0.18,s*0.2);
+        group.add(eyeWhite);
+        const pupil=new THREE.Mesh(new THREE.SphereGeometry(0.06,8,8),new THREE.MeshBasicMaterial({color:0x111111}));
+        pupil.position.set(1.5,0.16,s*0.16);
+        group.add(pupil);
+    }
+
+    const reinMat=toon({color:0xf2ecd0});
+    const reinAnchors=[new THREE.Vector3(-5.9,-4.7,0.52),new THREE.Vector3(-5.8,-4.45,-0.52)];
+    reinAnchors.forEach((endPt,idx)=>{
+        const start=new THREE.Vector3(1.72,0.06,idx===0?0.08:-0.08);
+        const mid1=new THREE.Vector3(0.9,-0.05,idx===0?0.15:-0.15);
+        const mid2=new THREE.Vector3(-2.1,-2.0,idx===0?0.42:-0.42);
+        const curve=new THREE.CatmullRomCurve3([start,mid1,mid2,endPt]);
+        const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,18,0.09,6,false),reinMat);
+        mesh.castShadow=true;
+        group.add(mesh);
+    });
+
+    group.rotation.z=-0.08;
+    group.scale.set(1.08,1.08,1.08);
+    return {group,leftWing,rightWing,baseY:18.6,baseX:17.9,phase:Math.random()*Math.PI*2,spec};
+}
+
+function createHorse(colorHex,number,mascotPoolIdx,birdIdx=0){
     const root=new THREE.Group(),body=new THREE.Group();root.add(body);
     const brown=toon({color:0x6B4226}),ltBr=toon({color:0x8B6B4A}),dkBr=toon({color:0x3a2212});
     const hoofM=toon({color:0x161616}),maneM=toon({color:0x57331c}),tailM=toon({color:0x1a0f00}),hoodC=toon({color:new THREE.Color(colorHex)});
@@ -505,9 +618,14 @@ function createHorse(colorHex,number,mascotPoolIdx){
     mHead.position.set(1.52+(headOffset.x||0),4.9+(headOffset.y||0)+(headMeta.headLift||0),(headOffset.z||0));
     mHead.userData.basePos=mHead.position.clone();
     jG.add(mHead);
+
+    const birdRig=createBirdRig(birdIdx);
+    birdRig.group.position.set(birdRig.baseX,birdRig.baseY,0);
+    body.add(birdRig.group);
+
     riderBody.userData.parts={chestSilk,hips,leftUpperArm,rightUpperArm,leftThigh,rightThigh};
 
-    return{root,body,tailG,legs,jG};
+    return{root,body,tailG,legs,jG,birdRig};
 }
 
 // --- UI ---
@@ -715,7 +833,7 @@ function buildAndStartRace(rng){
         h.earlyMod=h.style===0?1.04:h.style===1?0.995:0.965;
         h.lateMod=h.style===0?0.975:h.style===1?1.02:1.055;
         h.energy=1;h.finished=false;h.laneOffset=5+i*8;
-        const model=createHorse(h.color,h.number,mascotPool[i]);
+        const model=createHorse(h.color,h.number,mascotPool[i],i%BIRD_BREEDS.length);
         scene.add(model.root);h.model=model;
     });
     updateLB();animate();
@@ -778,6 +896,15 @@ function animate(){
         // Spin the hobby horse wheel
         if(h.model.legs[0]&&h.model.legs[0].wheelGroup){
             h.model.legs[0].wheelGroup.rotation.z-=dt*18;
+        }
+        if(h.model.birdRig){
+            const flap=time*7+h.model.birdRig.phase+i*0.6;
+            const wingAmt=0.42+Math.sin(flap)*0.26;
+            h.model.birdRig.leftWing.rotation.z=-0.42-wingAmt;
+            h.model.birdRig.rightWing.rotation.z=0.42+wingAmt;
+            h.model.birdRig.group.position.y=h.model.birdRig.baseY+Math.sin(time*4.2+h.model.birdRig.phase+i*0.35)*0.28+bound*0.12;
+            h.model.birdRig.group.position.x=h.model.birdRig.baseX+Math.cos(time*3.4+h.model.birdRig.phase+i*0.2)*0.18;
+            h.model.birdRig.group.rotation.z=-0.08+Math.sin(time*2.6+h.model.birdRig.phase)*0.05;
         }
         h.model.jG.position.y=9.02+bound*.22;
         h.model.jG.position.x=-0.18;
