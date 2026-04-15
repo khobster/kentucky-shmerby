@@ -427,19 +427,39 @@ function createBirdRig(birdIdx=0){
     tail.castShadow=true;
     group.add(tail);
 
-    const wingGeo=new THREE.SphereGeometry(0.4,10,8);
-    const leftWing=new THREE.Mesh(wingGeo,accentMat);
-    leftWing.position.set(-0.08,0.12,0.58);
-    leftWing.scale.set(0.55,0.95,0.25);
-    leftWing.rotation.z=-0.62;
-    leftWing.castShadow=true;
+    const wingGeo=new THREE.SphereGeometry(0.44,10,8);
+    const tipGeo=new THREE.ConeGeometry(0.16,0.56,5);
+
+    const leftWing=new THREE.Group();
+    leftWing.position.set(-0.02,0.14,0.72);
+    const leftWingMain=new THREE.Mesh(wingGeo,accentMat);
+    leftWingMain.scale.set(0.78,1.15,0.24);
+    leftWingMain.rotation.z=-0.18;
+    leftWingMain.castShadow=true;
+    leftWing.add(leftWingMain);
+    const leftWingTip=new THREE.Mesh(tipGeo,accentMat);
+    leftWingTip.rotation.z=-Math.PI/2;
+    leftWingTip.position.set(-0.44,-0.02,0);
+    leftWingTip.castShadow=true;
+    leftWing.add(leftWingTip);
+    leftWing.rotation.z=-0.92;
+    leftWing.rotation.y=0.22;
     group.add(leftWing);
 
-    const rightWing=new THREE.Mesh(wingGeo,accentMat);
-    rightWing.position.set(-0.08,0.12,-0.58);
-    rightWing.scale.set(0.55,0.95,0.25);
-    rightWing.rotation.z=0.62;
-    rightWing.castShadow=true;
+    const rightWing=new THREE.Group();
+    rightWing.position.set(-0.02,0.14,-0.72);
+    const rightWingMain=new THREE.Mesh(wingGeo,accentMat);
+    rightWingMain.scale.set(0.78,1.15,0.24);
+    rightWingMain.rotation.z=0.18;
+    rightWingMain.castShadow=true;
+    rightWing.add(rightWingMain);
+    const rightWingTip=new THREE.Mesh(tipGeo,accentMat);
+    rightWingTip.rotation.z=Math.PI/2;
+    rightWingTip.position.set(-0.44,-0.02,0);
+    rightWingTip.castShadow=true;
+    rightWing.add(rightWingTip);
+    rightWing.rotation.z=0.92;
+    rightWing.rotation.y=-0.22;
     group.add(rightWing);
 
     group.scale.setScalar(1.08);
@@ -526,9 +546,9 @@ function createHorse(colorHex,number,mascotPoolIdx,birdIdx=0){
     const stickM=toon({color:0x8B6B4A});
     const wheelM=toon({color:0x333333});
     const hubM=toon({color:0xcccccc});
-    const stick=new THREE.Mesh(new THREE.CylinderGeometry(0.38,0.34,7.2,8),stickM);
-    stick.position.set(0,1.95,0);stick.castShadow=true;body.add(stick);
-    const wheelGroup=new THREE.Group();wheelGroup.position.set(0,0.58,0);stick.add(wheelGroup);
+    const stick=new THREE.Mesh(new THREE.CylinderGeometry(0.38,0.34,7.8,8),stickM);
+    stick.position.set(0,1.9,0);stick.castShadow=true;body.add(stick);
+    const wheelGroup=new THREE.Group();wheelGroup.position.set(0,-4.0,0);stick.add(wheelGroup);
     const wheel=new THREE.Mesh(new THREE.TorusGeometry(1.95,0.33,8,16),wheelM);wheel.castShadow=true;wheelGroup.add(wheel);
     const hub=new THREE.Mesh(new THREE.CylinderGeometry(0.44,0.44,0.56,8),hubM);hub.rotation.x=Math.PI/2;wheelGroup.add(hub);
     for(let sp=0;sp<6;sp++){
@@ -928,15 +948,15 @@ function animate(){
             h.model.legs[0].wheelGroup.rotation.z-=dt*18;
         }
         if(h.model.birdRig){
-            const flap=time*9+h.model.birdRig.phase+i*0.6;
+            const flap=time*10.5+h.model.birdRig.phase+i*0.6;
             const wingBeat=Math.sin(flap);
             const wingLift=Math.abs(wingBeat);
-            h.model.birdRig.leftWing.rotation.z=-0.95-wingBeat*0.5;
-            h.model.birdRig.rightWing.rotation.z=0.95+wingBeat*0.5;
-            h.model.birdRig.leftWing.rotation.x=0.2+wingLift*0.55;
-            h.model.birdRig.rightWing.rotation.x=-0.2-wingLift*0.55;
-            h.model.birdRig.leftWing.rotation.y=0.18+wingBeat*0.08;
-            h.model.birdRig.rightWing.rotation.y=-0.18-wingBeat*0.08;
+            h.model.birdRig.leftWing.rotation.z=-0.96-wingBeat*0.62;
+            h.model.birdRig.rightWing.rotation.z=0.96+wingBeat*0.62;
+            h.model.birdRig.leftWing.rotation.x=0.3+wingLift*0.72;
+            h.model.birdRig.rightWing.rotation.x=-0.3-wingLift*0.72;
+            h.model.birdRig.leftWing.rotation.y=0.24+wingBeat*0.14;
+            h.model.birdRig.rightWing.rotation.y=-0.24-wingBeat*0.14;
             h.model.birdRig.group.position.y=h.model.birdRig.baseY+Math.sin(time*4.2+h.model.birdRig.phase+i*0.35)*0.24+bound*0.1;
             h.model.birdRig.group.position.x=h.model.birdRig.baseX+Math.cos(time*3.6+h.model.birdRig.phase+i*0.2)*0.14;
             h.model.birdRig.group.rotation.z=-0.18+Math.sin(time*2.8+h.model.birdRig.phase)*0.04;
