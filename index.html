@@ -365,13 +365,20 @@ const BIRD_BREEDS=[
     {name:'oriole',body:0xf68a1e,head:0xffa142,belly:0xffbf70,accent:0x111111,wing:0x1d1d1d,beak:0xd6a14a,eyeRing:0xffffff,crest:false,mask:true,cheek:false}
 ];
 
+const BIRD_SPECS=BIRD_BREEDS.map(b=>({
+    body:b.head ?? b.body,
+    accent:b.wing ?? b.accent,
+    dark:b.accent ?? 0x2b2b2b,
+    beak:b.beak ?? 0xf4d28a
+}));
+
 function createBirdRig(birdIdx=0){
     const spec=BIRD_SPECS[birdIdx % BIRD_SPECS.length];
     const group=new THREE.Group();
     const bodyMat=toon({color:spec.body});
     const accentMat=toon({color:spec.accent});
     const darkMat=toon({color:spec.dark});
-    const beakMat=toon({color:0xf4d28a});
+    const beakMat=toon({color:spec.beak});
 
     const birdBody=new THREE.Mesh(new THREE.SphereGeometry(0.82,14,12),bodyMat);
     birdBody.scale.set(1.25,0.92,0.95);
