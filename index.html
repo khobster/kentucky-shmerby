@@ -427,40 +427,52 @@ function createBirdRig(birdIdx=0){
     tail.castShadow=true;
     group.add(tail);
 
-    const wingGeo=new THREE.BoxGeometry(2.1,0.56,2.95);
-    const tipGeo=new THREE.ConeGeometry(0.22,0.92,6);
-
+    const leftWingPivot=new THREE.Group();
+    leftWingPivot.position.set(0.05,0.22,0.64);
     const leftWing=new THREE.Group();
-    leftWing.position.set(-0.18,0.18,0.88);
-    const leftWingMain=new THREE.Mesh(wingGeo,accentMat);
-    leftWingMain.rotation.z=-0.16;
-    leftWingMain.rotation.x=0.12;
-    leftWingMain.castShadow=true;
-    leftWing.add(leftWingMain);
-    const leftWingTip=new THREE.Mesh(tipGeo,accentMat);
+    const leftShoulder=new THREE.Mesh(new THREE.SphereGeometry(0.28,12,10),accentMat);
+    leftShoulder.scale.set(1.0,0.42,0.58);
+    leftShoulder.position.set(0.08,0,0);
+    leftShoulder.castShadow=true;
+    leftWing.add(leftShoulder);
+    const leftPrimary=new THREE.Mesh(new THREE.SphereGeometry(0.48,12,10),accentMat);
+    leftPrimary.scale.set(1.9,0.22,0.82);
+    leftPrimary.position.set(-0.56,0.06,0);
+    leftPrimary.rotation.z=0.08;
+    leftPrimary.castShadow=true;
+    leftWing.add(leftPrimary);
+    const leftSecondary=new THREE.Mesh(new THREE.SphereGeometry(0.36,10,8),accentMat);
+    leftSecondary.scale.set(1.7,0.18,0.72);
+    leftSecondary.position.set(-0.22,-0.16,0);
+    leftSecondary.rotation.z=0.28;
+    leftSecondary.castShadow=true;
+    leftWing.add(leftSecondary);
+    const leftWingTip=new THREE.Mesh(new THREE.ConeGeometry(0.12,0.58,8),accentMat);
     leftWingTip.rotation.z=-Math.PI/2;
-    leftWingTip.position.set(-1.02,-0.04,0);
+    leftWingTip.position.set(-1.05,0.02,0);
     leftWingTip.castShadow=true;
     leftWing.add(leftWingTip);
-    leftWing.rotation.z=-1.08;
-    leftWing.rotation.y=0.34;
-    group.add(leftWing);
+    leftWing.rotation.y=0.12;
+    leftWingPivot.add(leftWing);
+    bird.add(leftWingPivot);
 
+    const rightWingPivot=new THREE.Group();
+    rightWingPivot.position.set(0.05,0.22,-0.64);
     const rightWing=new THREE.Group();
-    rightWing.position.set(-0.18,0.18,-0.88);
-    const rightWingMain=new THREE.Mesh(wingGeo,accentMat);
-    rightWingMain.rotation.z=0.16;
-    rightWingMain.rotation.x=-0.12;
-    rightWingMain.castShadow=true;
-    rightWing.add(rightWingMain);
-    const rightWingTip=new THREE.Mesh(tipGeo,accentMat);
+    const rightShoulder=leftShoulder.clone();
+    rightWing.add(rightShoulder);
+    const rightPrimary=leftPrimary.clone();
+    rightPrimary.rotation.z=-0.08;
+    rightWing.add(rightPrimary);
+    const rightSecondary=leftSecondary.clone();
+    rightSecondary.rotation.z=-0.28;
+    rightWing.add(rightSecondary);
+    const rightWingTip=leftWingTip.clone();
     rightWingTip.rotation.z=Math.PI/2;
-    rightWingTip.position.set(-1.02,-0.04,0);
-    rightWingTip.castShadow=true;
     rightWing.add(rightWingTip);
-    rightWing.rotation.z=1.08;
-    rightWing.rotation.y=-0.34;
-    group.add(rightWing);
+    rightWing.rotation.y=-0.12;
+    rightWingPivot.add(rightWing);
+    bird.add(rightWingPivot);
 
     group.scale.setScalar(1.18);
     return {
@@ -541,107 +553,137 @@ function createHorse(colorHex,number,mascotPoolIdx,birdIdx=0){
     const tail2=new THREE.Mesh(new THREE.SphereGeometry(.35,6,6),tailM);tail2.scale.set(1,2,1);tail2.position.set(-.4,-2.5,0);tailG.add(tail2);
     tailG.position.set(-7.5,8.5,0);tailG.rotation.z=.6;body.add(tailG);
 
-    // HOBBY HORSE: single stick + spinning wheel
+    // HOBBY HORSE: single stick + clearly visible wheel below it
     const legs=[];
     const stickM=toon({color:0x8B6B4A});
-    const wheelM=toon({color:0x333333});
-    const hubM=toon({color:0xcccccc});
-    const stick=new THREE.Mesh(new THREE.CylinderGeometry(0.4,0.36,8.2,8),stickM);
-    stick.position.set(0.12,1.95,0.92);stick.castShadow=true;body.add(stick);
-    const wheelGroup=new THREE.Group();wheelGroup.position.set(0,-4.0,0.18);stick.add(wheelGroup);
-    const wheel=new THREE.Mesh(new THREE.TorusGeometry(2.7,0.48,12,24),wheelM);wheel.castShadow=true;wheelGroup.add(wheel);
-    const rim=new THREE.Mesh(new THREE.TorusGeometry(1.92,0.18,10,20),hubM);rim.castShadow=true;wheelGroup.add(rim);
-    const hub=new THREE.Mesh(new THREE.CylinderGeometry(0.56,0.56,0.74,8),hubM);hub.rotation.x=Math.PI/2;wheelGroup.add(hub);
+    const tireM=toon({color:0x3F3F3F});
+    const rimM=toon({color:0xEEE7DD});
+    const supportStick=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.26,3.15,8),stickM);
+    supportStick.position.set(0.14,-1.62,0.84);
+    supportStick.castShadow=true;
+    body.add(supportStick);
+
+    const fork=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.9,0.34),stickM);
+    fork.position.set(0.14,-3.34,0.84);
+    fork.castShadow=true;
+    body.add(fork);
+
+    const axle=new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.1,0.9,8),rimM);
+    axle.rotation.z=Math.PI/2;
+    axle.position.set(0.14,-3.48,0.84);
+    axle.castShadow=true;
+    body.add(axle);
+
+    const wheelGroup=new THREE.Group();
+    wheelGroup.position.set(0.14,-3.48,0.84);
+    body.add(wheelGroup);
+
+    const wheel=new THREE.Mesh(new THREE.TorusGeometry(1.8,0.24,12,28),tireM);
+    wheel.castShadow=true;
+    wheelGroup.add(wheel);
+    const innerRim=new THREE.Mesh(new THREE.TorusGeometry(1.18,0.1,10,24),rimM);
+    wheelGroup.add(innerRim);
+    const hub=new THREE.Mesh(new THREE.CylinderGeometry(0.24,0.24,0.66,10),rimM);
+    hub.rotation.x=Math.PI/2;
+    wheelGroup.add(hub);
     for(let sp=0;sp<6;sp++){
-        const spoke=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.07,4.85,4),hubM);
-        spoke.rotation.z=sp*(Math.PI/3);
-        spoke.rotation.x=Math.PI/2;
-        wheelGroup.add(spoke);
+      const spoke=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.045,2.2,6),rimM);
+      spoke.rotation.z=sp*(Math.PI/3);
+      wheelGroup.add(spoke);
     }
+    legs.push({wheelGroup,supportStick});
 
     const jG=new THREE.Group();jG.position.set(-0.38,9.08,-0.26);body.add(jG);
-    const riderBody=new THREE.Group();riderBody.position.set(-0.46,-0.08,0.14);riderBody.scale.set(1.18,1.12,1.08);riderBody.rotation.z=-0.42;jG.add(riderBody);
+    const riderBody=new THREE.Group();
+    riderBody.position.set(-0.28,0.04,0.18);
+    riderBody.scale.set(1.02,1.02,1.02);
+    riderBody.rotation.z=-0.26;
+    jG.add(riderBody);
     jG.userData.riderBody=riderBody;
+
     const silkColor=new THREE.Color(colorHex);
     const silk=toon({color:silkColor});
     const silkAccent=toon({color:silkColor.clone().lerp(new THREE.Color(0xffffff),0.42)});
-    const pants=toon({color:0x3a2212});
-    const boots=toon({color:0xb32020});
-    const skin=toon({color:0xd8a07a});
+    const limb=toon({color:0xF4ECDF});
+    const boot=toon({color:0x2B2B2B});
+    const neckMat=toon({color:0xE63C3C});
 
-    const upperArmGeo=new THREE.CylinderGeometry(0.22,0.26,1.45,6);upperArmGeo.translate(0,-0.725,0);
-    const lowerArmGeo=new THREE.CylinderGeometry(0.18,0.21,1.25,6);lowerArmGeo.translate(0,-0.625,0);
-    const thighRideGeo=new THREE.CylinderGeometry(0.28,0.33,1.75,6);thighRideGeo.translate(0,-0.875,0);
-    const calfRideGeo=new THREE.CylinderGeometry(0.2,0.24,1.55,6);calfRideGeo.translate(0,-0.775,0);
+    const torso=new THREE.Mesh(new THREE.CylinderGeometry(0.38,0.46,1.9,10),silk);
+    torso.position.set(-0.08,1.72,0);
+    torso.rotation.z=-0.88;
+    torso.castShadow=true;
+    riderBody.add(torso);
 
-    const hips=new THREE.Mesh(new THREE.SphereGeometry(1.12,8,6),pants);
-    hips.scale.set(1.64,1.02,0.98);
-    hips.position.set(-0.98,0.98,0.14);
-    hips.rotation.z=-0.18;
-    riderBody.add(hips);
-
-    const chestSilk=new THREE.Mesh(new THREE.SphereGeometry(1.32,8,6),silk);
-    chestSilk.scale.set(1.12,1.9,0.98);
-    chestSilk.position.set(0.18,2.12,0.14);
-    chestSilk.rotation.z=-0.94;
+    const chestSilk=new THREE.Mesh(new THREE.CylinderGeometry(0.26,0.3,0.8,10),silkAccent);
+    chestSilk.position.set(0.22,2.04,0);
+    chestSilk.rotation.z=-0.88;
+    chestSilk.castShadow=true;
     riderBody.add(chestSilk);
 
+    const hips=new THREE.Mesh(new THREE.SphereGeometry(0.4,10,8),silk);
+    hips.scale.set(1.7,0.85,1.05);
+    hips.position.set(-0.82,0.92,0);
+    hips.castShadow=true;
+    riderBody.add(hips);
 
-    const leftUpperArm=new THREE.Mesh(upperArmGeo,silk);
-    leftUpperArm.position.set(0.8,2.3,0.28);
-    leftUpperArm.rotation.z=-1.28;
-    riderBody.add(leftUpperArm);
-    const leftLowerArm=new THREE.Mesh(lowerArmGeo,silk);
-    leftLowerArm.position.set(0.5,-1.15,0);
-    leftLowerArm.rotation.z=-0.1;
-    leftUpperArm.add(leftLowerArm);
-    const leftHand=new THREE.Mesh(new THREE.SphereGeometry(0.22,6,6),skin);
-    leftHand.scale.set(1.15,0.8,1);
-    leftHand.position.set(0.1,-1.2,0);
-    leftLowerArm.add(leftHand);
+    function buildArm(side){
+      const shoulder=new THREE.Group();
+      shoulder.position.set(0.26,2.32,side*0.34);
+      riderBody.add(shoulder);
+      const upper=new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.11,0.98,8),limb);
+      upper.position.set(0.24,-0.16,0);
+      upper.rotation.z=-1.1;
+      upper.rotation.x=side*0.18;
+      upper.castShadow=true;
+      shoulder.add(upper);
+      const fore=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.09,0.86,8),limb);
+      fore.position.set(0.35,-0.82,0);
+      fore.rotation.z=-0.34;
+      fore.rotation.x=side*0.12;
+      fore.castShadow=true;
+      shoulder.add(fore);
+      const hand=new THREE.Mesh(new THREE.SphereGeometry(0.16,10,8),limb);
+      hand.scale.set(1.15,0.95,1.05);
+      hand.position.set(0.52,-1.24,0);
+      hand.castShadow=true;
+      shoulder.add(hand);
+      return shoulder;
+    }
 
-    const rightUpperArm=new THREE.Mesh(upperArmGeo,silk);
-    rightUpperArm.position.set(0.8,2.3,-0.28);
-    rightUpperArm.rotation.z=-1.28;
-    riderBody.add(rightUpperArm);
-    const rightLowerArm=new THREE.Mesh(lowerArmGeo,silk);
-    rightLowerArm.position.set(0.5,-1.15,0);
-    rightLowerArm.rotation.z=-0.1;
-    rightUpperArm.add(rightLowerArm);
-    const rightHand=new THREE.Mesh(new THREE.SphereGeometry(0.22,6,6),skin);
-    rightHand.scale.set(1.15,0.8,1);
-    rightHand.position.set(0.1,-1.2,0);
-    rightLowerArm.add(rightHand);
+    const leftUpperArm=buildArm(1);
+    const rightUpperArm=buildArm(-1);
 
-    const leftThigh=new THREE.Mesh(thighRideGeo,pants);
-    leftThigh.position.set(-0.78,0.86,0.26);
-    leftThigh.rotation.z=1.34;
-    riderBody.add(leftThigh);
-    const leftCalf=new THREE.Mesh(calfRideGeo,boots);
-    leftCalf.position.set(-0.05,-1.48,0);
-    leftCalf.rotation.z=-0.92;
-    leftThigh.add(leftCalf);
-    const leftBoot=new THREE.Mesh(new THREE.SphereGeometry(0.28,6,6),boots);
-    leftBoot.scale.set(1.55,0.65,0.9);
-    leftBoot.position.set(0.2,-1.45,0);
-    leftCalf.add(leftBoot);
+    function buildLeg(side){
+      const leg=new THREE.Group();
+      leg.position.set(-0.78,0.94,side*0.6);
+      riderBody.add(leg);
+      const thigh=new THREE.Mesh(new THREE.CylinderGeometry(0.11,0.12,0.92,8),limb);
+      thigh.position.set(-0.06,-0.18,0);
+      thigh.rotation.z=0.86;
+      thigh.rotation.x=side*0.14;
+      thigh.castShadow=true;
+      leg.add(thigh);
+      const shin=new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.1,0.88,8),limb);
+      shin.position.set(0.34,-0.62,0.02);
+      shin.rotation.z=0.08;
+      shin.rotation.x=side*0.1;
+      shin.castShadow=true;
+      leg.add(shin);
+      const foot=new THREE.Mesh(new THREE.SphereGeometry(0.13,10,8),boot);
+      foot.scale.set(1.45,0.72,0.92);
+      foot.position.set(0.38,-1.06,0.04);
+      foot.castShadow=true;
+      leg.add(foot);
+      return leg;
+    }
 
-    const rightThigh=new THREE.Mesh(thighRideGeo,pants);
-    rightThigh.position.set(-0.78,0.86,-0.26);
-    rightThigh.rotation.z=1.34;
-    riderBody.add(rightThigh);
-    const rightCalf=new THREE.Mesh(calfRideGeo,boots);
-    rightCalf.position.set(-0.05,-1.48,0);
-    rightCalf.rotation.z=-0.92;
-    rightThigh.add(rightCalf);
-    const rightBoot=new THREE.Mesh(new THREE.SphereGeometry(0.28,6,6),boots);
-    rightBoot.scale.set(1.55,0.65,0.9);
-    rightBoot.position.set(0.2,-1.45,0);
-    rightCalf.add(rightBoot);
+    const leftThigh=buildLeg(1);
+    const rightThigh=buildLeg(-1);
 
-    const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.26,0.68,6),skin);
-    jNeck.position.set(0.86,3.0,0);
-    jNeck.rotation.z=-0.52;
+    const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.14,0.54,8),neckMat);
+    jNeck.position.set(0.62,2.82,0);
+    jNeck.rotation.z=-0.46;
+    jNeck.castShadow=true;
     riderBody.add(jNeck);
 
     const mHead=buildMascotHead(mascotPoolIdx);
@@ -950,10 +992,10 @@ function animate(){
             const flap=time*11.6+h.model.birdRig.phase+i*0.6;
             const wingBeat=Math.sin(flap);
             const wingLift=Math.abs(wingBeat);
-            h.model.birdRig.leftWing.rotation.z=-1.08-wingBeat*1.02;
-            h.model.birdRig.rightWing.rotation.z=1.08+wingBeat*1.02;
-            h.model.birdRig.leftWing.rotation.x=0.36+wingLift*1.12;
-            h.model.birdRig.rightWing.rotation.x=-0.36-wingLift*1.12;
+            h.model.birdRig.leftWing.rotation.z=-1.2-wingBeat*1.38;
+            h.model.birdRig.rightWing.rotation.z=1.2+wingBeat*1.38;
+            h.model.birdRig.leftWing.rotation.x=0.48+wingLift*1.22;
+            h.model.birdRig.rightWing.rotation.x=-0.48-wingLift*1.22;
             h.model.birdRig.leftWing.rotation.y=0.34+wingBeat*0.24;
             h.model.birdRig.rightWing.rotation.y=-0.34-wingBeat*0.24;
             h.model.birdRig.group.position.y=h.model.birdRig.baseY+Math.sin(time*4.2+h.model.birdRig.phase+i*0.35)*0.3+bound*0.1;
