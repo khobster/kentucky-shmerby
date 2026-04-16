@@ -454,7 +454,7 @@ function createBirdRig(birdIdx=0){
     leftWing.add(leftWingTip);
     leftWing.rotation.y=0.12;
     leftWingPivot.add(leftWing);
-    bird.add(leftWingPivot);
+    group.add(leftWingPivot);
 
     const rightWingPivot=new THREE.Group();
     rightWingPivot.position.set(0.05,0.22,-0.64);
@@ -472,7 +472,7 @@ function createBirdRig(birdIdx=0){
     rightWing.add(rightWingTip);
     rightWing.rotation.y=-0.12;
     rightWingPivot.add(rightWing);
-    bird.add(rightWingPivot);
+    group.add(rightWingPivot);
 
     group.scale.setScalar(1.18);
     return {
