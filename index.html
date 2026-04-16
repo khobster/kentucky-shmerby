@@ -608,11 +608,11 @@ function createHorse(colorHex,number,mascotPoolIdx,birdIdx=0){
     const boot=toon({color:0x2B2B2B});
     const neckMat=toon({color:0xE63C3C});
 
-    const torso=new THREE.Mesh(new THREE.CylinderGeometry(0.38,0.46,1.9,10),silk);
-    torso.position.set(-0.08,1.72,0);
-    torso.rotation.z=-0.88;
-    torso.castShadow=true;
-    riderBody.add(torso);
+    const riderTorso=new THREE.Mesh(new THREE.CylinderGeometry(0.38,0.46,1.9,10),silk);
+    riderTorso.position.set(-0.08,1.72,0);
+    riderTorso.rotation.z=-0.88;
+    riderTorso.castShadow=true;
+    riderBody.add(riderTorso);
 
     const chestSilk=new THREE.Mesh(new THREE.CylinderGeometry(0.26,0.3,0.8,10),silkAccent);
     chestSilk.position.set(0.22,2.04,0);
