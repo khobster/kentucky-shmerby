@@ -519,204 +519,130 @@ function updateBirdReins(body,birdRig){
 }
 
 function createHorse(colorHex,number,mascotPoolIdx,birdIdx=0){
-    const root=new THREE.Group(),body=new THREE.Group();root.add(body);
-    const brown=toon({color:0x6B4226}),ltBr=toon({color:0x8B6B4A}),dkBr=toon({color:0x3a2212});
-    const hoofM=toon({color:0x161616}),maneM=toon({color:0x57331c}),tailM=toon({color:0x1a0f00}),hoodC=toon({color:new THREE.Color(colorHex)});
+    const root=new THREE.Group();scene.add(root);
+    const body=new THREE.Group();root.add(body);
+    const brown=toon({color:colorHex});
+    const dark=toon({color:0x4a2a18});
+    const hoof=toon({color:0x3a3a3a});
+    const cream=toon({color:0xf6f7fb});
 
-    const torso=new THREE.Mesh(new THREE.SphereGeometry(1,14,10),brown);torso.scale.set(7.25,2.2,2.1);torso.position.y=6.4;torso.castShadow=true;body.add(torso);
-    const rump=new THREE.Mesh(new THREE.SphereGeometry(3,10,10),brown);rump.scale.set(0.98,0.9,0.96);rump.position.set(-5.0,6.95,0);body.add(rump);
-    const chest=new THREE.Mesh(new THREE.SphereGeometry(2.6,10,10),brown);chest.scale.set(1.0,1.05,0.95);chest.position.set(4.95,6.95,0);body.add(chest);
+    const belly=new THREE.Mesh(new THREE.SphereGeometry(3.2,18,18),brown);
+    belly.scale.set(1.12,0.96,0.96); belly.position.set(0.2,6.45,0); belly.castShadow=true; body.add(belly);
+    const rump=new THREE.Mesh(new THREE.SphereGeometry(2.55,16,16),brown);
+    rump.position.set(-4.65,6.55,0); rump.castShadow=true; body.add(rump);
+    const chest=new THREE.Mesh(new THREE.SphereGeometry(2.15,16,16),brown);
+    chest.scale.set(1.05,1.0,0.92); chest.position.set(4.05,6.35,0); chest.castShadow=true; body.add(chest);
+    const neck=new THREE.Mesh(new THREE.CylinderGeometry(0.88,1.15,7.1,12),brown);
+    neck.position.set(5.2,10.05,0); neck.rotation.z=-0.84; neck.castShadow=true; body.add(neck);
+    const head=new THREE.Mesh(new THREE.SphereGeometry(1.65,14,14),brown);
+    head.scale.set(1.25,0.92,0.9); head.position.set(7.55,13.18,0); head.castShadow=true; body.add(head);
+    const muzzle=new THREE.Mesh(new THREE.SphereGeometry(0.92,12,12),toon({color:0xd2a36c}));
+    muzzle.scale.set(1.55,0.78,0.82); muzzle.position.set(8.82,13.0,0); body.add(muzzle);
+    const eye=new THREE.Mesh(new THREE.SphereGeometry(0.18,10,10),toon({color:0x111111}));
+    eye.position.set(8.1,13.45,1.0); body.add(eye);
+    const eye2=eye.clone(); eye2.position.z=-1.0; body.add(eye2);
+    const ear1=new THREE.Mesh(new THREE.ConeGeometry(0.28,1.0,8),brown);
+    ear1.position.set(7.02,14.55,0.55); ear1.rotation.z=-0.35; body.add(ear1);
+    const ear2=ear1.clone(); ear2.position.z=-0.55; body.add(ear2);
+    const mane=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,6.4,8),dark);
+    mane.position.set(4.6,10.05,-0.98); mane.rotation.z=-0.78; body.add(mane);
 
-    const st=saddleTex(number.toString(),colorHex),sm=toon({map:st});
-    const sR=new THREE.Mesh(new THREE.PlaneGeometry(5.5,4),sm);sR.position.set(-.5,7,2.7);body.add(sR);
-    const sL=new THREE.Mesh(new THREE.PlaneGeometry(5.5,4),sm);sL.position.set(-.5,7,-2.7);sL.rotation.y=Math.PI;body.add(sL);
-
-    const neckCurve=new THREE.QuadraticBezierCurve3(new THREE.Vector3(5.2,7.2,0),new THREE.Vector3(7.45,11.1,0),new THREE.Vector3(10.35,14.15,0));
-    const neck=new THREE.Mesh(new THREE.TubeGeometry(neckCurve,14,1.32,8,false),brown);neck.castShadow=true;body.add(neck);
-
-    const skull=new THREE.Mesh(new THREE.SphereGeometry(1,12,10),brown);skull.scale.set(3.05,1.35,1.36);skull.position.set(11.55,14.2,0);body.add(skull);
-    const muzzle=new THREE.Mesh(new THREE.SphereGeometry(1,10,8),ltBr);muzzle.scale.set(1.9,0.95,1.02);muzzle.position.set(14.15,13.25,0);body.add(muzzle);
-    const nm=new THREE.MeshBasicMaterial({color:0x333333});
-    for(let s of[-1,1]){const n=new THREE.Mesh(new THREE.SphereGeometry(.3,6,6),nm);n.position.set(15,13.3,s*.6);body.add(n);}
-    const hoodMesh=new THREE.Mesh(new THREE.SphereGeometry(1,12,10),hoodC);hoodMesh.scale.set(3.28,1.45,1.52);hoodMesh.position.set(11.55,14.2,0);body.add(hoodMesh);
-    const ehm=new THREE.MeshBasicMaterial({color:0x111111});
-    for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.CircleGeometry(.65,8),ehm);e.position.set(12.5,14.5,s*1.66);if(s<0)e.rotation.y=Math.PI;body.add(e);}
-    for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.ConeGeometry(.48,2.35,6),hoodC);e.position.set(10.35,16.15,s*.82);e.rotation.z=.1;body.add(e);}
-
-    const maneStrip=new THREE.Mesh(new THREE.BoxGeometry(4.8,.38,.46),maneM);
-    maneStrip.position.set(8.25,12.15,0);
-    maneStrip.rotation.z=.93;
-    maneStrip.castShadow=true;
-    body.add(maneStrip);
     const tailG=new THREE.Group();
-    const tail1=new THREE.Mesh(new THREE.SphereGeometry(.4,6,6),tailM);tail1.scale.set(1,2.5,1);tail1.position.y=-1.2;tailG.add(tail1);
-    const tail2=new THREE.Mesh(new THREE.SphereGeometry(.35,6,6),tailM);tail2.scale.set(1,2,1);tail2.position.set(-.4,-2.5,0);tailG.add(tail2);
-    tailG.position.set(-7.5,8.5,0);tailG.rotation.z=.6;body.add(tailG);
+    tailG.position.set(-6.55,7.0,0);
+    const tail=new THREE.Mesh(new THREE.CylinderGeometry(0.28,0.85,3.9,10),dark);
+    tail.rotation.z=1.03; tail.rotation.x=0.08; tail.castShadow=true; tailG.add(tail); body.add(tailG);
 
-    // HOBBY HORSE: single stick + clearly visible wheel below it
-    const legs=[];
-    const stickM=toon({color:0x8B6B4A});
-    const tireM=toon({color:0x3F3F3F});
-    const rimM=toon({color:0xEEE7DD});
-    const supportStick=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.26,3.15,8),stickM);
-    supportStick.position.set(0.14,-1.62,0.84);
+    function buildWing(side){
+        const wing=new THREE.Group();
+        wing.position.set(1.55,9.15,side*2.55);
+        const bone=new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.24,2.9,8),toon({color:0xe8e8ee}));
+        bone.rotation.z=side>0?0.95:-0.95;
+        wing.add(bone);
+        for(let i=0;i<5;i++){
+            const feather=new THREE.Mesh(new THREE.SphereGeometry(0.95-0.08*i,12,12),cream);
+            feather.scale.set(2.05-0.18*i,0.34,0.86);
+            feather.position.set((side>0?-1:1)*(1.45+i*0.95),1.05-i*0.18,0);
+            feather.rotation.z=side>0?(-0.55-i*0.1):(0.55+i*0.1);
+            feather.castShadow=true;
+            wing.add(feather);
+        }
+        const coverts=new THREE.Mesh(new THREE.SphereGeometry(0.85,12,12),toon({color:0xffffff}));
+        coverts.scale.set(1.55,0.42,0.95);
+        coverts.position.set(side>0?-0.9:0.9,0.18,0);
+        wing.add(coverts);
+        wing.rotation.y=side>0?-0.28:0.28;
+        wing.rotation.z=side>0?-0.62:0.62;
+        body.add(wing);
+        return wing;
+    }
+    const leftWing=buildWing(-1);
+    const rightWing=buildWing(1);
+
+    const stickMat=toon({color:0xC89B6D});
+    const supportStick=new THREE.Mesh(new THREE.CylinderGeometry(0.24,0.32,5.6,10),stickMat);
+    supportStick.position.set(-0.35,1.45,0.88);
     supportStick.castShadow=true;
     body.add(supportStick);
-
-    const fork=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.9,0.34),stickM);
-    fork.position.set(0.14,-3.34,0.84);
-    fork.castShadow=true;
-    body.add(fork);
-
-    const axle=new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.1,0.9,8),rimM);
-    axle.rotation.z=Math.PI/2;
-    axle.position.set(0.14,-3.48,0.84);
-    axle.castShadow=true;
-    body.add(axle);
-
     const wheelGroup=new THREE.Group();
-    wheelGroup.position.set(0.14,-3.48,0.84);
+    wheelGroup.position.set(-0.35,-1.75,0.92);
     body.add(wheelGroup);
-
-    const wheel=new THREE.Mesh(new THREE.TorusGeometry(1.8,0.24,12,28),tireM);
-    wheel.castShadow=true;
-    wheelGroup.add(wheel);
-    const innerRim=new THREE.Mesh(new THREE.TorusGeometry(1.18,0.1,10,24),rimM);
-    wheelGroup.add(innerRim);
-    const hub=new THREE.Mesh(new THREE.CylinderGeometry(0.24,0.24,0.66,10),rimM);
-    hub.rotation.x=Math.PI/2;
-    wheelGroup.add(hub);
-    for(let sp=0;sp<6;sp++){
-      const spoke=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.045,2.2,6),rimM);
-      spoke.rotation.z=sp*(Math.PI/3);
-      wheelGroup.add(spoke);
+    const wheel=new THREE.Mesh(new THREE.TorusGeometry(1.68,0.25,10,22),hoof);
+    wheel.castShadow=true; wheelGroup.add(wheel);
+    const hubMat=toon({color:0xe9e4d8});
+    const hub=new THREE.Mesh(new THREE.CylinderGeometry(0.28,0.28,0.5,12),hubMat);
+    hub.rotation.x=Math.PI/2; wheelGroup.add(hub);
+    for(let i=0;i<6;i++){
+        const spoke=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,2.4,6),hubMat);
+        spoke.rotation.z=i*(Math.PI/3); wheelGroup.add(spoke);
     }
-    legs.push({wheelGroup,supportStick});
+    const footA=new THREE.Mesh(new THREE.BoxGeometry(0.58,0.16,1.18),hoof);
+    footA.position.set(-0.38,-0.25,0.56); footA.rotation.z=-0.14; supportStick.add(footA);
+    const footB=footA.clone(); footB.position.z=-0.56; footB.rotation.z=0.14; supportStick.add(footB);
+    const legs=[{wheelGroup,stick:supportStick}];
 
-    const jG=new THREE.Group();jG.position.set(-0.38,9.08,-0.26);body.add(jG);
-    const riderBody=new THREE.Group();
-    riderBody.position.set(-0.28,0.04,0.18);
-    riderBody.scale.set(1.02,1.02,1.02);
-    riderBody.rotation.z=-0.26;
-    jG.add(riderBody);
-    jG.userData.riderBody=riderBody;
+    const jG=new THREE.Group();
+    jG.position.set(1.1,9.3,0);
+    body.add(jG);
+    const set=loadedTextures[mascotPoolIdx%loadedTextures.length];
+    const riderScale=set.riderScale||1.0;
+    const jersey=toon({color:0xf4f4f4});
+    const skin=toon({color:0xf1d2bd});
+    const shorts=toon({color:0x222222});
 
-    const silkColor=new THREE.Color(colorHex);
-    const silk=toon({color:silkColor});
-    const silkAccent=toon({color:silkColor.clone().lerp(new THREE.Color(0xffffff),0.42)});
-    const limb=toon({color:0xF4ECDF});
-    const boot=toon({color:0x2B2B2B});
-    const neckMat=toon({color:0xE63C3C});
+    const riderTorso=new THREE.Mesh(new THREE.CylinderGeometry(0.72,0.88,3.15,12),jersey);
+    riderTorso.position.set(0,0.05,0); riderTorso.rotation.z=-0.28; riderTorso.scale.multiplyScalar(riderScale); riderTorso.castShadow=true; jG.add(riderTorso);
+    const leftArm=new THREE.Mesh(new THREE.CylinderGeometry(0.17,0.17,2.45,8),jersey);
+    leftArm.position.set(0.95,0.42,0.78); leftArm.rotation.z=-1.08; leftArm.rotation.x=0.26; jG.add(leftArm);
+    const rightArm=leftArm.clone(); rightArm.position.z=-0.78; rightArm.rotation.x=-0.26; jG.add(rightArm);
+    const leftHand=new THREE.Mesh(new THREE.SphereGeometry(0.28,10,10),skin);
+    leftHand.position.set(2.02,-0.08,1.0); jG.add(leftHand);
+    const rightHand=leftHand.clone(); rightHand.position.z=-1.0; jG.add(rightHand);
+    const leftLeg=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.18,2.55,8),shorts);
+    leftLeg.position.set(-0.65,-1.8,1.25); leftLeg.rotation.z=0.28; jG.add(leftLeg);
+    const rightLeg=leftLeg.clone(); rightLeg.position.z=-1.25; rightLeg.rotation.z=0.16; jG.add(rightLeg);
 
-    const riderTorso=new THREE.Mesh(new THREE.CylinderGeometry(0.38,0.46,1.9,10),silk);
-    riderTorso.position.set(-0.08,1.72,0);
-    riderTorso.rotation.z=-0.88;
-    riderTorso.castShadow=true;
-    riderBody.add(riderTorso);
+    const headGroup=buildMascotHead(mascotPoolIdx);
+    const headOffset=set.headOffset||{x:0.28,y:2.55,z:0};
+    headGroup.position.set(headOffset.x,headOffset.y+(set.headLift||0),headOffset.z);
+    headGroup.scale.setScalar(1.0*riderScale);
 
-    const chestSilk=new THREE.Mesh(new THREE.CylinderGeometry(0.26,0.3,0.8,10),silkAccent);
-    chestSilk.position.set(0.22,2.04,0);
-    chestSilk.rotation.z=-0.88;
-    chestSilk.castShadow=true;
-    riderBody.add(chestSilk);
+    const reinMat=toon({color:0xf5f5f5});
+    const reinL=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,3.2,6),reinMat);
+    reinL.position.set(3.45,0.2,0.86); reinL.rotation.z=-0.95; reinL.rotation.x=0.2; jG.add(reinL);
+    const reinR=reinL.clone(); reinR.position.z=-0.86; reinR.rotation.x=-0.2; jG.add(reinR);
+    jG.add(headGroup);
 
-    const hips=new THREE.Mesh(new THREE.SphereGeometry(0.4,10,8),silk);
-    hips.scale.set(1.7,0.85,1.05);
-    hips.position.set(-0.82,0.92,0);
-    hips.castShadow=true;
-    riderBody.add(hips);
+    const sign=new THREE.Group();
+    const pole=new THREE.Mesh(new THREE.BoxGeometry(0.32,4.5,0.32),toon({color:0xC89B6D}));
+    pole.position.set(0,-1.0,0); sign.add(pole);
+    const plate=new THREE.Mesh(new THREE.BoxGeometry(3.9,2.25,0.26),toon({color:numPlateColor(number)}));
+    plate.position.set(0,1.1,0); sign.add(plate);
+    const txt=makeNumberTexture(number); const tmat=new THREE.MeshBasicMaterial({map:txt,transparent:true});
+    const tp=new THREE.Mesh(new THREE.PlaneGeometry(2.95,1.55),tmat);
+    tp.position.set(0,1.1,0.14); sign.add(tp);
+    sign.position.set(-0.1,3.4,2.2); body.add(sign);
 
-    function buildArm(side){
-      const shoulder=new THREE.Group();
-      shoulder.position.set(0.26,2.32,side*0.34);
-      riderBody.add(shoulder);
-      const upper=new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.11,0.98,8),limb);
-      upper.position.set(0.24,-0.16,0);
-      upper.rotation.z=-1.1;
-      upper.rotation.x=side*0.18;
-      upper.castShadow=true;
-      shoulder.add(upper);
-      const fore=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.09,0.86,8),limb);
-      fore.position.set(0.35,-0.82,0);
-      fore.rotation.z=-0.34;
-      fore.rotation.x=side*0.12;
-      fore.castShadow=true;
-      shoulder.add(fore);
-      const hand=new THREE.Mesh(new THREE.SphereGeometry(0.16,10,8),limb);
-      hand.scale.set(1.15,0.95,1.05);
-      hand.position.set(0.52,-1.24,0);
-      hand.castShadow=true;
-      shoulder.add(hand);
-      return shoulder;
-    }
-
-    const leftUpperArm=buildArm(1);
-    const rightUpperArm=buildArm(-1);
-
-    function buildLeg(side){
-      const leg=new THREE.Group();
-      leg.position.set(-0.78,0.94,side*0.6);
-      riderBody.add(leg);
-      const thigh=new THREE.Mesh(new THREE.CylinderGeometry(0.11,0.12,0.92,8),limb);
-      thigh.position.set(-0.06,-0.18,0);
-      thigh.rotation.z=0.86;
-      thigh.rotation.x=side*0.14;
-      thigh.castShadow=true;
-      leg.add(thigh);
-      const shin=new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.1,0.88,8),limb);
-      shin.position.set(0.34,-0.62,0.02);
-      shin.rotation.z=0.08;
-      shin.rotation.x=side*0.1;
-      shin.castShadow=true;
-      leg.add(shin);
-      const foot=new THREE.Mesh(new THREE.SphereGeometry(0.13,10,8),boot);
-      foot.scale.set(1.45,0.72,0.92);
-      foot.position.set(0.38,-1.06,0.04);
-      foot.castShadow=true;
-      leg.add(foot);
-      return leg;
-    }
-
-    const leftThigh=buildLeg(1);
-    const rightThigh=buildLeg(-1);
-
-    const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.14,0.54,8),neckMat);
-    jNeck.position.set(0.62,2.82,0);
-    jNeck.rotation.z=-0.46;
-    jNeck.castShadow=true;
-    riderBody.add(jNeck);
-
-    const mHead=buildMascotHead(mascotPoolIdx);
-    const headMeta=mHead.userData.multiAngle||{};
-    const headOffset=headMeta.headOffset||{x:0,y:0,z:0};
-    if(headMeta.name==='liberty'){
-        jNeck.position.x+=0.18;
-        jNeck.position.y+=0.45;
-    }
-    mHead.position.set(1.52+(headOffset.x||0),4.9+(headOffset.y||0)+(headMeta.headLift||0),(headOffset.z||0));
-    mHead.userData.basePos=mHead.position.clone();
-    jG.add(mHead);
-
-    const birdRig=createBirdRig(birdIdx);
-    birdRig.group.position.set(birdRig.baseX,birdRig.baseY,0);
-    body.add(birdRig.group);
-    const reinMat=toon({color:0xf8f1d8});
-    birdRig.reinMeshes=birdRig.reinStarts.map(()=>{
-        const reinMesh=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
-            new THREE.Vector3(),
-            new THREE.Vector3(0.1,0,0),
-            new THREE.Vector3(0.2,0,0),
-            new THREE.Vector3(0.3,0,0)
-        ]),10,0.072,6,false),reinMat);
-        reinMesh.castShadow=true;
-        body.add(reinMesh);
-        return reinMesh;
-    });
-    updateBirdReins(body,birdRig);
-
-    riderBody.userData.parts={chestSilk,hips,leftUpperArm,rightUpperArm,leftThigh,rightThigh};
-
-    return{root,body,tailG,legs,jG,birdRig};
+    return{root,body,tailG,legs,jG,leftWing,rightWing,birdRig:null};
 }
 
 // --- UI ---
@@ -988,20 +914,12 @@ function animate(){
         if(h.model.legs[0]&&h.model.legs[0].wheelGroup){
             h.model.legs[0].wheelGroup.rotation.z-=dt*18;
         }
-        if(h.model.birdRig){
-            const flap=time*11.6+h.model.birdRig.phase+i*0.6;
-            const wingBeat=Math.sin(flap);
-            const wingLift=Math.abs(wingBeat);
-            h.model.birdRig.leftWing.rotation.z=-1.2-wingBeat*1.38;
-            h.model.birdRig.rightWing.rotation.z=1.2+wingBeat*1.38;
-            h.model.birdRig.leftWing.rotation.x=0.48+wingLift*1.22;
-            h.model.birdRig.rightWing.rotation.x=-0.48-wingLift*1.22;
-            h.model.birdRig.leftWing.rotation.y=0.34+wingBeat*0.24;
-            h.model.birdRig.rightWing.rotation.y=-0.34-wingBeat*0.24;
-            h.model.birdRig.group.position.y=h.model.birdRig.baseY+Math.sin(time*4.2+h.model.birdRig.phase+i*0.35)*0.3+bound*0.1;
-            h.model.birdRig.group.position.x=h.model.birdRig.baseX+Math.cos(time*3.6+h.model.birdRig.phase+i*0.2)*0.16;
-            h.model.birdRig.group.rotation.z=-0.2+Math.sin(time*2.8+h.model.birdRig.phase)*0.05;
-            updateBirdReins(h.model.body,h.model.birdRig);
+        if(h.model.leftWing&&h.model.rightWing){
+            const flap=Math.sin(c*2.25+h.phase)*0.32;
+            h.model.leftWing.rotation.z=0.62+flap;
+            h.model.rightWing.rotation.z=-0.62-flap;
+            h.model.leftWing.rotation.y=0.22+Math.cos(c*1.35+h.phase)*0.08;
+            h.model.rightWing.rotation.y=-0.22-Math.cos(c*1.35+h.phase)*0.08;
         }
         h.model.jG.position.y=9.02+bound*.22;
         h.model.jG.position.x=-0.18;
