@@ -553,208 +553,134 @@ function createHorse(colorHex,number,mascotPoolIdx){
     const tail2=new THREE.Mesh(new THREE.SphereGeometry(.35,6,6),tailM);tail2.scale.set(1,2,1);tail2.position.set(-.4,-2.5,0);tailG.add(tail2);
     tailG.position.set(-7.5,8.5,0);tailG.rotation.z=.6;body.add(tailG);
 
-    // PEGASUS WINGS
-    const wingMat=toon({color:0xf2efe7});
-    const wingShade=toon({color:0xd8d2c6});
-    function buildPegasusWing(side){
-      const pivot=new THREE.Group();
-      pivot.position.set(-1.15,9.45,side*2.25);
-      pivot.rotation.y=side>0?0.2:-0.2;
-      body.add(pivot);
-
-      const wing=new THREE.Group();
-      pivot.add(wing);
-
-      const shoulder=new THREE.Mesh(new THREE.SphereGeometry(0.9,10,10),wingShade);
-      shoulder.scale.set(1.2,0.85,0.95);
-      shoulder.position.set(0,0,0);
-      shoulder.castShadow=true;
-      wing.add(shoulder);
-
-      const primaries=[
-        {x:-1.0,y:0.55,len:2.4,thick:0.46,rz:0.55},
-        {x:-1.9,y:0.18,len:3.2,thick:0.42,rz:0.2},
-        {x:-2.85,y:-0.2,len:4.1,thick:0.38,rz:-0.05},
-        {x:-3.9,y:-0.65,len:4.7,thick:0.34,rz:-0.28},
-        {x:-4.8,y:-1.02,len:5.05,thick:0.3,rz:-0.46}
-      ];
-      primaries.forEach(f=>{
-        const feather=new THREE.Mesh(new THREE.SphereGeometry(0.7,10,8),wingMat);
-        feather.scale.set(f.len,f.thick,0.18);
-        feather.position.set(f.x,f.y,0);
-        feather.rotation.z=f.rz;
-        feather.castShadow=true;
-        wing.add(feather);
-      });
-
-      const coverts=[
-        {x:-0.65,y:0.9,len:1.7,thick:0.4,rz:0.82},
-        {x:-1.5,y:0.78,len:2.0,thick:0.36,rz:0.52},
-        {x:-2.25,y:0.5,len:2.2,thick:0.3,rz:0.25}
-      ];
-      coverts.forEach(f=>{
-        const feather=new THREE.Mesh(new THREE.SphereGeometry(0.64,10,8),wingShade);
-        feather.scale.set(f.len,f.thick,0.16);
-        feather.position.set(f.x,f.y,0.02);
-        feather.rotation.z=f.rz;
-        feather.castShadow=true;
-        wing.add(feather);
-      });
-
-      wing.rotation.y=side>0?0.32:-0.32;
-      wing.rotation.x=-0.1;
-      return {pivot,wing};
-    }
-    const leftWingRig=buildPegasusWing(1);
-    const rightWingRig=buildPegasusWing(-1);
-
-    // HOBBY HORSE: single stick + clearly visible wheel below it
     const legs=[];
-    const stickM=toon({color:0x8B6B4A});
-    const tireM=toon({color:0x3F3F3F});
-    const rimM=toon({color:0xEEE7DD});
-    const supportStick=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.26,3.15,8),stickM);
-    supportStick.position.set(0.14,-1.62,0.84);
-    supportStick.castShadow=true;
-    body.add(supportStick);
+    const thighGeo=new THREE.CylinderGeometry(.28,.52,5.35,8);thighGeo.translate(0,-2.68,0);
+    const shinGeo=new THREE.CylinderGeometry(.17,.29,4.85,8);shinGeo.translate(0,-2.42,0);
+    [[4.25,5.55,1.42],[4.25,5.55,-1.42],[-4.45,5.45,1.42],[-4.45,5.45,-1.42]].forEach(p=>{
+        const isFront=p[0]>0, baseShinX=isFront?0.56:-0.44;
+        const thigh=new THREE.Mesh(thighGeo,dkBr);thigh.position.set(p[0],p[1],p[2]);thigh.castShadow=true;body.add(thigh);
+        const knee=new THREE.Mesh(new THREE.SphereGeometry(.44,7,7),dkBr);
+        knee.scale.set(1.05,.82,.95);
+        knee.position.set(isFront?.18:-.12,-4.98,0);
+        thigh.add(knee);
+        const shin=new THREE.Mesh(shinGeo,dkBr);shin.position.set(baseShinX,-5.08,0);thigh.add(shin);
+        const fetlock=new THREE.Mesh(new THREE.SphereGeometry(.24,6,6),dkBr);
+        fetlock.scale.set(1,.75,.9);
+        fetlock.position.set(isFront?.08:-.06,-4.56,0);
+        shin.add(fetlock);
+        const hoof=new THREE.Group();
+        const hoofMain=new THREE.Mesh(new THREE.BoxGeometry(1.34,.56,.96),hoofM);
+        hoofMain.position.set(.12,-4.82,0);
+        hoofMain.rotation.z=.1;
+        hoofMain.castShadow=true;
+        hoof.add(hoofMain);
+        const hoofToe=new THREE.Mesh(new THREE.SphereGeometry(.38,6,6),hoofM);
+        hoofToe.scale.set(1.42,.76,1.04);
+        hoofToe.position.set(.46,-4.8,0);
+        hoofToe.castShadow=true;
+        hoof.add(hoofToe);
+        shin.add(hoof);
+        legs.push({thigh,shin,isFront,baseShinX});
+    });
 
-    const fork=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.9,0.34),stickM);
-    fork.position.set(0.14,-3.34,0.84);
-    fork.castShadow=true;
-    body.add(fork);
-
-    const axle=new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.1,0.9,8),rimM);
-    axle.rotation.z=Math.PI/2;
-    axle.position.set(0.14,-3.48,0.84);
-    axle.castShadow=true;
-    body.add(axle);
-
-    const wheelGroup=new THREE.Group();
-    wheelGroup.position.set(0.14,-3.48,0.84);
-    body.add(wheelGroup);
-
-    const wheel=new THREE.Mesh(new THREE.TorusGeometry(1.8,0.24,12,28),tireM);
-    wheel.castShadow=true;
-    wheelGroup.add(wheel);
-    const innerRim=new THREE.Mesh(new THREE.TorusGeometry(1.18,0.1,10,24),rimM);
-    wheelGroup.add(innerRim);
-    const hub=new THREE.Mesh(new THREE.CylinderGeometry(0.24,0.24,0.66,10),rimM);
-    hub.rotation.x=Math.PI/2;
-    wheelGroup.add(hub);
-    for(let sp=0;sp<6;sp++){
-      const spoke=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.045,2.2,6),rimM);
-      spoke.rotation.z=sp*(Math.PI/3);
-      wheelGroup.add(spoke);
-    }
-    legs.push({wheelGroup,supportStick});
-
-    const jG=new THREE.Group();jG.position.set(-0.38,9.08,-0.26);body.add(jG);
-    const riderBody=new THREE.Group();
-    riderBody.position.set(-0.28,0.04,0.18);
-    riderBody.scale.set(1.02,1.02,1.02);
-    riderBody.rotation.z=-0.26;
-    jG.add(riderBody);
+    // Small solid seated rider
+    const jG=new THREE.Group();jG.position.set(-0.1,8.75,0);body.add(jG);
+    const riderBody=new THREE.Group();riderBody.position.set(-0.62,0.18,0);riderBody.rotation.z=-0.18;riderBody.scale.set(.88,.88,.88);jG.add(riderBody);
     jG.userData.riderBody=riderBody;
-
     const silkColor=new THREE.Color(colorHex);
     const silk=toon({color:silkColor});
     const silkAccent=toon({color:silkColor.clone().lerp(new THREE.Color(0xffffff),0.42)});
-    const limb=toon({color:0xF4ECDF});
-    const boot=toon({color:0x2B2B2B});
-    const neckMat=toon({color:0xE63C3C});
+    const pants=toon({color:0x3a2212});
+    const boots=toon({color:0xb32020});
+    const skin=toon({color:0xd8a07a});
 
-    const riderTorso=new THREE.Mesh(new THREE.CylinderGeometry(0.38,0.46,1.9,10),silk);
-    riderTorso.position.set(-0.08,1.72,0);
-    riderTorso.rotation.z=-0.88;
-    riderTorso.castShadow=true;
-    riderBody.add(riderTorso);
+    const upperArmGeo=new THREE.CylinderGeometry(0.22,0.26,1.45,6);upperArmGeo.translate(0,-0.725,0);
+    const lowerArmGeo=new THREE.CylinderGeometry(0.18,0.21,1.25,6);lowerArmGeo.translate(0,-0.625,0);
+    const thighRideGeo=new THREE.CylinderGeometry(0.28,0.33,1.75,6);thighRideGeo.translate(0,-0.875,0);
+    const calfRideGeo=new THREE.CylinderGeometry(0.2,0.24,1.55,6);calfRideGeo.translate(0,-0.775,0);
 
-    const chestSilk=new THREE.Mesh(new THREE.CylinderGeometry(0.26,0.3,0.8,10),silkAccent);
-    chestSilk.position.set(0.22,2.04,0);
-    chestSilk.rotation.z=-0.88;
-    chestSilk.castShadow=true;
-    riderBody.add(chestSilk);
-
-    const hips=new THREE.Mesh(new THREE.SphereGeometry(0.4,10,8),silk);
-    hips.scale.set(1.7,0.85,1.05);
-    hips.position.set(-0.82,0.92,0);
-    hips.castShadow=true;
+    const hips=new THREE.Mesh(new THREE.SphereGeometry(1.0,8,6),pants);
+    hips.scale.set(1.42,0.88,0.64);
+    hips.position.set(-0.85,0.92,0);
+    hips.rotation.z=-0.08;
     riderBody.add(hips);
 
-    function buildArm(side){
-      const shoulder=new THREE.Group();
-      shoulder.position.set(0.26,2.32,side*0.34);
-      riderBody.add(shoulder);
-      const upper=new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.11,0.98,8),limb);
-      upper.position.set(0.24,-0.16,0);
-      upper.rotation.z=-1.1;
-      upper.rotation.x=side*0.18;
-      upper.castShadow=true;
-      shoulder.add(upper);
-      const fore=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.09,0.86,8),limb);
-      fore.position.set(0.35,-0.82,0);
-      fore.rotation.z=-0.34;
-      fore.rotation.x=side*0.12;
-      fore.castShadow=true;
-      shoulder.add(fore);
-      const hand=new THREE.Mesh(new THREE.SphereGeometry(0.16,10,8),limb);
-      hand.scale.set(1.15,0.95,1.05);
-      hand.position.set(0.52,-1.24,0);
-      hand.castShadow=true;
-      shoulder.add(hand);
-      return shoulder;
-    }
+    const chestSilk=new THREE.Mesh(new THREE.SphereGeometry(1.2,8,6),silk);
+    chestSilk.scale.set(0.96,1.52,0.56);
+    chestSilk.position.set(0.05,2.08,0);
+    chestSilk.rotation.z=-0.48;
+    riderBody.add(chestSilk);
 
-    const leftUpperArm=buildArm(1);
-    const rightUpperArm=buildArm(-1);
+    const leftUpperArm=new THREE.Mesh(upperArmGeo,silkAccent);
+    leftUpperArm.position.set(0.55,2.18,0.28);
+    leftUpperArm.rotation.z=-0.92;
+    riderBody.add(leftUpperArm);
+    const leftLowerArm=new THREE.Mesh(lowerArmGeo,silkAccent);
+    leftLowerArm.position.set(0.42,-1.08,0);
+    leftLowerArm.rotation.z=-0.18;
+    leftUpperArm.add(leftLowerArm);
+    const leftHand=new THREE.Mesh(new THREE.SphereGeometry(0.22,6,6),skin);
+    leftHand.scale.set(1.15,0.8,1);
+    leftHand.position.set(0.08,-1.18,0);
+    leftLowerArm.add(leftHand);
 
-    function buildLeg(side){
-      const leg=new THREE.Group();
-      leg.position.set(-0.78,0.94,side*0.6);
-      riderBody.add(leg);
-      const thigh=new THREE.Mesh(new THREE.CylinderGeometry(0.11,0.12,0.92,8),limb);
-      thigh.position.set(-0.06,-0.18,0);
-      thigh.rotation.z=0.86;
-      thigh.rotation.x=side*0.14;
-      thigh.castShadow=true;
-      leg.add(thigh);
-      const shin=new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.1,0.88,8),limb);
-      shin.position.set(0.34,-0.62,0.02);
-      shin.rotation.z=0.08;
-      shin.rotation.x=side*0.1;
-      shin.castShadow=true;
-      leg.add(shin);
-      const foot=new THREE.Mesh(new THREE.SphereGeometry(0.13,10,8),boot);
-      foot.scale.set(1.45,0.72,0.92);
-      foot.position.set(0.38,-1.06,0.04);
-      foot.castShadow=true;
-      leg.add(foot);
-      return leg;
-    }
+    const rightUpperArm=new THREE.Mesh(upperArmGeo,silkAccent);
+    rightUpperArm.position.set(0.55,2.18,-0.28);
+    rightUpperArm.rotation.z=-0.92;
+    riderBody.add(rightUpperArm);
+    const rightLowerArm=new THREE.Mesh(lowerArmGeo,silkAccent);
+    rightLowerArm.position.set(0.42,-1.08,0);
+    rightLowerArm.rotation.z=-0.18;
+    rightUpperArm.add(rightLowerArm);
+    const rightHand=new THREE.Mesh(new THREE.SphereGeometry(0.22,6,6),skin);
+    rightHand.scale.set(1.15,0.8,1);
+    rightHand.position.set(0.08,-1.18,0);
+    rightLowerArm.add(rightHand);
 
-    const leftThigh=buildLeg(1);
-    const rightThigh=buildLeg(-1);
+    const leftThigh=new THREE.Mesh(thighRideGeo,pants);
+    leftThigh.position.set(-0.82,0.9,0.28);
+    leftThigh.rotation.z=1.05;
+    riderBody.add(leftThigh);
+    const leftCalf=new THREE.Mesh(calfRideGeo,boots);
+    leftCalf.position.set(0.05,-1.42,0);
+    leftCalf.rotation.z=-0.48;
+    leftThigh.add(leftCalf);
+    const leftBoot=new THREE.Mesh(new THREE.SphereGeometry(0.28,6,6),boots);
+    leftBoot.scale.set(1.55,0.65,0.9);
+    leftBoot.position.set(0.35,-1.42,0);
+    leftCalf.add(leftBoot);
 
-    const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.14,0.54,8),neckMat);
-    jNeck.position.set(0.62,2.82,0);
-    jNeck.rotation.z=-0.46;
-    jNeck.castShadow=true;
+    const rightThigh=new THREE.Mesh(thighRideGeo,pants);
+    rightThigh.position.set(-0.82,0.9,-0.28);
+    rightThigh.rotation.z=1.05;
+    riderBody.add(rightThigh);
+    const rightCalf=new THREE.Mesh(calfRideGeo,boots);
+    rightCalf.position.set(0.05,-1.42,0);
+    rightCalf.rotation.z=-0.48;
+    rightThigh.add(rightCalf);
+    const rightBoot=new THREE.Mesh(new THREE.SphereGeometry(0.28,6,6),boots);
+    rightBoot.scale.set(1.55,0.65,0.9);
+    rightBoot.position.set(0.35,-1.42,0);
+    rightCalf.add(rightBoot);
+
+    const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.26,0.68,6),skin);
+    jNeck.position.set(0.52,2.86,0);
+    jNeck.rotation.z=-0.22;
     riderBody.add(jNeck);
 
     const mHead=buildMascotHead(mascotPoolIdx);
     const headMeta=mHead.userData.multiAngle||{};
     const headOffset=headMeta.headOffset||{x:0,y:0,z:0};
     if(headMeta.name==='liberty'){
-        jNeck.position.x+=0.18;
-        jNeck.position.y+=0.45;
+        jNeck.position.x+=0.12;
+        jNeck.position.y+=0.28;
     }
-    mHead.position.set(1.52+(headOffset.x||0),4.9+(headOffset.y||0)+(headMeta.headLift||0),(headOffset.z||0));
+    mHead.position.set(1.05+(headOffset.x||0),4.45+(headOffset.y||0)+(headMeta.headLift||0),(headOffset.z||0));
     mHead.userData.basePos=mHead.position.clone();
     jG.add(mHead);
-
     riderBody.userData.parts={chestSilk,hips,leftUpperArm,rightUpperArm,leftThigh,rightThigh};
 
-    return{root,body,tailG,legs,jG,leftWingRig,rightWingRig};
+    return{root,body,tailG,legs,jG};
 }
 
 // --- UI ---
