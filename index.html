@@ -949,11 +949,12 @@ function animate(){
         h.model.body.rotation.z=Math.sin(c)*.045;
         h.model.body.rotation.x=-0.02+Math.cos(c*2)*.012;
         h.model.legs.forEach((leg,li)=>{
-            const phase=c+(li%2===0?0:Math.PI),swing=Math.sin(phase)*1.08,lift=Math.max(0,Math.sin(phase))*0.95;
-            leg.thigh.rotation.z=swing*.42;
-            leg.shin.rotation.z=(leg.isFront?0.26:-0.24)+(-swing*.62)+(lift*.2*(leg.isFront?1:-1));
-            leg.shin.position.x=leg.baseShinX+(lift*.12*(leg.isFront?1:-1));
-            leg.shin.position.y=-5.08+lift*.42;
+            const tNorm=((c/(Math.PI*2))+(li%2===0?0:0.5))*12;
+            const pose=sampleGallop(leg.isFront?FRONT_GALLOP_KF:HIND_GALLOP_KF,tNorm);
+            leg.thigh.rotation.z=pose.th;
+            leg.shin.rotation.z=pose.sh;
+            leg.shin.position.x=leg.baseShinX+pose.x;
+            leg.shin.position.y=-5.08+pose.y;
         });
         h.model.jG.position.y=9.02+bound*.22;
         h.model.jG.position.x=-0.18;
