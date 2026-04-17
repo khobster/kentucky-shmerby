@@ -253,16 +253,16 @@ function createHorse(colorHex,number,mascotPoolIdx){
 }
 // --- GALLOP KEYFRAMES (12 frames matching real thoroughbred gallop cycle) ---
 const FRONT_GALLOP_KF=[
-  {th:0.29,sh:-0.41,x:-0.30,y:-0.10},{th:-0.05,sh:-0.35,x:-0.17,y:-0.10},{th:-0.40,sh:-0.42,x:-0.24,y:-0.04},
-  {th:-0.81,sh:-0.24,x:-0.05,y:0.38},{th:-0.42,sh:-0.28,x:0.07,y:0.00},{th:-0.20,sh:0.01,x:0.17,y:0.00},
-  {th:0.38,sh:0.00,x:0.00,y:0.00},{th:0.60,sh:0.00,x:0.00,y:0.00},{th:0.12,sh:0.39,x:0.00,y:0.00},
-  {th:0.00,sh:0.00,x:0.00,y:0.00},{th:0.00,sh:-0.19,x:0.00,y:0.00},{th:0.00,sh:0.00,x:0.00,y:0.00}
+  {th:0.45,sh:-0.41,x:-0.30,y:-0.10},{th:0.59,sh:-0.71,x:-0.22,y:-0.10},{th:0.69,sh:-0.01,x:-0.24,y:-0.04},
+  {th:-0.31,sh:-0.60,x:-0.19,y:0.16},{th:-0.42,sh:-0.79,x:-0.11,y:0.00},{th:-0.28,sh:-0.29,x:-0.13,y:0.00},
+  {th:0.23,sh:-0.91,x:0.00,y:0.00},{th:0.20,sh:-0.55,x:0.00,y:0.00},{th:0.12,sh:-0.93,x:0.00,y:0.00},
+  {th:0.64,sh:0.04,x:-0.30,y:0.00},{th:1.03,sh:-1.20,x:-0.30,y:-0.10},{th:0.47,sh:-0.61,x:0.00,y:0.00}
 ];
 const HIND_GALLOP_KF=[
-  {th:-0.12,sh:0.11,x:0.13,y:0.07},{th:-0.16,sh:0.27,x:0.00,y:0.00},{th:-0.36,sh:0.27,x:0.02,y:-0.08},
-  {th:-0.59,sh:0.40,x:0.21,y:0.20},{th:-0.55,sh:-0.11,x:0.00,y:0.00},{th:-0.36,sh:0.13,x:0.30,y:-0.10},
-  {th:0.14,sh:0.14,x:0.17,y:-0.10},{th:0.55,sh:-0.43,x:0.21,y:-0.10},{th:0.19,sh:-0.23,x:0.00,y:0.00},
-  {th:0.00,sh:0.00,x:0.00,y:0.00},{th:-0.18,sh:0.00,x:0.14,y:0.00},{th:0.00,sh:0.00,x:0.00,y:0.00}
+  {th:-0.32,sh:0.48,x:0.00,y:0.07},{th:-0.56,sh:0.70,x:0.00,y:0.00},{th:-0.58,sh:-0.38,x:0.12,y:-0.09},
+  {th:-0.59,sh:-0.38,x:0.21,y:0.20},{th:-0.55,sh:0.57,x:0.00,y:0.00},{th:-0.04,sh:0.58,x:0.16,y:-0.01},
+  {th:0.65,sh:-0.44,x:0.24,y:-0.10},{th:0.88,sh:-0.35,x:0.24,y:-0.10},{th:0.77,sh:-0.79,x:0.00,y:0.00},
+  {th:0.29,sh:-0.57,x:0.00,y:0.00},{th:0.37,sh:-0.55,x:0.14,y:0.00},{th:-0.30,sh:-0.51,x:0.00,y:0.00}
 ];
 function sampleGallop(cycle,t){const n=cycle.length;const ft=((t%n)+n)%n;const idx=Math.floor(ft);const next=(idx+1)%n;const a=ft-idx;const A=cycle[idx],B=cycle[next];return{th:THREE.MathUtils.lerp(A.th,B.th,a),sh:THREE.MathUtils.lerp(A.sh,B.sh,a),x:THREE.MathUtils.lerp(A.x,B.x,a),y:THREE.MathUtils.lerp(A.y,B.y,a)};}
 // --- UI ---
