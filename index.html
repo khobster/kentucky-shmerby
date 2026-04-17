@@ -221,27 +221,124 @@ function createHorse(colorHex,number,mascotPoolIdx){
         const hoof=new THREE.Group();const hoofMain=new THREE.Mesh(new THREE.BoxGeometry(1.34,.56,.96),hoofM);hoofMain.position.set(.12,-5.1,0);hoofMain.rotation.z=.1;hoof.add(hoofMain);const hoofToe=new THREE.Mesh(new THREE.SphereGeometry(.38,6,6),hoofM);hoofToe.scale.set(1.42,.76,1.04);hoofToe.position.set(.46,-5.08,0);hoof.add(hoofToe);shin.add(hoof);
         legs.push({thigh,shin,isFront,baseShinX});
     });
-    // Jockey: tuned rider
-    const jG=new THREE.Group();jG.position.set(1.4,8.2,0);body.add(jG);
-    const riderBody=new THREE.Group();riderBody.position.set(0,0,0);riderBody.scale.setScalar(1.05);jG.add(riderBody);
+    // Jockey: simple chunky sprite-style rider
+    const jG=new THREE.Group();jG.position.set(1.0,8.25,0);body.add(jG);
+    const riderBody=new THREE.Group();riderBody.position.set(0,0,0);riderBody.rotation.z=-0.08;riderBody.scale.setScalar(0.96);jG.add(riderBody);
     jG.userData.riderBody=riderBody;
-    const silkColor=new THREE.Color(colorHex);
-    const silk=toon({color:silkColor});const pants=toon({color:0xeeeedd});const bootsMat=toon({color:0x222222});const skin=toon({color:0xd8a07a});
-    // Torso
-    const chestSilk=new THREE.Mesh(new THREE.SphereGeometry(1.0,8,6),silk);chestSilk.scale.set(0.95,1.60,0.75);chestSilk.position.set(0.05,2.35,0);chestSilk.rotation.z=0.06;riderBody.add(chestSilk);
-    // Hips
-    const hips=new THREE.Mesh(new THREE.SphereGeometry(0.9,8,6),pants);hips.scale.set(0.95,1.45,0.75);hips.position.set(-0.25,0.80,0);riderBody.add(hips);
-    // Left leg
-    const leftThigh=new THREE.Mesh(new THREE.CylinderGeometry(0.46,0.40,3.0,6),pants);leftThigh.position.set(-0.80,-0.50,2.0);leftThigh.rotation.z=-0.40;leftThigh.rotation.x=-0.1;riderBody.add(leftThigh);
-    const leftBoot=new THREE.Mesh(new THREE.BoxGeometry(1.20,0.60,0.4),bootsMat);leftBoot.position.set(0.1,-1.6,0);leftThigh.add(leftBoot);
-    // Right leg
-    const rightThigh=new THREE.Mesh(new THREE.CylinderGeometry(0.46,0.40,3.0,6),pants);rightThigh.position.set(-0.80,-0.50,-2.0);rightThigh.rotation.z=-0.40;rightThigh.rotation.x=0.1;riderBody.add(rightThigh);
-    const rightBoot=new THREE.Mesh(new THREE.BoxGeometry(1.20,0.60,0.4),bootsMat);rightBoot.position.set(0.1,-1.6,0);rightThigh.add(rightBoot);
-    // Arms
-    const leftUpperArm=new THREE.Mesh(new THREE.CylinderGeometry(0.39,0.32,2.5,6),silk);leftUpperArm.position.set(1.25,2.75,1.50);leftUpperArm.rotation.z=-1.30;riderBody.add(leftUpperArm);
-    const rightUpperArm=new THREE.Mesh(new THREE.CylinderGeometry(0.39,0.32,2.5,6),silk);rightUpperArm.position.set(1.25,2.75,-1.50);rightUpperArm.rotation.z=-1.30;riderBody.add(rightUpperArm);
-    // Neck
-    const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.40,0.48,0.5,6),skin);jNeck.position.set(0.05,3.80,0);riderBody.add(jNeck);
+
+    const shirt=toon({color:0x5b3929});
+    const trim=toon({color:0xf0c51a});
+    const pants=toon({color:0x79d9ef});
+    const pantsDark=toon({color:0x63c7dd});
+    const gloves=toon({color:0x9b6550});
+    const bootsMat=toon({color:0x2a2a2a});
+    const skin=toon({color:0xd8a07a});
+
+    const chestSilk=new THREE.Mesh(new THREE.BoxGeometry(2.0,3.15,1.35),shirt);
+    chestSilk.position.set(0.1,2.45,0);
+    chestSilk.rotation.z=-0.12;
+    riderBody.add(chestSilk);
+
+    const chestTrim=new THREE.Mesh(new THREE.BoxGeometry(0.22,3.0,1.42),trim);
+    chestTrim.position.set(0.32,0.0,0.02);
+    chestSilk.add(chestTrim);
+
+    const leftShoulder=new THREE.Mesh(new THREE.SphereGeometry(0.36,8,8),shirt);
+    leftShoulder.scale.set(1.2,0.9,1.0);
+    leftShoulder.position.set(0.78,1.2,0.55);
+    chestSilk.add(leftShoulder);
+    const rightShoulder=new THREE.Mesh(new THREE.SphereGeometry(0.36,8,8),shirt);
+    rightShoulder.scale.set(1.2,0.9,1.0);
+    rightShoulder.position.set(0.78,1.2,-0.55);
+    chestSilk.add(rightShoulder);
+
+    const hips=new THREE.Mesh(new THREE.BoxGeometry(1.9,1.75,1.3),pants);
+    hips.position.set(-0.35,0.7,0);
+    hips.rotation.z=0.08;
+    riderBody.add(hips);
+
+    const riderArmGeo=new THREE.BoxGeometry(0.62,2.05,0.62);
+    const riderForeGeo=new THREE.BoxGeometry(0.56,1.7,0.56);
+    const riderThighGeo=new THREE.BoxGeometry(0.78,2.15,0.82);
+    const riderCalfGeo=new THREE.BoxGeometry(0.68,1.9,0.72);
+
+    const leftUpperArm=new THREE.Group();
+    leftUpperArm.position.set(1.08,3.0,0.72);
+    leftUpperArm.rotation.z=-0.95;
+    riderBody.add(leftUpperArm);
+    const leftUpperArmMesh=new THREE.Mesh(riderArmGeo,shirt);
+    leftUpperArmMesh.position.set(0,-1.0,0);
+    leftUpperArm.add(leftUpperArmMesh);
+    const leftForeArm=new THREE.Mesh(riderForeGeo,gloves);
+    leftForeArm.position.set(0.55,-1.65,0);
+    leftForeArm.rotation.z=-0.48;
+    leftUpperArm.add(leftForeArm);
+    const leftHand=new THREE.Mesh(new THREE.SphereGeometry(0.38,8,8),gloves);
+    leftHand.scale.set(1.35,0.9,0.95);
+    leftHand.position.set(0.72,-0.78,0);
+    leftForeArm.add(leftHand);
+
+    const rightUpperArm=new THREE.Group();
+    rightUpperArm.position.set(1.08,3.0,-0.72);
+    rightUpperArm.rotation.z=-0.95;
+    riderBody.add(rightUpperArm);
+    const rightUpperArmMesh=new THREE.Mesh(riderArmGeo,shirt);
+    rightUpperArmMesh.position.set(0,-1.0,0);
+    rightUpperArm.add(rightUpperArmMesh);
+    const rightForeArm=new THREE.Mesh(riderForeGeo,gloves);
+    rightForeArm.position.set(0.55,-1.65,0);
+    rightForeArm.rotation.z=-0.48;
+    rightUpperArm.add(rightForeArm);
+    const rightHand=new THREE.Mesh(new THREE.SphereGeometry(0.38,8,8),gloves);
+    rightHand.scale.set(1.35,0.9,0.95);
+    rightHand.position.set(0.72,-0.78,0);
+    rightForeArm.add(rightHand);
+
+    const leftThigh=new THREE.Group();
+    leftThigh.position.set(-0.9,1.0,0.72);
+    leftThigh.rotation.z=1.18;
+    leftThigh.rotation.x=-0.18;
+    riderBody.add(leftThigh);
+    const leftThighMesh=new THREE.Mesh(riderThighGeo,pants);
+    leftThighMesh.position.set(0,-0.95,0);
+    leftThigh.add(leftThighMesh);
+    const leftCalf=new THREE.Mesh(riderCalfGeo,pantsDark);
+    leftCalf.position.set(0.18,-1.72,0);
+    leftCalf.rotation.z=-0.52;
+    leftThigh.add(leftCalf);
+    const leftStripe=new THREE.Mesh(new THREE.BoxGeometry(0.12,1.9,0.78),trim);
+    leftStripe.position.set(0.14,0.0,0.02);
+    leftCalf.add(leftStripe);
+    const leftBoot=new THREE.Mesh(new THREE.BoxGeometry(1.08,0.52,0.78),bootsMat);
+    leftBoot.position.set(0.45,-1.08,0.05);
+    leftBoot.rotation.z=0.08;
+    leftCalf.add(leftBoot);
+
+    const rightThigh=new THREE.Group();
+    rightThigh.position.set(-0.9,1.0,-0.72);
+    rightThigh.rotation.z=1.18;
+    rightThigh.rotation.x=0.18;
+    riderBody.add(rightThigh);
+    const rightThighMesh=new THREE.Mesh(riderThighGeo,pants);
+    rightThighMesh.position.set(0,-0.95,0);
+    rightThigh.add(rightThighMesh);
+    const rightCalf=new THREE.Mesh(riderCalfGeo,pantsDark);
+    rightCalf.position.set(0.18,-1.72,0);
+    rightCalf.rotation.z=-0.52;
+    rightThigh.add(rightCalf);
+    const rightStripe=new THREE.Mesh(new THREE.BoxGeometry(0.12,1.9,0.78),trim);
+    rightStripe.position.set(0.14,0.0,0.02);
+    rightCalf.add(rightStripe);
+    const rightBoot=new THREE.Mesh(new THREE.BoxGeometry(1.08,0.52,0.78),bootsMat);
+    rightBoot.position.set(0.45,-1.08,0.05);
+    rightBoot.rotation.z=0.08;
+    rightCalf.add(rightBoot);
+
+    const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.28,0.34,0.55,6),skin);
+    jNeck.position.set(0.18,4.0,0);
+    jNeck.rotation.z=-0.1;
+    riderBody.add(jNeck);
+
     riderBody.userData.parts={chestSilk,hips,leftUpperArm,rightUpperArm,leftThigh,rightThigh};
     // Head
     const mHead=buildMascotHead(mascotPoolIdx);
