@@ -18,26 +18,20 @@
         .overlay{position:relative;z-index:10;text-align:center;}
         h1{color:#ffd700;font-size:22px;text-shadow:4px 4px 0 #000;margin:18px 0;position:relative;z-index:10;}
         .panel{background:rgba(0,0,0,0.7);padding:24px 32px;border-radius:12px;border:3px solid #ffd700;margin-top:40px;max-width:500px;width:90%;}
-        #tap-zone{width:90%;max-width:600px;height:260px;margin:16px auto;background:#e53935;border:8px solid #000;
-            box-shadow:0 10px 0 #b71c1c;display:flex;align-items:center;justify-content:center;
-            font-size:13px;cursor:pointer;color:#fff;line-height:1.8;text-shadow:2px 2px 0 #000;border-radius:8px;}
+        #tap-zone{width:90%;max-width:600px;height:260px;margin:16px auto;background:#e53935;border:8px solid #000;box-shadow:0 10px 0 #b71c1c;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;color:#fff;line-height:1.8;text-shadow:2px 2px 0 #000;border-radius:8px;}
         #tap-zone:active{transform:translateY(10px);box-shadow:0 0 0 #b71c1c;}
         #tap-zone.disabled{background:#6a6a6a;box-shadow:0 10px 0 #444;cursor:default;opacity:.72;}
         #tap-status{font-size:10px;color:#ffd700;margin-top:14px;line-height:1.7;text-shadow:2px 2px 0 #000;min-height:34px;}
-        button{padding:12px 24px;font-size:12px;font-family:inherit;cursor:pointer;background:#ffeb3b;color:#000;
-            border:5px solid #000;box-shadow:0 5px 0 #f57f17;margin-top:14px;text-transform:uppercase;}
+        button{padding:12px 24px;font-size:12px;font-family:inherit;cursor:pointer;background:#ffeb3b;color:#000;border:5px solid #000;box-shadow:0 5px 0 #f57f17;margin-top:14px;text-transform:uppercase;}
         button:hover{background:#fff176;}
         .share-box{margin-top:14px;}
         .share-box input{font-family:inherit;font-size:8px;padding:8px;width:100%;background:#222;color:#ffd700;border:2px solid #ffd700;border-radius:4px;margin-bottom:8px;}
         .share-box button{font-size:10px;padding:8px 16px;}
         .waiting{color:#ffd700;font-size:10px;margin-top:14px;animation:pulse 1.5s infinite;}
         @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
-        #notifications-container{position:absolute;top:80px;left:50%;transform:translateX(-50%);
-            z-index:1000;display:flex;flex-direction:column;align-items:center;pointer-events:none;}
-        .finish-notif{background:rgba(0,0,0,0.9);border:2px solid #ffd700;color:#fff;
-            padding:10px 20px;margin-bottom:6px;font-size:10px;border-radius:4px;transition:opacity 0.5s ease;}
-        #leaderboard{position:absolute;bottom:20px;left:20px;z-index:100;background:rgba(245,245,245,0.95);
-            border:2px solid #333;border-radius:4px;padding:0;min-width:280px;font-family:Arial,sans-serif;}
+        #notifications-container{position:absolute;top:80px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;flex-direction:column;align-items:center;pointer-events:none;}
+        .finish-notif{background:rgba(0,0,0,0.9);border:2px solid #ffd700;color:#fff;padding:10px 20px;margin-bottom:6px;font-size:10px;border-radius:4px;transition:opacity 0.5s ease;}
+        #leaderboard{position:absolute;bottom:20px;left:20px;z-index:100;background:rgba(245,245,245,0.95);border:2px solid #333;border-radius:4px;padding:0;min-width:280px;font-family:Arial,sans-serif;}
         #lb-header{background:#1a1a1a;color:#fff;padding:6px 10px;font-size:10px;font-weight:bold;letter-spacing:1px;font-family:'Press Start 2P',monospace;}
         #standings-list{display:flex;flex-direction:column;}
         .lb-row{display:flex;align-items:center;padding:4px 10px;border-bottom:1px solid #ddd;font-size:11px;color:#222;}
@@ -46,24 +40,16 @@
         .lb-color{width:18px;height:14px;border:1px solid #000;margin-right:8px;display:inline-block;flex-shrink:0;}
         .lb-name{font-weight:bold;flex-grow:1;text-transform:uppercase;letter-spacing:.5px;}
         .lb-row.you{background:#fff8c4;}
-        #results-modal{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-            background:rgba(0,0,0,0.95);border:6px solid #ffd700;padding:24px;
-            z-index:1000;text-align:left;width:90%;max-width:480px;display:none;flex-direction:column;}
+        #results-modal{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.95);border:6px solid #ffd700;padding:24px;z-index:1000;text-align:left;width:90%;max-width:480px;display:none;flex-direction:column;}
         .result-row{display:flex;align-items:center;margin:6px 0;font-size:10px;border-bottom:2px dashed #444;padding-bottom:6px;}
         .result-place{width:50px;color:#ffd700;}
         #timer-display{font-size:34px;color:#fff;text-shadow:4px 4px #000;margin-top:60px;}
         #race-header{position:absolute;top:10px;left:0;width:100%;z-index:100;text-align:center;padding:0 12px;}
         #race-status{text-shadow:3px 3px #000;font-size:15px;}
         #race-timer{position:absolute;top:10px;right:16px;z-index:100;font-size:12px;color:#fff;text-shadow:2px 2px #000;}
-        #stretch-call{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-            z-index:500;font-size:24px;color:#fff;text-shadow:6px 6px 0 #000,-2px -2px 0 #ffd700;
-            pointer-events:none;opacity:0;transition:opacity 0.4s;white-space:nowrap;text-align:center;line-height:1.5;}
+        #stretch-call{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:500;font-size:24px;color:#fff;text-shadow:6px 6px 0 #000,-2px -2px 0 #ffd700;pointer-events:none;opacity:0;transition:opacity 0.4s;white-space:nowrap;text-align:center;line-height:1.5;}
         #stretch-call.show{opacity:1;}
         .you-tag{font-size:7px;color:#ffeb3b;background:#000;padding:1px 4px;border-radius:2px;margin-left:4px;}
-        #furlong-bar{position:absolute;top:45px;left:50%;transform:translateX(-50%);z-index:100;width:280px;}
-        #furlong-track{width:100%;height:10px;background:rgba(0,0,0,.6);border:2px solid #ffd700;border-radius:5px;overflow:hidden;}
-        #furlong-fill{height:100%;width:0%;background:linear-gradient(90deg,#4caf50,#ffeb3b,#ff5722);border-radius:3px;transition:width .3s;}
-        #furlong-labels{display:flex;justify-content:space-between;font-size:6px;color:#ffd700;margin-top:2px;text-shadow:1px 1px #000;}
     </style>
 </head>
 <body>
@@ -74,7 +60,7 @@
         <div class="panel">
             <p style="font-size:10px;margin-bottom:12px;">Your Steed:</p>
             <h2 id="player-horse-name" style="color:#ffeb3b;text-shadow:2px 2px #000;font-size:14px;margin:0 0 10px 0;">Loading...</h2>
-            <p style="font-size:8px;color:#ffd700;margin:0 0 12px 0;">1¼ MILES • RUN FOR THE ROSES</p>
+            <p style="font-size:8px;color:#ffd700;margin:0 0 12px 0;">1&frac14; MILES &bull; RUN FOR THE ROSES</p>
             <button id="solo-btn">SOLO RACE</button>
             <button id="create-btn">CREATE MULTIPLAYER</button>
             <div id="share-area" class="share-box hidden">
@@ -113,59 +99,22 @@
     </div>
 </div>
 <script>
-firebase.initializeApp({
-    apiKey:"AIzaSyDicI1nKcrMDaaYkL_8q70yj1mM05tW5Ak",authDomain:"mookie-pig-challenge.firebaseapp.com",
-    projectId:"mookie-pig-challenge",storageBucket:"mookie-pig-challenge.appspot.com",
-    messagingSenderId:"96530997300",appId:"1:96530997300:web:96400cf87b98c8e19eaa61"
-});
+firebase.initializeApp({apiKey:"AIzaSyDicI1nKcrMDaaYkL_8q70yj1mM05tW5Ak",authDomain:"mookie-pig-challenge.firebaseapp.com",projectId:"mookie-pig-challenge",storageBucket:"mookie-pig-challenge.appspot.com",messagingSenderId:"96530997300",appId:"1:96530997300:web:96400cf87b98c8e19eaa61"});
 const db=firebase.firestore();
 let myPlayerId=localStorage.getItem('shmerbyId');
 if(!myPlayerId){myPlayerId=Math.random().toString(36).substr(2,9);localStorage.setItem('shmerbyId',myPlayerId);}
 let gameDocRef=null,unsubGame=null,isMultiplayer=false,isHost=false,myPlayerSlot=0;
-
-const DW=["people","history","art","information","map","family","government","health","system","computer","music","person","reading","method","data","food","understanding","theory","law","bird","literature","problem","software","control","knowledge","power","ability","love","internet","television","science","library","nature","fact","product","idea","temperature","investment","area","society","activity","story","industry","media","thing","oven","community","definition","safety","quality","development","language","management","player","variety","video","week","security","country","exam","movie","organization","equipment","physics","analysis","policy","series","thought","basis","boyfriend","direction","strategy","technology","army","camera","freedom","paper","environment","child","instance","month","truth","marketing","university","writing","article","department","difference","goal","news","audience","fishing","growth","income","marriage","user","combination","failure","meaning","medicine","philosophy","teacher","communication","night","chemistry","disease","disk","energy","nation","road","role","soup","advertising","location","success","addition","apartment","education","math","moment","painting","politics","attention","decision","event","property","shopping","student","wood","competition","distribution","entertainment","office","population","president","unit","category","cigarette","context","introduction","opportunity","performance","driver","flight","length","magazine","newspaper","relationship","teaching","cell","dealer","finding","lake","member","message","phone","scene","appearance","association","concept","customer","death","discussion","housing","inflation","insurance","mood","woman","advice","blood","effort","expression","importance","opinion","payment","reality","responsibility","situation","skill","statement","wealth","application","city","county","depth","estate","foundation","grandmother","heart","perspective","photo","recipe","studio","topic","collection","depression","imagination","passion","percentage","resource","setting","ad","agency","college","connection","criticism","debt","description","memory","patience","secretary","solution","administration","aspect","attitude","director","personality","psychology","recommendation","response","selection","storage","version","alcohol","argument","complaint","contract","emphasis","highway","loss","membership","possession","preparation","steak","union","agreement","cancer","currency","employment","engineering","entry","interaction","mixture","preference","region","republic","tradition","virus","actor","classroom","delivery","device","difficulty","drama","election","engine","football","guidance","hotel","owner","priority","protection","suggestion","tension","variation","anxiety","atmosphere","awareness","bath","bread","candidate","climate","comparison","confusion","construction","elevator","emotion","employee","employer","guest","height","leadership","mall","manager","operation","recording","sample","transportation","charity","cousin","disaster","editor","efficiency","way","year","work","day","man","world","life","part","house","course","case","place","end","group","company","party","school","money","point","example","state","business","area","water","hand","order","john","side","home","power","council","use","service","room","market","court","lot","war","police","interest","car","road","form","face","policy","research","sort","body","question","book","level","society","minister","view","door","line","community","south","city","god","father","centre","effect","staff","position","kind","job","action","act","process","north","age","evidence","idea","west","support","moment","sense","report","mind","church","morning","death","change","land","care","century","range","table","back","trade","history","study","street","committee","rate","word","team","other","sir","section","air","authority","role","reason","price","town","class","nature","subject","department","union","bank","member","value","need","east","practice","type","paper","date","decision","figure","right","wife","friend","club","quality","voice","lord","stage","king","us","situation","light","tax","production","march","art","board","may","hospital","month","music","cost","field","award","issue","bed","project","chapter","girl","game","amount","basis","knowledge","approach","series","love","top","news","front","account","rest","labour","structure","hair","bill","heart","force","attention","movement","success","letter","agreement","capital","analysis","population","environment","performance","model","material","theory","growth","fire","chance","son","sea","record","size","property","space","term","plan","treatment","energy","st","peter","income","cup","scheme","design","response","association","choice","pressure","hall","couple","technology","defence","list","loss","contract","county","wall","paul","difference","army","hotel","sun","product","summer","set","village","colour","floor","season","unit","park","hour","investment","test","garden","husband","employment","style","science","look","deal","charge","help","economy","page","risk","advice","event","picture","commission","fish","college","oil","doctor","opportunity","film","conference","operation","application","press","extent","addition","station","window","shop","access","region","doubt","majority","degree","television","blood","statement","sound","election","parliament","site","mark","importance","title","species","increase","return","concern","public","competition","software","glass","lady","answer","earth","daughter","purpose","responsibility","leader","river","eye","ability","appeal","opposition","campaign","respect","task","instance","sale","whole","officer","method","division","source","piece","pattern","lack","disease","equipment","surface","oxford","demand","post","mouth","radio","provision","attempt","sector","firm","status","peace","variety","teacher","show","speaker","baby","arm","base","miss","safety","trouble","culture","direction","context","character","box","discussion","past","weight","organisation","start","brother","league","condition","machine","argument","sex","budget","english","transport","share","mum","cash","principle","exchange","aid","library","version","rule","tea","balance","afternoon","reference","protection","truth","district","turn","smith","review","minute","duty","survey","presence","influence","stone","dog","benefit","collection","executive","speech","function","queen","marriage","stock","failure","kitchen","student","effort","holiday","career","attack","length","horse","progress","plant","visit","relation","ball","memory","bar","opinion","quarter","impact","scale","race","image","trust","justice","edge","gas","railway","expression","advantage","gold","wood","network","text","forest","sister","chair","cause","foot","rise","half","winter","corner","insurance","step","damage","credit","pain","possibility","legislation","strength","speed","crime","hill","debate","will","supply","present","confidence","mary","patient","wind","solution","band","museum","farm","pound","henry","match","assessment","message","football","animal","skin","scene","article","stuff","introduction","play","fear","dad","proportion","island","contact","japan","claim","kingdom","video","tv","existence","telephone","move","traffic","distance","relief","cabinet","unemployment","reality","target","trial","rock","concept","spirit","accident","coffee","phone","distribution","train","sight","difficulty","factor","exercise","weekend","battle","prison","grant","aircraft","tree","bridge","strategy","contrast","communication","background","shape","wine","star","hope","selection","detail","user","path","client","search","master","rain","offer","goal","dinner","freedom","attitude","while","seat","manner","favour","fig","pair","crisis","smile","prince","danger","call","capacity","output","note","procedure","theatre","tour","recognition","middle","absence","sentence","package","track","card","sign","commitment","threat","weather","element","conflict","notice","victory","bottom","finance","fund","violence","file","profit","standard","jack","route","china","expenditure","second","discipline","congress","individual","lead","consideration","debt","option","payment","exhibition","reform","emphasis","spring","feature","touch","estate","assembly","volume","youth","curriculum","contribution","martin","tom","boat","institute","branch","bus","waste","heat","neck","object","captain","challenge","conversation","occasion","code","crown","birth","silence","faith","hell","entry","transfer","gentleman","bag","coal","investigation","leg","belief","total","major","document","description","murder","aim","manchester","conclusion","drug","pleasure","connection","owner","treaty","tony","alan","desire","professor","copy","ministry","acid","palace","address","institution","lunch","generation","partner","cross","reduction","welfare","definition","key","release","vote","examination","judge","sky","breath","creation","row","guide","milk","cover","screen","intention","jones","silver","journey","explanation","green","measure","brain","significance","phase","injury","run","coast","technique","valley","drink","potential","drive","revolution","bishop","settlement","christ","metal","motion","index","adult","sport","surprise","pension","factory","tape","flow","iron","trip","lane","pool","independence","hole","un","flat","content","pay","noise","session","appointment","fashion","consumer","accommodation","mike","religion","author","northern","assistance","interpretation","display","shoulder","agent","gallery","proposal","sequence","simon","ship","interview","vehicle","democracy","improvement","involvement","general","enterprise","van","meal","breakfast","motor","channel","impression","tone","sheet","pollution","bob","beauty","square","vision","spot","distinction","brown","crowd","fuel","desk","sum","decline","revenue","fall","diet","bedroom","soil","reader","shock","fruit","behalf","deputy","roof","nose","steel","co","artist","graham","plate","song","formation","grass","spokesman","ice","talk","program","link","ring","expert","establishment","plastic","rail","passage","joe","parish","ref","emergency","liability","identity","framework","strike","countryside","border","bottle","autumn","cat","agriculture","concentration","guy","dress","victim","mountain","editor","theme","error","loan","stress","recovery","electricity","recession","request","lewis","white","walk","focus","chief","parent","sleep","mass","jane","bush","hill","item","lifespan","lee","publication","decade","beach","sugar","writer","panel","struggle","dream","outcome","offence","resolution","reputation","specialist","taylor","pub","port","incident","representation","chain","initiative","clause","resistance","mistake","worker","advance","empire","notion","mirror","frank","average","expansion","block","alternative","chancellor","meat","store","self","break","corporation","convention","partnership","furniture","round","regime","inquiry","rugby","scope","gate","minority","intelligence","restaurant","consequence","mill","golf","retirement","plane","gun","gap","core","uncle","thatcher","fun","arrival","snow","command","abuse","limit"];
+const DW=["people","history","art","information","map","family","government","health","system","computer","music","person","reading","method","data","food","understanding","theory","law","bird","literature","problem","software","control","knowledge","power","ability","love","internet","television","science","library","nature","fact","product","idea","temperature","investment","area","society","activity","story","industry","media","thing","oven","community","definition","safety","quality","development","language","management","player","variety","video","week","security","country","exam","movie","organization","equipment","physics","analysis","policy","series","thought","basis","boyfriend","direction","strategy","technology","army","camera","freedom","paper","environment","child","instance","month","truth","marketing","university","writing","article","department","difference","goal","news","audience","fishing","growth","income","marriage","user","combination","failure","meaning","medicine","philosophy","teacher","communication","night","chemistry","disease","disk","energy","nation","road","role","soup","advertising","location","success","addition","apartment","education","math","moment","painting","politics","attention","decision","event","property","shopping","student","wood","competition","distribution","entertainment","office","population","president","unit","category","cigarette","context","introduction","opportunity","performance","driver","flight","length","magazine","newspaper","relationship","teaching","cell","dealer","finding","lake","member","message","phone","scene","appearance","association","concept","customer","death","discussion","housing","inflation","insurance","mood","woman","advice","blood","effort","expression","importance","opinion","payment","reality","responsibility","situation","skill","statement","wealth","application","city","county","depth","estate","foundation","grandmother","heart","perspective","photo","recipe","studio","topic","collection","depression","imagination","passion","percentage","resource","setting","ad","agency","college","connection","criticism","debt","description","memory","patience","secretary","solution","administration","aspect","attitude","director","personality","psychology","recommendation","response","selection","storage","version","alcohol","argument","complaint","contract","emphasis","highway","loss","membership","possession","preparation","steak","union","agreement","cancer","currency","employment","engineering","entry","interaction","mixture","preference","region","republic","tradition","virus","actor","classroom","delivery","device","difficulty","drama","election","engine","football","guidance","hotel","owner","priority","protection","suggestion","tension","variation","anxiety","atmosphere","awareness","bath","bread","candidate","climate","comparison","confusion","construction","elevator","emotion","employee","employer","guest","height","leadership","mall","manager","operation","recording","sample","transportation","charity","cousin","disaster","editor","efficiency","way","year","work","day","man","world","life","part","house","course","case","place","end","group","company","party","school","money","point","example","state","business","water","hand","order","john","side","home","council","use","service","room","market","court","lot","war","police","interest","car","form","face","research","sort","body","question","book","level","minister","view","door","line","south","god","father","centre","effect","staff","position","kind","job","action","act","process","north","age","evidence","west","support","sense","report","mind","church","morning","change","land","care","century","range","table","back","trade","study","street","committee","rate","word","team","other","sir","section","air","authority","reason","price","town","class","subject","bank","value","need","east","practice","type","date","figure","right","wife","friend","club","voice","lord","stage","king","us","light","tax","production","march","board","may","hospital","cost","field","award","issue","bed","project","chapter","girl","game","amount","approach","top","front","account","rest","labour","structure","hair","bill","force","movement","letter","capital","model","material","fire","chance","son","sea","record","size","space","term","plan","treatment","st","peter","cup","scheme","design","choice","pressure","hall","couple","defence","list","wall","paul","sun","summer","set","village","colour","floor","season","park","hour","test","garden","husband","style","look","deal","charge","help","economy","page","risk","picture","commission","fish","oil","doctor","film","conference","press","extent","station","window","shop","access","doubt","majority","degree","sound","parliament","site","mark","title","species","increase","return","concern","public","glass","lady","answer","earth","daughter","purpose","leader","river","eye","appeal","opposition","campaign","respect","task","sale","whole","officer","division","source","piece","pattern","lack","surface","oxford","demand","post","mouth","radio","provision","attempt","sector","firm","status","peace","show","speaker","baby","arm","base","miss","trouble","culture","character","box","past","weight","organisation","start","brother","league","condition","machine","sex","budget","english","transport","share","mum","cash","principle","exchange","aid","rule","tea","balance","afternoon","reference","district","turn","smith","review","minute","duty","survey","presence","influence","stone","dog","benefit","executive","speech","function","queen","stock","kitchen","holiday","career","attack","horse","progress","plant","visit","relation","ball","bar","quarter","impact","scale","race","image","trust","justice","edge","gas","railway","advantage","gold","network","text","forest","sister","chair","cause","foot","rise","half","winter","corner","step","damage","credit","pain","possibility","legislation","strength","speed","crime","hill","debate","will","supply","present","confidence","mary","patient","wind","band","museum","farm","pound","henry","match","assessment","football","animal","skin","stuff","play","fear","dad","proportion","island","contact","japan","claim","kingdom","tv","existence","telephone","move","traffic","distance","relief","cabinet","unemployment","target","trial","rock","spirit","accident","coffee","distribution","train","sight","factor","exercise","weekend","battle","prison","grant","aircraft","tree","bridge","contrast","background","shape","wine","star","hope","detail","path","client","search","master","rain","offer","dinner","attitude","seat","manner","favour","fig","pair","crisis","smile","prince","danger","call","capacity","output","note","procedure","theatre","tour","recognition","middle","absence","sentence","package","track","card","sign","commitment","threat","weather","element","conflict","notice","victory","bottom","finance","fund","violence","file","profit","standard","jack","route","china","expenditure","second","discipline","congress","individual","lead","consideration","option","exhibition","reform","spring","feature","touch","assembly","volume","youth","curriculum","contribution","martin","tom","boat","institute","branch","bus","waste","heat","neck","object","captain","challenge","conversation","occasion","code","crown","birth","silence","faith","hell","transfer","gentleman","bag","coal","investigation","leg","belief","total","major","document","murder","aim","manchester","conclusion","drug","pleasure","treaty","tony","alan","desire","professor","copy","ministry","acid","palace","address","institution","lunch","generation","partner","cross","reduction","welfare","key","release","vote","examination","judge","sky","breath","creation","row","guide","milk","cover","screen","intention","jones","silver","journey","explanation","green","measure","brain","significance","phase","injury","run","coast","technique","valley","drink","potential","drive","revolution","bishop","settlement","christ","metal","motion","index","adult","sport","surprise","pension","factory","tape","flow","iron","trip","lane","pool","independence","hole","flat","content","pay","noise","session","appointment","fashion","consumer","accommodation","mike","religion","author","northern","assistance","interpretation","display","shoulder","agent","gallery","proposal","sequence","simon","ship","interview","vehicle","democracy","improvement","involvement","general","enterprise","van","meal","breakfast","motor","channel","impression","tone","sheet","pollution","bob","beauty","square","vision","spot","distinction","brown","crowd","fuel","desk","sum","decline","revenue","fall","diet","bedroom","soil","reader","shock","fruit","behalf","deputy","roof","nose","steel","artist","graham","plate","song","formation","grass","spokesman","ice","talk","program","link","ring","expert","establishment","plastic","rail","passage","joe","parish","emergency","liability","identity","framework","strike","countryside","border","bottle","autumn","cat","agriculture","concentration","guy","dress","victim","mountain","theme","error","loan","stress","recovery","electricity","recession","request","lewis","white","walk","focus","chief","parent","sleep","mass","jane","bush","item","lifespan","lee","publication","decade","beach","sugar","writer","panel","struggle","dream","outcome","offence","resolution","reputation","specialist","taylor","pub","port","incident","representation","chain","initiative","clause","resistance","mistake","worker","advance","empire","notion","mirror","frank","average","expansion","block","alternative","chancellor","meat","store","self","break","corporation","convention","partnership","furniture","round","regime","inquiry","rugby","scope","gate","minority","intelligence","restaurant","consequence","mill","golf","retirement","plane","gun","gap","core","uncle","fun","arrival","snow","command","abuse","limit"];
 const NAME_FILE='list%20of%20words.txt';
 const WORD_BLACKLIST=new Set(['act','scene','enter','reenter','exit','exeunt','lord','lady','sir','madam','king','queen','duke','prince','servant','first','second','third','fourth']);
-function cleanToken(token){
-    return token.toLowerCase().replace(/[’']/g,'').replace(/[^a-z-]/g,'').replace(/^-+|-+$/g,'');
-}
-function extractWords(text){
-    const matches=text.match(/[A-Za-z][A-Za-z'-]{2,18}/g)||[];
-    const out=[];
-    for(const raw of matches){
-        const w=cleanToken(raw);
-        if(!w||w.length<3) continue;
-        if(WORD_BLACKLIST.has(w)) continue;
-        if(/^[ivxlcdm]+$/i.test(w)) continue;
-        out.push(w);
-    }
-    return [...new Set(out)];
-}
+function cleanToken(t){return t.toLowerCase().replace(/['']/g,'').replace(/[^a-z-]/g,'').replace(/^-+|-+$/g,'');}
+function extractWords(text){const m=text.match(/[A-Za-z][A-Za-z'-]{2,18}/g)||[];const o=[];for(const r of m){const w=cleanToken(r);if(!w||w.length<3||WORD_BLACKLIST.has(w)||/^[ivxlcdm]+$/i.test(w))continue;o.push(w);}return[...new Set(o)];}
 let NAME_WORDS=[...new Set(DW.map(cleanToken).filter(Boolean))];
 function pickWord(){return NAME_WORDS[(Math.random()*NAME_WORDS.length)|0];}
 function titleCase(w){return w.charAt(0).toUpperCase()+w.slice(1);}
-function genName(){
-    let a=pickWord(),b=pickWord();
-    while(b===a) b=pickWord();
-    return `${titleCase(a)} ${titleCase(b)}`;
-}
-async function bootstrapNamePool(){
-    try{
-        const res=await fetch(NAME_FILE,{cache:'no-store'});
-        if(!res.ok) throw new Error('name file missing');
-        const txt=await res.text();
-        NAME_WORDS=[...new Set([...NAME_WORDS,...extractWords(txt)])];
-        if(playerHorse){
-            playerHorse.name=genName();
-            document.getElementById('player-horse-name').innerText=`#${playerHorse.number} ${playerHorse.name}`;
-        }
-        console.log(`Loaded ${NAME_WORDS.length} name words.`);
-    }catch(err){
-        console.warn('Using built-in name pool only.',err);
-    }
-}
+function genName(){let a=pickWord(),b=pickWord();while(b===a)b=pickWord();return`${titleCase(a)} ${titleCase(b)}`;}
+async function bootstrapNamePool(){try{const r=await fetch(NAME_FILE,{cache:'no-store'});if(!r.ok)throw new Error('missing');const t=await r.text();NAME_WORDS=[...new Set([...NAME_WORDS,...extractWords(t)])];if(playerHorse){playerHorse.name=genName();document.getElementById('player-horse-name').innerText=`#${playerHorse.number} ${playerHorse.name}`;}console.log(`Loaded ${NAME_WORDS.length} words.`);}catch(e){console.warn('Built-in pool only.',e);}}
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
-
 let playerHorse={name:genName(),taps:0,isPlayer:true,color:"#e91e63",number:Math.floor(Math.random()*20)+1};
 let gameHorses=[],finishOrder=[],raceFinished=false,stretchCalled=false,raceStartTime=0;
 let tapping=false,tappingDone=false,tapCountdownStarted=false,tapInterval=null;
@@ -174,7 +123,6 @@ const TRACK_SX=1.8,BASE_R=280,DIRT_W=75;
 const START_ANGLE=-Math.PI/2,FINISH_ANGLE=START_ANGLE+2*Math.PI;
 const AVG_SPEED=0.0011;
 let camMode='broadcast';
-
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x87CEEB);scene.fog=new THREE.Fog(0x87CEEB,600,1200);
 const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,1,3000);
 const camTarget=new THREE.Vector3();
@@ -182,27 +130,13 @@ const renderer=new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;
 document.getElementById('canvas-container').appendChild(renderer.domElement);
 scene.add(new THREE.AmbientLight(0xffffff,0.7));
-const sun=new THREE.DirectionalLight(0xffffff,0.9);sun.position.set(150,300,80);sun.castShadow=true;
-sun.shadow.camera.top=500;sun.shadow.camera.bottom=-500;sun.shadow.camera.left=-600;sun.shadow.camera.right=600;scene.add(sun);
-
-const gradCanvas=document.createElement('canvas');gradCanvas.width=4;gradCanvas.height=1;
-const gctx=gradCanvas.getContext('2d');
-gctx.fillStyle='#555';gctx.fillRect(0,0,1,1);gctx.fillStyle='#999';gctx.fillRect(1,0,1,1);
-gctx.fillStyle='#ccc';gctx.fillRect(2,0,1,1);gctx.fillStyle='#fff';gctx.fillRect(3,0,1,1);
-const gradMap=new THREE.CanvasTexture(gradCanvas);
-gradMap.minFilter=THREE.NearestFilter;gradMap.magFilter=THREE.NearestFilter;
+const sun=new THREE.DirectionalLight(0xffffff,0.9);sun.position.set(150,300,80);sun.castShadow=true;sun.shadow.camera.top=500;sun.shadow.camera.bottom=-500;sun.shadow.camera.left=-600;sun.shadow.camera.right=600;scene.add(sun);
+const gradCanvas=document.createElement('canvas');gradCanvas.width=4;gradCanvas.height=1;const gctx=gradCanvas.getContext('2d');
+gctx.fillStyle='#555';gctx.fillRect(0,0,1,1);gctx.fillStyle='#999';gctx.fillRect(1,0,1,1);gctx.fillStyle='#ccc';gctx.fillRect(2,0,1,1);gctx.fillStyle='#fff';gctx.fillRect(3,0,1,1);
+const gradMap=new THREE.CanvasTexture(gradCanvas);gradMap.minFilter=THREE.NearestFilter;gradMap.magFilter=THREE.NearestFilter;
 function toon(opts){return new THREE.MeshToonMaterial({...opts,gradientMap:gradMap});}
-
-function mowedGrass(){const c=document.createElement('canvas');c.width=512;c.height=512;const x=c.getContext('2d');
-for(let i=0;i<18;i++){x.fillStyle=i%2?'#3d8a35':'#4da843';x.fillRect(0,i*28.4,512,28.4);}
-const d=x.getImageData(0,0,512,512);for(let j=0;j<d.data.length;j+=4){const n=(Math.random()-.5)*8;d.data[j]+=n;d.data[j+1]+=n;d.data[j+2]+=n;}
-x.putImageData(d,0,0);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(6,6);return t;}
-
-function saddleTex(num,col){const c=document.createElement('canvas');c.width=128;c.height=128;const x=c.getContext('2d');
-x.fillStyle=col;x.fillRect(0,0,128,128);x.strokeStyle='#000';x.lineWidth=6;x.strokeRect(0,0,128,128);
-x.fillStyle='#fff';x.font='bold 64px "Press Start 2P",monospace';x.textAlign='center';x.textBaseline='middle';
-x.fillText(num,64,68);x.lineWidth=3;x.strokeText(num,64,68);return new THREE.CanvasTexture(c);}
-
+function mowedGrass(){const c=document.createElement('canvas');c.width=512;c.height=512;const x=c.getContext('2d');for(let i=0;i<18;i++){x.fillStyle=i%2?'#3d8a35':'#4da843';x.fillRect(0,i*28.4,512,28.4);}const d=x.getImageData(0,0,512,512);for(let j=0;j<d.data.length;j+=4){const n=(Math.random()-.5)*8;d.data[j]+=n;d.data[j+1]+=n;d.data[j+2]+=n;}x.putImageData(d,0,0);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(6,6);return t;}
+function saddleTex(num,col){const c=document.createElement('canvas');c.width=128;c.height=128;const x=c.getContext('2d');x.fillStyle=col;x.fillRect(0,0,128,128);x.strokeStyle='#000';x.lineWidth=6;x.strokeRect(0,0,128,128);x.fillStyle='#fff';x.font='bold 64px "Press Start 2P",monospace';x.textAlign='center';x.textBaseline='middle';x.fillText(num,64,68);x.lineWidth=3;x.strokeText(num,64,68);return new THREE.CanvasTexture(c);}
 // --- TRACK ---
 (function(){const g=new THREE.Group();
 const grassMesh=new THREE.Mesh(new THREE.CircleGeometry(BASE_R-3,80),toon({map:mowedGrass()}));grassMesh.rotation.x=-Math.PI/2;grassMesh.receiveShadow=true;g.add(grassMesh);
@@ -211,14 +145,10 @@ const out=new THREE.Mesh(new THREE.RingGeometry(BASE_R+DIRT_W,BASE_R+400,80),too
 const rm=new THREE.MeshBasicMaterial({color:0xffffff});
 [BASE_R-3,BASE_R+DIRT_W].forEach(r=>{const t=new THREE.Mesh(new THREE.TorusGeometry(r,.6,8,80),rm);t.rotation.x=-Math.PI/2;t.position.y=2;g.add(t);});
 for(let i=0;i<40;i++){const a=(i/40)*Math.PI*2;const p=new THREE.Mesh(new THREE.CylinderGeometry(.2,.2,4,4),toon({color:0xdddddd}));p.position.set(Math.cos(a)*(BASE_R-3),2,Math.sin(a)*(BASE_R-3));g.add(p);}
-const fc=document.createElement('canvas');fc.width=64;fc.height=64;const fx=fc.getContext('2d');
-for(let r=0;r<8;r++)for(let c=0;c<8;c++){fx.fillStyle=(r+c)%2?'#000':'#fff';fx.fillRect(c*8,r*8,8,8);}
-const fl=new THREE.Mesh(new THREE.PlaneGeometry(DIRT_W+6,5),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(fc)}));
-fl.rotation.x=-Math.PI/2;fl.rotation.z=Math.PI/2;fl.position.set(0,.2,-(BASE_R+DIRT_W/2));g.add(fl);
-[BASE_R-3,BASE_R+DIRT_W].forEach(off=>{const p=new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,22,8),toon({color:0xffffff}));p.position.set(0,11,-off);g.add(p);
-const b=new THREE.Mesh(new THREE.SphereGeometry(1.2,8,8),toon({color:0xffd700}));b.position.set(0,22.5,-off);g.add(b);});
+const fc=document.createElement('canvas');fc.width=64;fc.height=64;const fx=fc.getContext('2d');for(let r=0;r<8;r++)for(let c=0;c<8;c++){fx.fillStyle=(r+c)%2?'#000':'#fff';fx.fillRect(c*8,r*8,8,8);}
+const fl=new THREE.Mesh(new THREE.PlaneGeometry(DIRT_W+6,5),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(fc)}));fl.rotation.x=-Math.PI/2;fl.rotation.z=Math.PI/2;fl.position.set(0,.2,-(BASE_R+DIRT_W/2));g.add(fl);
+[BASE_R-3,BASE_R+DIRT_W].forEach(off=>{const p=new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,22,8),toon({color:0xffffff}));p.position.set(0,11,-off);g.add(p);const b=new THREE.Mesh(new THREE.SphereGeometry(1.2,8,8),toon({color:0xffd700}));b.position.set(0,22.5,-off);g.add(b);});
 g.scale.set(TRACK_SX,1,1);scene.add(g);})();
-
 // --- MASCOT SYSTEM ---
 const texLoader=new THREE.TextureLoader();
 const LT_SET={name:'lt',front:"lt-front.png",side:"lt-side.png",side_r:"lt-side-r.png",back:"lt-back.png",frontSize:12,sideSize:13.5,bodyPeek:0.58,riderScale:1.0,headForward:0.08};
@@ -229,311 +159,45 @@ const BUN_SET={name:'bunny',front:"bunny-front.png",side:"bunny-side.png",side_r
 const TOM_SET={name:'tomato',front:"tomato-front.png",side:"tomato-side.png",side_r:"tomato-side-r.png",back:"tomato-back.png",swapSideViews:true,bodyPeek:0.95,riderScale:1.08,headLift:0.62,headForward:0.22};
 const ALL_SETS=[LT_SET,GEO_SET,DAV_SET,LIB_SET,BUN_SET,TOM_SET];
 const loadedTextures=[];
-ALL_SETS.forEach(s=>{
-    loadedTextures.push({
-        ...s,
-        front:texLoader.load(s.front),
-        side:texLoader.load(s.side),
-        side_r:texLoader.load(s.side_r),
-        back:texLoader.load(s.back)
-    });
-});
-
-function buildMascotHead(idx){
-    const charData=loadedTextures[idx%loadedTextures.length];
-    const g=new THREE.Group();
-    const mat=new THREE.MeshBasicMaterial({transparent:true,alphaTest:0.5,side:THREE.DoubleSide});
-    const headSizeFront=charData.frontSize||10.5;
-    const headSizeSide=charData.sideSize||10.5;
-    const geoFront=new THREE.PlaneGeometry(headSizeFront,headSizeFront);
-    const geoSide=new THREE.PlaneGeometry(headSizeSide,headSizeFront);
-    const plane=new THREE.Mesh(geoFront,mat);
-    plane.position.z=1.3;
-    g.add(plane);
-    g.userData.multiAngle=charData;
-    g.userData.headMat=mat;
-    g.userData.headMesh=plane;
-    g.userData.isHead=true;
-    g.userData.sideGeo=geoSide;
-    g.userData.frontGeo=geoFront;
-    return g;
-}
-
-const _headWorldPos=new THREE.Vector3();
-const _camToHead=new THREE.Vector3();
-const _horseForward=new THREE.Vector3();
-const _parentWorldQuat=new THREE.Quaternion();
-const _targetQuat=new THREE.Quaternion();
-const _lookMatrix=new THREE.Matrix4();
-const _desiredHeadPos=new THREE.Vector3();
-
+ALL_SETS.forEach(s=>{loadedTextures.push({...s,front:texLoader.load(s.front),side:texLoader.load(s.side),side_r:texLoader.load(s.side_r),back:texLoader.load(s.back)});});
+function buildMascotHead(idx){const charData=loadedTextures[idx%loadedTextures.length];const g=new THREE.Group();const mat=new THREE.MeshBasicMaterial({transparent:true,alphaTest:0.5,side:THREE.DoubleSide});const hsf=charData.frontSize||10.5;const hss=charData.sideSize||10.5;const gF=new THREE.PlaneGeometry(hsf,hsf);const gS=new THREE.PlaneGeometry(hss,hsf);const plane=new THREE.Mesh(gF,mat);plane.position.z=1.3;g.add(plane);g.userData.multiAngle=charData;g.userData.headMat=mat;g.userData.headMesh=plane;g.userData.isHead=true;g.userData.sideGeo=gS;g.userData.frontGeo=gF;return g;}
+const _headWorldPos=new THREE.Vector3(),_camToHead=new THREE.Vector3(),_horseForward=new THREE.Vector3();
+const _parentWorldQuat=new THREE.Quaternion(),_targetQuat=new THREE.Quaternion(),_lookMatrix=new THREE.Matrix4(),_desiredHeadPos=new THREE.Vector3();
 function updateHeadAngle(horseRoot,jockeyGroup,cam){
-    const headGroup=jockeyGroup.children[jockeyGroup.children.length-1];
-    if(!headGroup||!headGroup.userData.isHead) return;
-
-    headGroup.updateWorldMatrix(true,false);
-    headGroup.getWorldPosition(_headWorldPos);
-    _lookMatrix.lookAt(cam.position,_headWorldPos,THREE.Object3D.DefaultUp);
-    _targetQuat.setFromRotationMatrix(_lookMatrix);
-    headGroup.parent.updateWorldMatrix(true,false);
-    headGroup.parent.getWorldQuaternion(_parentWorldQuat);
-    _parentWorldQuat.invert();
+    const headGroup=jockeyGroup.children[jockeyGroup.children.length-1];if(!headGroup||!headGroup.userData.isHead)return;
+    headGroup.updateWorldMatrix(true,false);headGroup.getWorldPosition(_headWorldPos);
+    _lookMatrix.lookAt(cam.position,_headWorldPos,THREE.Object3D.DefaultUp);_targetQuat.setFromRotationMatrix(_lookMatrix);
+    headGroup.parent.updateWorldMatrix(true,false);headGroup.parent.getWorldQuaternion(_parentWorldQuat);_parentWorldQuat.invert();
     headGroup.quaternion.copy(_targetQuat.premultiply(_parentWorldQuat));
-
-    const texSet=headGroup.userData.multiAngle;
-    const mat=headGroup.userData.headMat;
-    const mesh=headGroup.userData.headMesh;
-
-    const rotY=horseRoot.rotation.y;
-    _horseForward.set(Math.cos(rotY),0,-Math.sin(rotY)).normalize();
-    _camToHead.subVectors(cam.position,_headWorldPos);
-    _camToHead.y=0;
-    _camToHead.normalize();
-
-    const angle=Math.atan2(
-        _horseForward.x*_camToHead.z-_horseForward.z*_camToHead.x,
-        _horseForward.x*_camToHead.x+_horseForward.z*_camToHead.z
-    );
+    const texSet=headGroup.userData.multiAngle,mat=headGroup.userData.headMat,mesh=headGroup.userData.headMesh;
+    const rotY=horseRoot.rotation.y;_horseForward.set(Math.cos(rotY),0,-Math.sin(rotY)).normalize();
+    _camToHead.subVectors(cam.position,_headWorldPos);_camToHead.y=0;_camToHead.normalize();
+    const angle=Math.atan2(_horseForward.x*_camToHead.z-_horseForward.z*_camToHead.x,_horseForward.x*_camToHead.x+_horseForward.z*_camToHead.z);
     const deg=angle*180/Math.PI;
-
-    let zone='front';
-    if(deg<=-135||deg>=135) zone='back';
-    else if(deg>=45&&deg<135) zone=texSet.swapSideViews?'side_r':'side';
-    else if(deg<=-45&&deg>-135) zone=texSet.swapSideViews?'side':'side_r';
-
-    const sideSign=deg>=0?1:-1;
-    const headSpan=Math.max(texSet.frontSize||10.5,texSet.sideSize||10.5);
-    const sizeBoost=Math.max(0,headSpan-10.5);
-    if(headGroup.userData.basePos){
-        const base=headGroup.userData.basePos;
-        const forwardLift=(texSet.headForward||0)+(sizeBoost*0.12);
-        const sideLean=(zone==='front'||zone==='back') ? sideSign*0.04 : sideSign*Math.min(0.12,0.05+sizeBoost*0.03);
-        _desiredHeadPos.set(base.x+forwardLift,base.y+(sizeBoost*0.08),base.z+sideLean);
-        headGroup.position.lerp(_desiredHeadPos,0.16);
-    }
-
+    let zone='front';if(deg<=-135||deg>=135)zone='back';else if(deg>=45&&deg<135)zone=texSet.swapSideViews?'side_r':'side';else if(deg<=-45&&deg>-135)zone=texSet.swapSideViews?'side':'side_r';
+    const sideSign=deg>=0?1:-1;const headSpan=Math.max(texSet.frontSize||10.5,texSet.sideSize||10.5);const sizeBoost=Math.max(0,headSpan-10.5);
+    if(headGroup.userData.basePos){const base=headGroup.userData.basePos;const fl=(texSet.headForward||0)+(sizeBoost*0.12);const sl=(zone==='front'||zone==='back')?sideSign*0.04:sideSign*Math.min(0.12,0.05+sizeBoost*0.03);_desiredHeadPos.set(base.x+fl,base.y+(sizeBoost*0.08),base.z+sl);headGroup.position.lerp(_desiredHeadPos,0.16);}
     const riderBody=jockeyGroup.userData.riderBody;
-    if(riderBody){
-        const bodyPeek=(texSet.bodyPeek ?? 0.68)+(sizeBoost*0.05);
-        const riderScale=texSet.riderScale ?? 1;
-        const targetZ=(zone==='front'||zone==='back') ? sideSign*(bodyPeek*0.16) : sideSign*(bodyPeek*0.34);
-        const targetY=(texSet.name==='liberty' ? -0.08 : -0.02) + (texSet.riderDrop||0);
-        const targetX=(zone==='front'||zone==='back') ? -0.2-(sizeBoost*0.03) : -0.26-(sizeBoost*0.035);
-        riderBody.position.x += (targetX-riderBody.position.x)*0.16;
-        riderBody.position.z += (targetZ-riderBody.position.z)*0.18;
-        riderBody.position.y += (targetY-riderBody.position.y)*0.18;
-        riderBody.scale.x += (riderScale-riderBody.scale.x)*0.16;
-        riderBody.scale.y += (riderScale-riderBody.scale.y)*0.16;
-        riderBody.scale.z += (riderScale-riderBody.scale.z)*0.16;
-
-        const parts=riderBody.userData.parts||{};
-        const sideView=(zone==='side'||zone==='side_r');
-        const showNearLeft=sideSign>0;
-        if(parts.leftUpperArm) parts.leftUpperArm.visible=!sideView || showNearLeft;
-        if(parts.leftThigh) parts.leftThigh.visible=!sideView || showNearLeft;
-        if(parts.rightUpperArm) parts.rightUpperArm.visible=!sideView || !showNearLeft;
-        if(parts.rightThigh) parts.rightThigh.visible=!sideView || !showNearLeft;
-        if(parts.chestSilk){
-            const tz=sideView ? sideSign*0.1 : 0;
-            parts.chestSilk.position.z += (tz-parts.chestSilk.position.z)*0.2;
-        }
-        if(parts.hips){
-            const hz=sideView ? sideSign*0.08 : 0;
-            parts.hips.position.z += (hz-parts.hips.position.z)*0.2;
-        }
-    }
-
-    if(texSet.name==='liberty'||texSet.name==='lt'){
-        const targetGeo=(zone==='front'||zone==='back') ? headGroup.userData.frontGeo : headGroup.userData.sideGeo;
-        if(mesh.geometry!==targetGeo) mesh.geometry=targetGeo;
-    }
-
-    const newTex=texSet[zone];
-    if(newTex&&mat.map!==newTex){
-        mat.map=newTex;
-        mat.needsUpdate=true;
-    }
+    if(riderBody){const bp=(texSet.bodyPeek??0.68)+(sizeBoost*0.05);const rs=texSet.riderScale??1;const tz2=(zone==='front'||zone==='back')?sideSign*(bp*0.16):sideSign*(bp*0.34);const ty=(texSet.name==='liberty'?-0.08:-0.02)+(texSet.riderDrop||0);const tx=(zone==='front'||zone==='back')?-0.2-(sizeBoost*0.03):-0.26-(sizeBoost*0.035);riderBody.position.x+=(tx-riderBody.position.x)*0.16;riderBody.position.z+=(tz2-riderBody.position.z)*0.18;riderBody.position.y+=(ty-riderBody.position.y)*0.18;riderBody.scale.x+=(rs-riderBody.scale.x)*0.16;riderBody.scale.y+=(rs-riderBody.scale.y)*0.16;riderBody.scale.z+=(rs-riderBody.scale.z)*0.16;
+    const parts=riderBody.userData.parts||{};const sv=(zone==='side'||zone==='side_r');const snl=sideSign>0;
+    if(parts.leftUpperArm)parts.leftUpperArm.visible=!sv||snl;if(parts.leftThigh)parts.leftThigh.visible=!sv||snl;if(parts.rightUpperArm)parts.rightUpperArm.visible=!sv||!snl;if(parts.rightThigh)parts.rightThigh.visible=!sv||!snl;
+    if(parts.chestSilk){const tz3=sv?sideSign*0.1:0;parts.chestSilk.position.z+=(tz3-parts.chestSilk.position.z)*0.2;}if(parts.hips){const hz=sv?sideSign*0.08:0;parts.hips.position.z+=(hz-parts.hips.position.z)*0.2;}}
+    if(texSet.name==='liberty'||texSet.name==='lt'){const tg=(zone==='front'||zone==='back')?headGroup.userData.frontGeo:headGroup.userData.sideGeo;if(mesh.geometry!==tg)mesh.geometry=tg;}
+    const newTex=texSet[zone];if(newTex&&mat.map!==newTex){mat.map=newTex;mat.needsUpdate=true;}
 }
-
 // --- HORSE ---
-const BIRD_BREEDS=[
-    {name:'bunting',body:0x2ea6ff,head:0x62c0ff,belly:0xf0d5a6,accent:0x7b4a24,wing:0x1d88df,beak:0xe0b14a,eyeRing:0xffffff,crest:false,mask:false,cheek:false},
-    {name:'cardinal',body:0xc71f25,head:0xd62828,belly:0xc71f25,accent:0x111111,wing:0xa3161f,beak:0xe39b2e,eyeRing:0x111111,crest:true,mask:true,cheek:false},
-    {name:'goldfinch',body:0xf4d000,head:0xf8de2a,belly:0xf7e87b,accent:0x111111,wing:0x2b2b2b,beak:0xdca244,eyeRing:0x111111,crest:false,mask:true,cheek:false},
-    {name:'monk parakeet',body:0x7ccf64,head:0x96df7f,belly:0xd7d7d7,accent:0x4d8f42,wing:0x63b455,beak:0xe4bf68,eyeRing:0xffffff,crest:false,mask:false,cheek:false},
-    {name:'chickadee',body:0x9ea6ae,head:0xb9c0c8,belly:0xe8ecef,accent:0x111111,wing:0x727b83,beak:0x2f2f2f,eyeRing:0xffffff,crest:false,mask:true,cheek:true},
-    {name:'oriole',body:0xf68a1e,head:0xffa142,belly:0xffbf70,accent:0x111111,wing:0x1d1d1d,beak:0xd6a14a,eyeRing:0xffffff,crest:false,mask:true,cheek:false}
-];
-
-const BIRD_SPECS=BIRD_BREEDS.map(b=>({
-    body:b.head ?? b.body,
-    accent:b.wing ?? b.accent,
-    dark:b.accent ?? 0x2b2b2b,
-    beak:b.beak ?? 0xf4d28a
-}));
-
-function createBirdRig(birdIdx=0){
-    const spec=BIRD_SPECS[birdIdx % BIRD_SPECS.length];
-    const group=new THREE.Group();
-    const bodyMat=toon({color:spec.body});
-    const accentMat=toon({color:spec.accent});
-    const darkMat=toon({color:spec.dark});
-    const beakMat=toon({color:spec.beak});
-
-    const birdBody=new THREE.Mesh(new THREE.SphereGeometry(0.82,14,12),bodyMat);
-    birdBody.scale.set(1.25,0.92,0.95);
-    birdBody.castShadow=true;
-    group.add(birdBody);
-
-    const belly=new THREE.Mesh(new THREE.SphereGeometry(0.48,12,10),accentMat);
-    belly.position.set(0.08,-0.02,0.42);
-    belly.scale.set(0.95,0.78,0.55);
-    belly.castShadow=true;
-    group.add(belly);
-
-    const head=new THREE.Mesh(new THREE.SphereGeometry(0.56,14,12),bodyMat);
-    head.position.set(1.02,0.06,0);
-    head.scale.set(1.02,0.98,0.98);
-    head.castShadow=true;
-    group.add(head);
-
-    const cap=new THREE.Mesh(new THREE.SphereGeometry(0.28,10,8),accentMat);
-    cap.position.set(1.1,0.38,0.02);
-    cap.scale.set(1.05,0.45,0.75);
-    cap.castShadow=true;
-    group.add(cap);
-
-    const beak=new THREE.Mesh(new THREE.ConeGeometry(0.19,0.55,8),beakMat);
-    beak.rotation.z=-Math.PI/2;
-    beak.position.set(1.56,-0.02,0);
-    beak.castShadow=true;
-    group.add(beak);
-
-    const eyeWhiteMat=toon({color:0xffffff});
-    const pupilMat=toon({color:0x111111});
-    [-0.18,0.18].forEach(z=>{
-        const eyeWhite=new THREE.Mesh(new THREE.SphereGeometry(0.12,10,8),eyeWhiteMat);
-        eyeWhite.position.set(1.28,0.12,z);
-        eyeWhite.scale.set(0.85,0.95,0.72);
-        group.add(eyeWhite);
-        const pupil=new THREE.Mesh(new THREE.SphereGeometry(0.05,8,8),pupilMat);
-        pupil.position.set(1.34,0.1,z*0.88);
-        group.add(pupil);
-    });
-
-    const tail=new THREE.Mesh(new THREE.ConeGeometry(0.22,0.85,7),darkMat);
-    tail.position.set(-1.05,0.08,0);
-    tail.rotation.z=Math.PI*0.78;
-    tail.castShadow=true;
-    group.add(tail);
-
-    const leftWingPivot=new THREE.Group();
-    leftWingPivot.position.set(0.05,0.22,0.64);
-    const leftWing=new THREE.Group();
-    const leftShoulder=new THREE.Mesh(new THREE.SphereGeometry(0.28,12,10),accentMat);
-    leftShoulder.scale.set(1.0,0.42,0.58);
-    leftShoulder.position.set(0.08,0,0);
-    leftShoulder.castShadow=true;
-    leftWing.add(leftShoulder);
-    const leftPrimary=new THREE.Mesh(new THREE.SphereGeometry(0.48,12,10),accentMat);
-    leftPrimary.scale.set(1.9,0.22,0.82);
-    leftPrimary.position.set(-0.56,0.06,0);
-    leftPrimary.rotation.z=0.08;
-    leftPrimary.castShadow=true;
-    leftWing.add(leftPrimary);
-    const leftSecondary=new THREE.Mesh(new THREE.SphereGeometry(0.36,10,8),accentMat);
-    leftSecondary.scale.set(1.7,0.18,0.72);
-    leftSecondary.position.set(-0.22,-0.16,0);
-    leftSecondary.rotation.z=0.28;
-    leftSecondary.castShadow=true;
-    leftWing.add(leftSecondary);
-    const leftWingTip=new THREE.Mesh(new THREE.ConeGeometry(0.12,0.58,8),accentMat);
-    leftWingTip.rotation.z=-Math.PI/2;
-    leftWingTip.position.set(-1.05,0.02,0);
-    leftWingTip.castShadow=true;
-    leftWing.add(leftWingTip);
-    leftWing.rotation.y=0.12;
-    leftWingPivot.add(leftWing);
-    group.add(leftWingPivot);
-
-    const rightWingPivot=new THREE.Group();
-    rightWingPivot.position.set(0.05,0.22,-0.64);
-    const rightWing=new THREE.Group();
-    const rightShoulder=leftShoulder.clone();
-    rightWing.add(rightShoulder);
-    const rightPrimary=leftPrimary.clone();
-    rightPrimary.rotation.z=-0.08;
-    rightWing.add(rightPrimary);
-    const rightSecondary=leftSecondary.clone();
-    rightSecondary.rotation.z=-0.28;
-    rightWing.add(rightSecondary);
-    const rightWingTip=leftWingTip.clone();
-    rightWingTip.rotation.z=Math.PI/2;
-    rightWing.add(rightWingTip);
-    rightWing.rotation.y=-0.12;
-    rightWingPivot.add(rightWing);
-    group.add(rightWingPivot);
-
-    group.scale.setScalar(1.18);
-    return {
-        group,
-        leftWing,
-        rightWing,
-        reinStarts:[
-            new THREE.Vector3(1.5,-0.03,0.13),
-            new THREE.Vector3(1.5,-0.03,-0.13)
-        ],
-        horseReinAnchors:[
-            new THREE.Vector3(12.05,13.95,0.5),
-            new THREE.Vector3(12.15,14.15,-0.5)
-        ],
-        reinMeshes:[],
-        baseX:17.9,
-        baseY:18.6,
-        phase:birdIdx*0.92
-    };
-}
-
-function updateBirdReins(body,birdRig){
-    if(!birdRig || !birdRig.reinMeshes || !birdRig.reinMeshes.length) return;
-    body.updateWorldMatrix(true,false);
-    birdRig.group.updateWorldMatrix(true,false);
-    birdRig.reinStarts.forEach((startLocal,idx)=>{
-        const start=body.worldToLocal(birdRig.group.localToWorld(startLocal.clone()));
-        const end=birdRig.horseReinAnchors[idx].clone();
-        const pull=end.clone().sub(start);
-        const distance=Math.max(1,pull.length());
-        const c1=start.clone().lerp(end,0.34);
-        const c2=start.clone().lerp(end,0.7);
-        const sag=Math.min(0.32,distance*0.018);
-        c1.y-=sag;
-        c2.y-=sag*0.45;
-        const side=(idx===0?1:-1)*0.05;
-        c1.z+=side;
-        c2.z+=side*0.5;
-        const curve=new THREE.CatmullRomCurve3([start,c1,c2,end]);
-        const mesh=birdRig.reinMeshes[idx];
-        if(mesh.geometry) mesh.geometry.dispose();
-        mesh.geometry=new THREE.TubeGeometry(curve,10,0.072,6,false);
-    });
-}
-
 function createHorse(colorHex,number,mascotPoolIdx){
     const root=new THREE.Group(),body=new THREE.Group();root.add(body);
     const brown=toon({color:0x6B4226}),ltBr=toon({color:0x8B6B4A}),dkBr=toon({color:0x3a2212});
     const hoofM=toon({color:0x161616}),maneM=toon({color:0x57331c}),tailM=toon({color:0x1a0f00}),hoodC=toon({color:new THREE.Color(colorHex)});
-
     const torso=new THREE.Mesh(new THREE.SphereGeometry(1,14,10),brown);torso.scale.set(7.25,2.2,2.1);torso.position.y=6.4;torso.castShadow=true;body.add(torso);
     const rump=new THREE.Mesh(new THREE.SphereGeometry(3,10,10),brown);rump.scale.set(0.98,0.9,0.96);rump.position.set(-5.0,6.95,0);body.add(rump);
     const chest=new THREE.Mesh(new THREE.SphereGeometry(2.6,10,10),brown);chest.scale.set(1.0,1.05,0.95);chest.position.set(4.95,6.95,0);body.add(chest);
-
     const st=saddleTex(number.toString(),colorHex),sm=toon({map:st});
     const sR=new THREE.Mesh(new THREE.PlaneGeometry(5.5,4),sm);sR.position.set(-.5,7,2.7);body.add(sR);
     const sL=new THREE.Mesh(new THREE.PlaneGeometry(5.5,4),sm);sL.position.set(-.5,7,-2.7);sL.rotation.y=Math.PI;body.add(sL);
-
     const neckCurve=new THREE.QuadraticBezierCurve3(new THREE.Vector3(5.2,7.2,0),new THREE.Vector3(7.45,11.1,0),new THREE.Vector3(10.35,14.15,0));
     const neck=new THREE.Mesh(new THREE.TubeGeometry(neckCurve,14,1.32,8,false),brown);neck.castShadow=true;body.add(neck);
-
     const skull=new THREE.Mesh(new THREE.SphereGeometry(1,12,10),brown);skull.scale.set(3.05,1.35,1.36);skull.position.set(11.55,14.2,0);body.add(skull);
     const muzzle=new THREE.Mesh(new THREE.SphereGeometry(1,10,8),ltBr);muzzle.scale.set(1.9,0.95,1.02);muzzle.position.set(14.15,13.25,0);body.add(muzzle);
     const nm=new THREE.MeshBasicMaterial({color:0x333333});
@@ -542,439 +206,131 @@ function createHorse(colorHex,number,mascotPoolIdx){
     const ehm=new THREE.MeshBasicMaterial({color:0x111111});
     for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.CircleGeometry(.65,8),ehm);e.position.set(12.5,14.5,s*1.66);if(s<0)e.rotation.y=Math.PI;body.add(e);}
     for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.ConeGeometry(.48,2.35,6),hoodC);e.position.set(10.35,16.15,s*.82);e.rotation.z=.1;body.add(e);}
-
-    const maneStrip=new THREE.Mesh(new THREE.BoxGeometry(4.8,.38,.46),maneM);
-    maneStrip.position.set(8.25,12.15,0);
-    maneStrip.rotation.z=.93;
-    maneStrip.castShadow=true;
-    body.add(maneStrip);
-    const tailG=new THREE.Group();
-    const tail1=new THREE.Mesh(new THREE.SphereGeometry(.4,6,6),tailM);tail1.scale.set(1,2.5,1);tail1.position.y=-1.2;tailG.add(tail1);
-    const tail2=new THREE.Mesh(new THREE.SphereGeometry(.35,6,6),tailM);tail2.scale.set(1,2,1);tail2.position.set(-.4,-2.5,0);tailG.add(tail2);
-    tailG.position.set(-7.5,8.5,0);tailG.rotation.z=.6;body.add(tailG);
-
+    const maneStrip=new THREE.Mesh(new THREE.BoxGeometry(4.8,.38,.46),maneM);maneStrip.position.set(8.25,12.15,0);maneStrip.rotation.z=.93;body.add(maneStrip);
+    const tailG=new THREE.Group();const tail1=new THREE.Mesh(new THREE.SphereGeometry(.4,6,6),tailM);tail1.scale.set(1,2.5,1);tail1.position.y=-1.2;tailG.add(tail1);const tail2=new THREE.Mesh(new THREE.SphereGeometry(.35,6,6),tailM);tail2.scale.set(1,2,1);tail2.position.set(-.4,-2.5,0);tailG.add(tail2);tailG.position.set(-7.5,8.5,0);tailG.rotation.z=.6;body.add(tailG);
+    // Legs
     const legs=[];
     const thighGeo=new THREE.CylinderGeometry(.28,.52,5.35,8);thighGeo.translate(0,-2.68,0);
     const shinGeo=new THREE.CylinderGeometry(.17,.29,4.85,8);shinGeo.translate(0,-2.42,0);
     [[4.25,5.55,1.42],[4.25,5.55,-1.42],[-4.45,5.45,1.42],[-4.45,5.45,-1.42]].forEach(p=>{
-        const isFront=p[0]>0, baseShinX=isFront?0.56:-0.44;
+        const isFront=p[0]>0,baseShinX=isFront?0.56:-0.44;
         const thigh=new THREE.Mesh(thighGeo,dkBr);thigh.position.set(p[0],p[1],p[2]);thigh.castShadow=true;body.add(thigh);
-        const knee=new THREE.Mesh(new THREE.SphereGeometry(.44,7,7),dkBr);
-        knee.scale.set(1.05,.82,.95);
-        knee.position.set(isFront?.18:-.12,-4.98,0);
-        thigh.add(knee);
+        const knee=new THREE.Mesh(new THREE.SphereGeometry(.44,7,7),dkBr);knee.scale.set(1.05,.82,.95);knee.position.set(isFront?.18:-.12,-4.98,0);thigh.add(knee);
         const shin=new THREE.Mesh(shinGeo,dkBr);shin.position.set(baseShinX,-5.08,0);thigh.add(shin);
-        const fetlock=new THREE.Mesh(new THREE.SphereGeometry(.24,6,6),dkBr);
-        fetlock.scale.set(1,.75,.9);
-        fetlock.position.set(isFront?.08:-.06,-4.56,0);
-        shin.add(fetlock);
-        const hoof=new THREE.Group();
-        const hoofMain=new THREE.Mesh(new THREE.BoxGeometry(1.34,.56,.96),hoofM);
-        hoofMain.position.set(.12,-4.82,0);
-        hoofMain.rotation.z=.1;
-        hoofMain.castShadow=true;
-        hoof.add(hoofMain);
-        const hoofToe=new THREE.Mesh(new THREE.SphereGeometry(.38,6,6),hoofM);
-        hoofToe.scale.set(1.42,.76,1.04);
-        hoofToe.position.set(.46,-4.8,0);
-        hoofToe.castShadow=true;
-        hoof.add(hoofToe);
-        shin.add(hoof);
+        const fetlock=new THREE.Mesh(new THREE.SphereGeometry(.24,6,6),dkBr);fetlock.scale.set(1,.75,.9);fetlock.position.set(isFront?.08:-.06,-4.56,0);shin.add(fetlock);
+        const hoof=new THREE.Group();const hoofMain=new THREE.Mesh(new THREE.BoxGeometry(1.34,.56,.96),hoofM);hoofMain.position.set(.12,-4.82,0);hoofMain.rotation.z=.1;hoof.add(hoofMain);const hoofToe=new THREE.Mesh(new THREE.SphereGeometry(.38,6,6),hoofM);hoofToe.scale.set(1.42,.76,1.04);hoofToe.position.set(.46,-4.8,0);hoof.add(hoofToe);shin.add(hoof);
         legs.push({thigh,shin,isFront,baseShinX});
     });
-
-    // Small solid seated rider
-    const jG=new THREE.Group();jG.position.set(-0.1,8.75,0);body.add(jG);
-    const riderBody=new THREE.Group();riderBody.position.set(-0.62,0.18,0);riderBody.rotation.z=-0.18;riderBody.scale.set(.88,.88,.88);jG.add(riderBody);
+    // JOCKEY: seated rider with legs straddling horse
+    const jG=new THREE.Group();jG.position.set(-0.5,8.2,0);body.add(jG);
+    const riderBody=new THREE.Group();riderBody.position.set(0,0,0);jG.add(riderBody);
     jG.userData.riderBody=riderBody;
     const silkColor=new THREE.Color(colorHex);
-    const silk=toon({color:silkColor});
-    const silkAccent=toon({color:silkColor.clone().lerp(new THREE.Color(0xffffff),0.42)});
-    const pants=toon({color:0x3a2212});
-    const boots=toon({color:0xb32020});
-    const skin=toon({color:0xd8a07a});
-
-    const upperArmGeo=new THREE.CylinderGeometry(0.22,0.26,1.45,6);upperArmGeo.translate(0,-0.725,0);
-    const lowerArmGeo=new THREE.CylinderGeometry(0.18,0.21,1.25,6);lowerArmGeo.translate(0,-0.625,0);
-    const thighRideGeo=new THREE.CylinderGeometry(0.28,0.33,1.75,6);thighRideGeo.translate(0,-0.875,0);
-    const calfRideGeo=new THREE.CylinderGeometry(0.2,0.24,1.55,6);calfRideGeo.translate(0,-0.775,0);
-
-    const hips=new THREE.Mesh(new THREE.SphereGeometry(1.0,8,6),pants);
-    hips.scale.set(1.42,0.88,0.64);
-    hips.position.set(-0.85,0.92,0);
-    hips.rotation.z=-0.08;
-    riderBody.add(hips);
-
-    const chestSilk=new THREE.Mesh(new THREE.SphereGeometry(1.2,8,6),silk);
-    chestSilk.scale.set(0.96,1.52,0.56);
-    chestSilk.position.set(0.05,2.08,0);
-    chestSilk.rotation.z=-0.48;
-    riderBody.add(chestSilk);
-
-    const leftUpperArm=new THREE.Mesh(upperArmGeo,silkAccent);
-    leftUpperArm.position.set(0.55,2.18,0.28);
-    leftUpperArm.rotation.z=-0.92;
-    riderBody.add(leftUpperArm);
-    const leftLowerArm=new THREE.Mesh(lowerArmGeo,silkAccent);
-    leftLowerArm.position.set(0.42,-1.08,0);
-    leftLowerArm.rotation.z=-0.18;
-    leftUpperArm.add(leftLowerArm);
-    const leftHand=new THREE.Mesh(new THREE.SphereGeometry(0.22,6,6),skin);
-    leftHand.scale.set(1.15,0.8,1);
-    leftHand.position.set(0.08,-1.18,0);
-    leftLowerArm.add(leftHand);
-
-    const rightUpperArm=new THREE.Mesh(upperArmGeo,silkAccent);
-    rightUpperArm.position.set(0.55,2.18,-0.28);
-    rightUpperArm.rotation.z=-0.92;
-    riderBody.add(rightUpperArm);
-    const rightLowerArm=new THREE.Mesh(lowerArmGeo,silkAccent);
-    rightLowerArm.position.set(0.42,-1.08,0);
-    rightLowerArm.rotation.z=-0.18;
-    rightUpperArm.add(rightLowerArm);
-    const rightHand=new THREE.Mesh(new THREE.SphereGeometry(0.22,6,6),skin);
-    rightHand.scale.set(1.15,0.8,1);
-    rightHand.position.set(0.08,-1.18,0);
-    rightLowerArm.add(rightHand);
-
-    const leftThigh=new THREE.Mesh(thighRideGeo,pants);
-    leftThigh.position.set(-0.82,0.9,0.28);
-    leftThigh.rotation.z=1.05;
-    riderBody.add(leftThigh);
-    const leftCalf=new THREE.Mesh(calfRideGeo,boots);
-    leftCalf.position.set(0.05,-1.42,0);
-    leftCalf.rotation.z=-0.48;
-    leftThigh.add(leftCalf);
-    const leftBoot=new THREE.Mesh(new THREE.SphereGeometry(0.28,6,6),boots);
-    leftBoot.scale.set(1.55,0.65,0.9);
-    leftBoot.position.set(0.35,-1.42,0);
-    leftCalf.add(leftBoot);
-
-    const rightThigh=new THREE.Mesh(thighRideGeo,pants);
-    rightThigh.position.set(-0.82,0.9,-0.28);
-    rightThigh.rotation.z=1.05;
-    riderBody.add(rightThigh);
-    const rightCalf=new THREE.Mesh(calfRideGeo,boots);
-    rightCalf.position.set(0.05,-1.42,0);
-    rightCalf.rotation.z=-0.48;
-    rightThigh.add(rightCalf);
-    const rightBoot=new THREE.Mesh(new THREE.SphereGeometry(0.28,6,6),boots);
-    rightBoot.scale.set(1.55,0.65,0.9);
-    rightBoot.position.set(0.35,-1.42,0);
-    rightCalf.add(rightBoot);
-
-    const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.26,0.68,6),skin);
-    jNeck.position.set(0.52,2.86,0);
-    jNeck.rotation.z=-0.22;
-    riderBody.add(jNeck);
-
-    const mHead=buildMascotHead(mascotPoolIdx);
-    const headMeta=mHead.userData.multiAngle||{};
-    const headOffset=headMeta.headOffset||{x:0,y:0,z:0};
-    if(headMeta.name==='liberty'){
-        jNeck.position.x+=0.12;
-        jNeck.position.y+=0.28;
-    }
-    mHead.position.set(1.05+(headOffset.x||0),4.45+(headOffset.y||0)+(headMeta.headLift||0),(headOffset.z||0));
-    mHead.userData.basePos=mHead.position.clone();
-    jG.add(mHead);
+    const silk=toon({color:silkColor});const pants=toon({color:0xeeeedd});const bootsMat=toon({color:0x222222});const skin=toon({color:0xd8a07a});
+    // Torso
+    const chestSilk=new THREE.Mesh(new THREE.SphereGeometry(1.0,8,6),silk);chestSilk.scale.set(0.8,1.4,0.6);chestSilk.position.set(0,2.5,0);chestSilk.rotation.z=-0.15;riderBody.add(chestSilk);
+    // Hips
+    const hips=new THREE.Mesh(new THREE.SphereGeometry(0.9,8,6),pants);hips.scale.set(1.0,0.7,0.7);hips.position.set(-0.3,1.0,0);riderBody.add(hips);
+    // Left leg hanging down
+    const leftThigh=new THREE.Mesh(new THREE.CylinderGeometry(0.25,0.22,2.4,6),pants);leftThigh.position.set(-0.4,0.0,1.8);leftThigh.rotation.z=0.15;leftThigh.rotation.x=-0.1;riderBody.add(leftThigh);
+    const leftBoot=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.3,0.4),bootsMat);leftBoot.position.set(0.1,-1.3,0);leftThigh.add(leftBoot);
+    // Right leg hanging down
+    const rightThigh=new THREE.Mesh(new THREE.CylinderGeometry(0.25,0.22,2.4,6),pants);rightThigh.position.set(-0.4,0.0,-1.8);rightThigh.rotation.z=0.15;rightThigh.rotation.x=0.1;riderBody.add(rightThigh);
+    const rightBoot=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.3,0.4),bootsMat);rightBoot.position.set(0.1,-1.3,0);rightThigh.add(rightBoot);
+    // Arms forward
+    const leftUpperArm=new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.15,1.4,6),silk);leftUpperArm.position.set(0.5,2.8,0.5);leftUpperArm.rotation.z=-0.8;riderBody.add(leftUpperArm);
+    const rightUpperArm=new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.15,1.4,6),silk);rightUpperArm.position.set(0.5,2.8,-0.5);rightUpperArm.rotation.z=-0.8;riderBody.add(rightUpperArm);
+    // Neck
+    const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.25,0.5,6),skin);jNeck.position.set(0.15,3.8,0);riderBody.add(jNeck);
     riderBody.userData.parts={chestSilk,hips,leftUpperArm,rightUpperArm,leftThigh,rightThigh};
-
+    // Head
+    const mHead=buildMascotHead(mascotPoolIdx);
+    const headMeta=mHead.userData.multiAngle||{};const headOffset=headMeta.headOffset||{x:0,y:0,z:0};
+    if(headMeta.name==='liberty'){jNeck.position.x+=0.12;jNeck.position.y+=0.28;}
+    mHead.position.set(1.05+(headOffset.x||0),4.45+(headOffset.y||0)+(headMeta.headLift||0),(headOffset.z||0));
+    mHead.userData.basePos=mHead.position.clone();jG.add(mHead);
     return{root,body,tailG,legs,jG};
 }
-
+// --- GALLOP KEYFRAMES (12 frames matching real thoroughbred gallop cycle) ---
 const FRONT_GALLOP_KF=[
-  {th:0.34,sh:-0.14,x:0.00,y:0.06},{th:0.22,sh:-0.34,x:0.04,y:0.12},{th:0.08,sh:-0.62,x:0.10,y:0.18},
-  {th:-0.12,sh:-0.56,x:0.14,y:0.12},{th:-0.34,sh:-0.22,x:0.12,y:0.04},{th:-0.52,sh:0.12,x:0.05,y:0.00},
-  {th:-0.46,sh:0.26,x:-0.04,y:0.00},{th:-0.20,sh:0.10,x:-0.08,y:0.02},{th:0.04,sh:-0.08,x:-0.06,y:0.04},
-  {th:0.24,sh:-0.20,x:-0.02,y:0.06},{th:0.40,sh:-0.16,x:0.00,y:0.08},{th:0.42,sh:-0.10,x:0.00,y:0.08}
+  {th: 0.65,sh:-0.85,x: 0.18,y: 0.22},{th: 0.45,sh:-0.50,x: 0.14,y: 0.10},{th: 0.20,sh:-0.20,x: 0.08,y: 0.02},
+  {th:-0.05,sh:-0.10,x: 0.02,y: 0.00},{th:-0.30,sh: 0.15,x:-0.06,y: 0.00},{th:-0.55,sh: 0.45,x:-0.14,y: 0.04},
+  {th:-0.50,sh: 0.70,x:-0.12,y: 0.14},{th:-0.30,sh: 0.90,x:-0.06,y: 0.28},{th:-0.05,sh: 0.65,x: 0.00,y: 0.32},
+  {th: 0.20,sh: 0.30,x: 0.06,y: 0.28},{th: 0.45,sh:-0.15,x: 0.12,y: 0.22},{th: 0.60,sh:-0.65,x: 0.16,y: 0.18}
 ];
 const HIND_GALLOP_KF=[
-  {th:-0.44,sh:0.14,x:-0.02,y:0.00},{th:-0.26,sh:0.34,x:-0.08,y:0.00},{th:0.00,sh:0.50,x:-0.12,y:0.04},
-  {th:0.26,sh:0.32,x:-0.08,y:0.10},{th:0.50,sh:-0.04,x:0.00,y:0.18},{th:0.62,sh:-0.30,x:0.07,y:0.24},
-  {th:0.50,sh:-0.56,x:0.10,y:0.18},{th:0.22,sh:-0.48,x:0.06,y:0.10},{th:-0.06,sh:-0.18,x:0.02,y:0.04},
-  {th:-0.30,sh:0.02,x:-0.02,y:0.00},{th:-0.42,sh:0.10,x:-0.02,y:0.00},{th:-0.46,sh:0.14,x:-0.02,y:0.00}
+  {th:-0.55,sh: 0.70,x:-0.14,y: 0.04},{th:-0.45,sh: 0.90,x:-0.10,y: 0.12},{th:-0.25,sh: 0.95,x:-0.04,y: 0.24},
+  {th: 0.00,sh: 0.75,x: 0.00,y: 0.30},{th: 0.25,sh: 0.40,x: 0.06,y: 0.28},{th: 0.50,sh: 0.05,x: 0.12,y: 0.20},
+  {th: 0.55,sh:-0.30,x: 0.14,y: 0.10},{th: 0.40,sh:-0.20,x: 0.10,y: 0.02},{th: 0.15,sh:-0.05,x: 0.04,y: 0.00},
+  {th:-0.10,sh: 0.10,x:-0.02,y: 0.00},{th:-0.35,sh: 0.35,x:-0.08,y: 0.00},{th:-0.50,sh: 0.55,x:-0.12,y: 0.02}
 ];
-function sampleGallop(cycle,t){
-  const n=cycle.length;
-  const ft=((t%n)+n)%n;
-  const idx=Math.floor(ft);
-  const next=(idx+1)%n;
-  const a=ft-idx;
-  const A=cycle[idx], B=cycle[next];
-  return {
-    th:THREE.MathUtils.lerp(A.th,B.th,a),
-    sh:THREE.MathUtils.lerp(A.sh,B.sh,a),
-    x:THREE.MathUtils.lerp(A.x,B.x,a),
-    y:THREE.MathUtils.lerp(A.y,B.y,a)
-  };
-}
-
+function sampleGallop(cycle,t){const n=cycle.length;const ft=((t%n)+n)%n;const idx=Math.floor(ft);const next=(idx+1)%n;const a=ft-idx;const A=cycle[idx],B=cycle[next];return{th:THREE.MathUtils.lerp(A.th,B.th,a),sh:THREE.MathUtils.lerp(A.sh,B.sh,a),x:THREE.MathUtils.lerp(A.x,B.x,a),y:THREE.MathUtils.lerp(A.y,B.y,a)};}
 // --- UI ---
 document.getElementById('player-horse-name').innerText=`#${playerHorse.number} ${playerHorse.name}`;
 bootstrapNamePool();
-
-document.getElementById('solo-btn').addEventListener('click',()=>{
-    isMultiplayer=false;
-    showTappingPhase(false);
-    startTapping();
-});
-
+document.getElementById('solo-btn').addEventListener('click',()=>{isMultiplayer=false;showTappingPhase(false);startTapping();});
 document.getElementById('create-btn').addEventListener('click',async()=>{
     isMultiplayer=true;isHost=true;myPlayerSlot=0;
     const seed=Math.floor(Math.random()*2147483647);
-    const doc=await db.collection('shmerbyGames').add({
-        hostId:myPlayerId,seed,status:'waiting',
-        players:[{id:myPlayerId,name:playerHorse.name,number:playerHorse.number,color:playerHorse.color,taps:null}],
-        created:firebase.firestore.FieldValue.serverTimestamp()
-    });
-    gameDocRef=doc;
-    document.getElementById('game-url').value=location.origin+location.pathname+'?gameId='+doc.id;
-    document.getElementById('share-area').classList.remove('hidden');
-    document.getElementById('create-btn').classList.add('hidden');
-    document.getElementById('solo-btn').classList.add('hidden');
-    document.getElementById('start-race-btn').classList.remove('hidden');
-    unsubGame=gameDocRef.onSnapshot(snap=>{
-        const d=snap.data();if(!d)return;
-        const count=(d.players||[]).length;
-        document.getElementById('waiting-msg').textContent=`PLAYERS: ${count}/6 - SHARE LINK`;
-        if(d.status==='tapping'&&!tappingDone){
-            showTappingPhase(true);
-        }
-        if(d.status==='racing'&&d.players&&d.players.every(p=>p.taps!==null)){
-            document.getElementById('tap-prep').classList.add('hidden');
-            document.getElementById('tap-status').classList.add('hidden');
-            document.getElementById('tapping-phase').classList.add('hidden');
-            startRaceFromData(d);
-        }
-    });
+    const doc=await db.collection('shmerbyGames').add({hostId:myPlayerId,seed,status:'waiting',players:[{id:myPlayerId,name:playerHorse.name,number:playerHorse.number,color:playerHorse.color,taps:null}],created:firebase.firestore.FieldValue.serverTimestamp()});
+    gameDocRef=doc;document.getElementById('game-url').value=location.origin+location.pathname+'?gameId='+doc.id;
+    document.getElementById('share-area').classList.remove('hidden');document.getElementById('create-btn').classList.add('hidden');document.getElementById('solo-btn').classList.add('hidden');document.getElementById('start-race-btn').classList.remove('hidden');
+    unsubGame=gameDocRef.onSnapshot(snap=>{const d=snap.data();if(!d)return;const count=(d.players||[]).length;document.getElementById('waiting-msg').textContent=`PLAYERS: ${count}/6 - SHARE LINK`;
+    if(d.status==='tapping'&&!tappingDone){showTappingPhase(true);}
+    if(d.status==='racing'&&d.players&&d.players.every(p=>p.taps!==null)){document.getElementById('tap-prep').classList.add('hidden');document.getElementById('tap-status').classList.add('hidden');document.getElementById('tapping-phase').classList.add('hidden');startRaceFromData(d);}});
 });
-
-document.getElementById('copy-btn').addEventListener('click',()=>{
-    const inp=document.getElementById('game-url');inp.select();document.execCommand('copy');
-    document.getElementById('copy-btn').textContent='COPIED!';
-    setTimeout(()=>document.getElementById('copy-btn').textContent='COPY LINK',2000);
-});
-
+document.getElementById('copy-btn').addEventListener('click',()=>{const inp=document.getElementById('game-url');inp.select();document.execCommand('copy');document.getElementById('copy-btn').textContent='COPIED!';setTimeout(()=>document.getElementById('copy-btn').textContent='COPY LINK',2000);});
 const srb=document.getElementById('start-race-btn');if(srb)srb.addEventListener('click',async()=>await gameDocRef.update({status:'tapping'}));
 document.getElementById('ready-btn').addEventListener('click',async()=>await gameDocRef.update({status:'tapping'}));
-
-const urlParams=new URLSearchParams(location.search);
-const joinId=urlParams.get('gameId');
-if(joinId){
-    isMultiplayer=true;isHost=false;
-    document.getElementById('create-btn').classList.add('hidden');
-    document.getElementById('solo-btn').classList.add('hidden');
-    gameDocRef=db.collection('shmerbyGames').doc(joinId);
-    gameDocRef.get().then(async snap=>{
-        const d=snap.data();
-        if(d&&d.status==='waiting'){
-            const players=d.players||[];
-            if(!players.some(p=>p.id===myPlayerId)&&players.length<6){
-                myPlayerSlot=players.length;
-                players.push({id:myPlayerId,name:playerHorse.name,number:playerHorse.number,color:playerHorse.color,taps:null});
-                await gameDocRef.update({players});
-            } else {
-                myPlayerSlot=players.findIndex(p=>p.id===myPlayerId);
-            }
-            document.getElementById('join-msg').classList.remove('hidden');
-            document.getElementById('join-msg').querySelector('p').textContent='Waiting for host to start race...';
-            document.getElementById('ready-btn').classList.add('hidden');
-        }
-        unsubGame=gameDocRef.onSnapshot(snap2=>{
-            const d2=snap2.data();if(!d2)return;
-            if(d2.status==='tapping'&&!tappingDone){
-                showTappingPhase(true);
-            }
-            if(d2.status==='racing'&&d2.players&&d2.players.every(p=>p.taps!==null)){
-                document.getElementById('tap-prep').classList.add('hidden');
-                document.getElementById('tap-status').classList.add('hidden');
-                document.getElementById('tapping-phase').classList.add('hidden');
-                startRaceFromData(d2);
-            }
-        });
-    });
-}
-
+const urlParams=new URLSearchParams(location.search);const joinId=urlParams.get('gameId');
+if(joinId){isMultiplayer=true;isHost=false;document.getElementById('create-btn').classList.add('hidden');document.getElementById('solo-btn').classList.add('hidden');
+gameDocRef=db.collection('shmerbyGames').doc(joinId);
+gameDocRef.get().then(async snap=>{const d=snap.data();
+if(d&&d.status==='waiting'){const players=d.players||[];if(!players.some(p=>p.id===myPlayerId)&&players.length<6){myPlayerSlot=players.length;players.push({id:myPlayerId,name:playerHorse.name,number:playerHorse.number,color:playerHorse.color,taps:null});await gameDocRef.update({players});}else{myPlayerSlot=players.findIndex(p=>p.id===myPlayerId);}document.getElementById('join-msg').classList.remove('hidden');document.getElementById('join-msg').querySelector('p').textContent='Waiting for host to start race...';document.getElementById('ready-btn').classList.add('hidden');}
+unsubGame=gameDocRef.onSnapshot(snap2=>{const d2=snap2.data();if(!d2)return;if(d2.status==='tapping'&&!tappingDone){showTappingPhase(true);}if(d2.status==='racing'&&d2.players&&d2.players.every(p=>p.taps!==null)){document.getElementById('tap-prep').classList.add('hidden');document.getElementById('tap-status').classList.add('hidden');document.getElementById('tapping-phase').classList.add('hidden');startRaceFromData(d2);}});});}
 // --- TAPPING ---
-function setTapZoneEnabled(enabled){
-    const zone=document.getElementById('tap-zone');
-    zone.classList.toggle('disabled',!enabled);
-    zone.style.pointerEvents=enabled?'auto':'none';
-}
-
-function showTappingPhase(manualStart=false){
-    document.getElementById('lobby').classList.add('hidden');
-    document.getElementById('main-title').classList.add('hidden');
-    document.getElementById('tapping-phase').classList.remove('hidden');
-    const prep=document.getElementById('tap-prep');
-    const status=document.getElementById('tap-status');
-    if(!tappingDone){
-        document.getElementById('timer-display').innerText=tapCountdownStarted?'10.0':'READY';
-    }
-    document.getElementById('tap-zone').innerHTML='TAP HERE!<br><br>Speed, not force.<br>Your count is hidden!';
-    if(manualStart && !tapCountdownStarted && !tappingDone){
-        prep.classList.remove('hidden');
-        status.classList.add('hidden');
-        setTapZoneEnabled(false);
-    }else if(!tappingDone){
-        prep.classList.add('hidden');
-        status.classList.add('hidden');
-        setTapZoneEnabled(true);
-    }
-}
-
-function startTapping(){
-    if(tapping||tappingDone)return;
-    tapping=true;
-    tapCountdownStarted=true;
-    playerHorse.taps=0;
-    document.getElementById('tap-prep').classList.add('hidden');
-    document.getElementById('tap-status').classList.add('hidden');
-    setTapZoneEnabled(true);
-    document.getElementById('timer-display').innerText='10.0';
-    if(tapInterval) clearInterval(tapInterval);
-    const st=Date.now();
-    tapInterval=setInterval(()=>{
-        let r=(10-(Date.now()-st)/1000).toFixed(1);
-        if(r<=0){r='0.0';clearInterval(tapInterval);tapInterval=null;endTapping();}
-        document.getElementById('timer-display').innerText=r;
-    },100);
-}
-document.getElementById('tap-zone').addEventListener('pointerdown',e=>{e.preventDefault();if(tapping) playerHorse.taps++;});
+function setTapZoneEnabled(e){const z=document.getElementById('tap-zone');z.classList.toggle('disabled',!e);z.style.pointerEvents=e?'auto':'none';}
+function showTappingPhase(manualStart=false){document.getElementById('lobby').classList.add('hidden');document.getElementById('main-title').classList.add('hidden');document.getElementById('tapping-phase').classList.remove('hidden');const prep=document.getElementById('tap-prep');const status=document.getElementById('tap-status');if(!tappingDone)document.getElementById('timer-display').innerText=tapCountdownStarted?'10.0':'READY';document.getElementById('tap-zone').innerHTML='TAP HERE!<br><br>Speed, not force.<br>Your count is hidden!';if(manualStart&&!tapCountdownStarted&&!tappingDone){prep.classList.remove('hidden');status.classList.add('hidden');setTapZoneEnabled(false);}else if(!tappingDone){prep.classList.add('hidden');status.classList.add('hidden');setTapZoneEnabled(true);}}
+function startTapping(){if(tapping||tappingDone)return;tapping=true;tapCountdownStarted=true;playerHorse.taps=0;document.getElementById('tap-prep').classList.add('hidden');document.getElementById('tap-status').classList.add('hidden');setTapZoneEnabled(true);document.getElementById('timer-display').innerText='10.0';if(tapInterval)clearInterval(tapInterval);const st=Date.now();tapInterval=setInterval(()=>{let r=(10-(Date.now()-st)/1000).toFixed(1);if(r<=0){r='0.0';clearInterval(tapInterval);tapInterval=null;endTapping();}document.getElementById('timer-display').innerText=r;},100);}
+document.getElementById('tap-zone').addEventListener('pointerdown',e=>{e.preventDefault();if(tapping)playerHorse.taps++;});
 document.getElementById('tap-start-btn').addEventListener('click',()=>startTapping());
-
-async function endTapping(){
-    tapping=false;
-    tappingDone=true;
-    setTapZoneEnabled(false);
-    document.getElementById('tap-zone').innerHTML='TAPS LOCKED IN';
-    if(isMultiplayer&&gameDocRef){
-        let allDone=false,remaining=0;
-        await db.runTransaction(async(t)=>{
-            const s=await t.get(gameDocRef);const d=s.data();
-            const players=(d.players||[]).slice();
-            if(players[myPlayerSlot]) players[myPlayerSlot].taps=playerHorse.taps;
-            allDone=players.every(p=>p.taps!==null);
-            remaining=players.filter(p=>p.taps===null).length;
-            t.update(gameDocRef,{players,status:allDone?'racing':'tapping'});
-        });
-        const status=document.getElementById('tap-status');
-        status.textContent=allDone?'LOCKED IN. BREAKING FROM THE GATE...':`TAPS LOCKED IN — WAITING FOR ${remaining} MORE...`;
-        status.classList.remove('hidden');
-    } else {
-        document.getElementById('tapping-phase').classList.add('hidden');
-        startSoloRace();
-    }
-}
-
+async function endTapping(){tapping=false;tappingDone=true;setTapZoneEnabled(false);document.getElementById('tap-zone').innerHTML='TAPS LOCKED IN';if(isMultiplayer&&gameDocRef){let allDone=false,remaining=0;await db.runTransaction(async(t)=>{const s=await t.get(gameDocRef);const d=s.data();const players=(d.players||[]).slice();if(players[myPlayerSlot])players[myPlayerSlot].taps=playerHorse.taps;allDone=players.every(p=>p.taps!==null);remaining=players.filter(p=>p.taps===null).length;t.update(gameDocRef,{players,status:allDone?'racing':'tapping'});});const status=document.getElementById('tap-status');status.textContent=allDone?'LOCKED IN. BREAKING FROM THE GATE...':`TAPS LOCKED IN — WAITING FOR ${remaining} MORE...`;status.classList.remove('hidden');}else{document.getElementById('tapping-phase').classList.add('hidden');startSoloRace();}}
 // --- RACE ---
 let raceStarted=false;
-function startRaceFromData(d){
-    if(raceStarted)return;raceStarted=true;
-    const rng=mulberry32(d.seed);
-    const humans=d.players||[];
-    humans.forEach((p,idx)=>{
-        gameHorses.push({name:p.name,taps:p.taps,isPlayer:p.id===myPlayerId,color:p.color,number:p.number,isHuman:true,style:Math.floor(rng()*3)});
-    });
-    const usedNums=new Set(humans.map(p=>p.number));
-    const botsNeeded=6-humans.length;
-    for(let i=0;i<botsNeeded;i++){
-        let n;do{n=Math.floor(rng()*20)+1;}while(usedNums.has(n));usedNums.add(n);
-        gameHorses.push({name:genName(),taps:Math.floor(rng()*45)+20,isPlayer:false,color:botColors[i%botColors.length],number:n,style:Math.floor(rng()*3),isHuman:false});
-    }
-    buildAndStartRace(rng);
-}
-
-function startSoloRace(){
-    if(raceStarted)return;raceStarted=true;
-    const rng=mulberry32(Date.now());
-    gameHorses.push(playerHorse);
-    for(let i=0;i<5;i++){
-        let n;do{n=Math.floor(rng()*20)+1;}while(gameHorses.some(h=>h.number===n));
-        gameHorses.push({name:genName(),taps:Math.floor(rng()*45)+20,isPlayer:false,color:botColors[i],number:n,style:Math.floor(rng()*3),isHuman:false});
-    }
-    buildAndStartRace(rng);
-}
-
-function buildAndStartRace(rng){
-    // FIX: Hide title so it doesn't overlap race UI
-    document.getElementById('main-title').classList.add('hidden');
-    document.getElementById('race-phase').classList.remove('hidden');
-    raceStartTime=Date.now();
-    for(let i=gameHorses.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[gameHorses[i],gameHorses[j]]=[gameHorses[j],gameHorses[i]];}
-    const mascotPool=[0,1,2,3,4,5];
-    for(let i=mascotPool.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[mascotPool[i],mascotPool[j]]=[mascotPool[j],mascotPool[i]];}
-
-    const tapVals=gameHorses.map(h=>Number.isFinite(h.taps)?h.taps:0);
-    const minTap=Math.min(...tapVals),maxTap=Math.max(...tapVals),tapRange=Math.max(1,maxTap-minTap);
-    gameHorses.forEach((h,i)=>{
-        h.angle=START_ANGLE-(0.02+i*.015);
-        h.tapNorm=((Number.isFinite(h.taps)?h.taps:0)-minTap)/tapRange;
-        h.baseSpeed=0.0478+(h.tapNorm*0.0048)+((rng()-0.5)*0.0007);
-        h.earlyMod=h.style===0?1.04:h.style===1?0.995:0.965;
-        h.lateMod=h.style===0?0.975:h.style===1?1.02:1.055;
-        h.energy=1;h.finished=false;h.laneOffset=5+i*8;
-        const model=createHorse(h.color,h.number,mascotPool[i]);
-        scene.add(model.root);h.model=model;
-    });
-    updateLB();animate();
-}
-
-function updateLB(){
-    const sorted=[...gameHorses].sort((a,b)=>{if(a.finished&&!b.finished)return-1;if(!a.finished&&b.finished)return 1;return b.angle-a.angle;});
-    const list=document.getElementById('standings-list');list.innerHTML='';
-    sorted.forEach((h,i)=>{
-        list.innerHTML+=`<div class="lb-row${h.isPlayer?' you':''}"><span class="lb-num">${h.number}</span><div class="lb-color" style="background:${h.color}"></div><span class="lb-name">${h.name}</span></div>`;
-    });
-}
-function showNotif(t){const e=document.createElement('div');e.className='finish-notif';e.innerText=t;
-document.getElementById('notifications-container').appendChild(e);setTimeout(()=>{e.style.opacity=0;setTimeout(()=>e.remove(),500);},3000);}
-
+function startRaceFromData(d){if(raceStarted)return;raceStarted=true;const rng=mulberry32(d.seed);const humans=d.players||[];humans.forEach(p=>{gameHorses.push({name:p.name,taps:p.taps,isPlayer:p.id===myPlayerId,color:p.color,number:p.number,isHuman:true,style:Math.floor(rng()*3)});});const usedNums=new Set(humans.map(p=>p.number));const botsNeeded=6-humans.length;for(let i=0;i<botsNeeded;i++){let n;do{n=Math.floor(rng()*20)+1;}while(usedNums.has(n));usedNums.add(n);gameHorses.push({name:genName(),taps:Math.floor(rng()*45)+20,isPlayer:false,color:botColors[i%botColors.length],number:n,style:Math.floor(rng()*3),isHuman:false});}buildAndStartRace(rng);}
+function startSoloRace(){if(raceStarted)return;raceStarted=true;const rng=mulberry32(Date.now());gameHorses.push(playerHorse);for(let i=0;i<5;i++){let n;do{n=Math.floor(rng()*20)+1;}while(gameHorses.some(h=>h.number===n));gameHorses.push({name:genName(),taps:Math.floor(rng()*45)+20,isPlayer:false,color:botColors[i],number:n,style:Math.floor(rng()*3),isHuman:false});}buildAndStartRace(rng);}
+function buildAndStartRace(rng){document.getElementById('main-title').classList.add('hidden');document.getElementById('race-phase').classList.remove('hidden');raceStartTime=Date.now();for(let i=gameHorses.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[gameHorses[i],gameHorses[j]]=[gameHorses[j],gameHorses[i]];}const mascotPool=[0,1,2,3,4,5];for(let i=mascotPool.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[mascotPool[i],mascotPool[j]]=[mascotPool[j],mascotPool[i]];}
+const tapVals=gameHorses.map(h=>Number.isFinite(h.taps)?h.taps:0);const minTap=Math.min(...tapVals),maxTap=Math.max(...tapVals),tapRange=Math.max(1,maxTap-minTap);
+gameHorses.forEach((h,i)=>{h.angle=START_ANGLE-(0.02+i*.015);h.tapNorm=((Number.isFinite(h.taps)?h.taps:0)-minTap)/tapRange;h.baseSpeed=0.0478+(h.tapNorm*0.0048)+((rng()-0.5)*0.0007);h.earlyMod=h.style===0?1.04:h.style===1?0.995:0.965;h.lateMod=h.style===0?0.975:h.style===1?1.02:1.055;h.energy=1;h.finished=false;h.laneOffset=5+i*8;const model=createHorse(h.color,h.number,mascotPool[i]);scene.add(model.root);h.model=model;});updateLB();animate();}
+function updateLB(){const sorted=[...gameHorses].sort((a,b)=>{if(a.finished&&!b.finished)return-1;if(!a.finished&&b.finished)return 1;return b.angle-a.angle;});const list=document.getElementById('standings-list');list.innerHTML='';sorted.forEach((h,i)=>{list.innerHTML+=`<div class="lb-row${h.isPlayer?' you':''}"><span class="lb-num">${h.number}</span><div class="lb-color" style="background:${h.color}"></div><span class="lb-name">${h.name}</span></div>`;});}
+function showNotif(t){const e=document.createElement('div');e.className='finish-notif';e.innerText=t;document.getElementById('notifications-container').appendChild(e);setTimeout(()=>{e.style.opacity=0;setTimeout(()=>e.remove(),500);},3000);}
 const clock=new THREE.Clock();
 function animate(){
     if(!raceFinished)requestAnimationFrame(animate);
     const dt=Math.min(clock.getDelta(),0.05);
     const time=clock.elapsedTime,gSpeed=25;
-    if(!raceFinished){
-        const el=((Date.now()-raceStartTime)/1000);
-        document.getElementById('race-timer').innerText=`${Math.floor(el/60)}:${(el%60).toFixed(1).padStart(4,'0')}`;
-    }
+    if(!raceFinished){const el=((Date.now()-raceStartTime)/1000);document.getElementById('race-timer').innerText=`${Math.floor(el/60)}:${(el%60).toFixed(1).padStart(4,'0')}`;}
     let leader=null,leaderAngle=-999,maxA=-999;
     gameHorses.forEach(h=>{if(h.angle>maxA)maxA=h.angle;});
     const progress=(maxA-START_ANGLE)/(FINISH_ANGLE-START_ANGLE);
-    if(progress>.78&&!stretchCalled){
-        stretchCalled=true;camMode='stretch';
-        const sc=document.getElementById('stretch-call');sc.innerHTML="AND DOWN THE<br>STRETCH THEY COME!";sc.classList.add('show');
-        setTimeout(()=>sc.classList.remove('show'),3500);
-    }
-    
-
+    if(progress>.78&&!stretchCalled){stretchCalled=true;camMode='stretch';const sc=document.getElementById('stretch-call');sc.innerHTML="AND DOWN THE<br>STRETCH THEY COME!";sc.classList.add('show');setTimeout(()=>sc.classList.remove('show'),3500);}
     gameHorses.forEach((h,i)=>{
         const raceMod=progress<.5?h.earlyMod:h.lateMod;
         h.energy+=(Math.random()-.5)*.0015;h.energy=Math.max(.96,Math.min(1.04,h.energy));
         h.angle+=Math.max((h.baseSpeed*raceMod*h.energy+((Math.random()-.5)*0.0009))*dt,0.018*dt);
         const rank=gameHorses.filter(o=>o.angle>h.angle).length;
         h.targetLane=Math.max(5,Math.min(5+rank*5.5+Math.sin(time*.5+i)*2,DIRT_W-8));
-        gameHorses.forEach((other,j)=>{
-            if(i===j)return;
-            const angleDist=Math.abs(h.angle-other.angle),laneDist=Math.abs(h.laneOffset-other.laneOffset);
-            if(angleDist<0.045&&laneDist<6){
-                const push=(6-laneDist)*0.1;
-                if(h.laneOffset>other.laneOffset) h.laneOffset+=push; else h.laneOffset-=push;
-            }
-        });
+        gameHorses.forEach((other,j)=>{if(i===j)return;const ad=Math.abs(h.angle-other.angle),ld=Math.abs(h.laneOffset-other.laneOffset);if(ad<0.045&&ld<6){const push=(6-ld)*0.1;if(h.laneOffset>other.laneOffset)h.laneOffset+=push;else h.laneOffset-=push;}});
         h.laneOffset+=(h.targetLane-h.laneOffset)*.025;
-        const r=BASE_R+h.laneOffset;
-        const x=Math.cos(h.angle)*r*TRACK_SX,z=Math.sin(h.angle)*r;
+        const r=BASE_R+h.laneOffset;const x=Math.cos(h.angle)*r*TRACK_SX,z=Math.sin(h.angle)*r;
         const dx=-Math.sin(h.angle)*r*TRACK_SX,dz=Math.cos(h.angle)*r;
         h.model.root.position.set(x,0,z);h.model.root.rotation.y=Math.atan2(-dz,dx);
-
         const c=time*gSpeed+i*1.7;
-        const bound=Math.max(0,Math.sin(c*0.5))*0.4;
+        const bound=Math.max(0,Math.sin(c))*1.6;
         h.model.body.position.y=bound;
-        h.model.body.rotation.z=Math.sin(c)*.045;
-        h.model.body.rotation.x=-0.02+Math.cos(c*2)*.012;
+        h.model.body.rotation.z=Math.sin(c)*.05;
+        h.model.body.rotation.x=-0.03+Math.cos(c)*.02;
+        // Gallop animation using keyframe sampling
         h.model.legs.forEach((leg,li)=>{
             const tNorm=((c/(Math.PI*2))+(li%2===0?0:0.5))*12;
             const pose=sampleGallop(leg.isFront?FRONT_GALLOP_KF:HIND_GALLOP_KF,tNorm);
@@ -986,34 +342,12 @@ function animate(){
         h.model.jG.position.y=9.02+bound*.22;
         h.model.jG.position.x=-0.18;
         updateHeadAngle(h.model.root,h.model.jG,camera);
-
-        if(h.angle>=FINISH_ANGLE&&!h.finished){
-            h.finished=true;finishOrder.push(h);
-            showNotif(`🏁 #${h.number} ${h.name} finishes.`);
-        }
+        if(h.angle>=FINISH_ANGLE&&!h.finished){h.finished=true;finishOrder.push(h);showNotif(`🏁 #${h.number} ${h.name} finishes.`);}
         if(!h.finished&&h.angle>leaderAngle){leaderAngle=h.angle;leader=h;}
     });
     updateLB();
-
-    if(leader){
-        const r=BASE_R+leader.laneOffset+(camMode==='broadcast'?70:25);
-        const camPos=camMode==='broadcast'?new THREE.Vector3(Math.cos(leader.angle+.06)*r*TRACK_SX,32,Math.sin(leader.angle+.06)*r):new THREE.Vector3(80,55,-(BASE_R+DIRT_W/2)+15);
-        camera.position.lerp(camPos,.08);
-        camTarget.lerp(new THREE.Vector3(Math.cos(leader.angle)*BASE_R*TRACK_SX,5,Math.sin(leader.angle)*BASE_R),.08);
-        camera.lookAt(camTarget);
-    }
-
-    if(finishOrder.length===gameHorses.length&&!raceFinished){
-        raceFinished=true;
-        setTimeout(()=>{
-            const rl=document.getElementById('results-list');
-            finishOrder.forEach((h,i)=>{
-                const t=i===0?'WIN':i===1?'PLACE':i===2?'SHOW':`${i+1}TH`;
-                rl.innerHTML+=`<div class="result-row"><span class="result-place">${t}</span><div class="lb-color" style="background:${h.color}"></div><span style="color:${h.isPlayer?'#ffeb3b':'#fff'}">#${h.number} ${h.name}${h.isPlayer?' ⭐':''}</span></div>`;
-            });
-            document.getElementById('results-modal').style.display='flex';
-        },2000);
-    }
+    if(leader){const r=BASE_R+leader.laneOffset+(camMode==='broadcast'?70:25);const camPos=camMode==='broadcast'?new THREE.Vector3(Math.cos(leader.angle+.06)*r*TRACK_SX,32,Math.sin(leader.angle+.06)*r):new THREE.Vector3(80,55,-(BASE_R+DIRT_W/2)+15);camera.position.lerp(camPos,.08);camTarget.lerp(new THREE.Vector3(Math.cos(leader.angle)*BASE_R*TRACK_SX,5,Math.sin(leader.angle)*BASE_R),.08);camera.lookAt(camTarget);}
+    if(finishOrder.length===gameHorses.length&&!raceFinished){raceFinished=true;setTimeout(()=>{const rl=document.getElementById('results-list');finishOrder.forEach((h,i)=>{const t=i===0?'WIN':i===1?'PLACE':i===2?'SHOW':`${i+1}TH`;rl.innerHTML+=`<div class="result-row"><span class="result-place">${t}</span><div class="lb-color" style="background:${h.color}"></div><span style="color:${h.isPlayer?'#ffeb3b':'#fff'}">#${h.number} ${h.name}${h.isPlayer?' ⭐':''}</span></div>`;});document.getElementById('results-modal').style.display='flex';},2000);}
     renderer.render(scene,camera);
 }
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
