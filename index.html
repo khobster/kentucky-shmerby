@@ -946,23 +946,15 @@ function animate(){
         const c=time*gSpeed+i*1.7;
         const bound=Math.max(0,Math.sin(c*0.5))*0.4;
         h.model.body.position.y=bound;
-        h.model.body.rotation.z=Math.sin(c)*.015;
-        h.model.body.rotation.x=0;
-        // Spin the hobby horse wheel
-        if(h.model.legs[0]&&h.model.legs[0].wheelGroup){
-            h.model.legs[0].wheelGroup.rotation.z-=dt*18;
-        }
-        const wingFlap=time*7.2+i*0.7;
-        const wingBeat=Math.sin(wingFlap);
-        const wingLift=Math.max(0,Math.sin(wingFlap-0.55));
-        if(h.model.leftWingRig&&h.model.rightWingRig){
-            h.model.leftWingRig.pivot.rotation.z=0.12-wingBeat*0.28;
-            h.model.rightWingRig.pivot.rotation.z=-0.12+wingBeat*0.28;
-            h.model.leftWingRig.wing.rotation.y=0.34+wingLift*0.26;
-            h.model.rightWingRig.wing.rotation.y=-0.34-wingLift*0.26;
-            h.model.leftWingRig.wing.rotation.x=-0.18-wingLift*0.18;
-            h.model.rightWingRig.wing.rotation.x=-0.18-wingLift*0.18;
-        }
+        h.model.body.rotation.z=Math.sin(c)*.045;
+        h.model.body.rotation.x=-0.02+Math.cos(c*2)*.012;
+        h.model.legs.forEach((leg,li)=>{
+            const phase=c+(li%2===0?0:Math.PI),swing=Math.sin(phase)*1.08,lift=Math.max(0,Math.sin(phase))*0.95;
+            leg.thigh.rotation.z=swing*.42;
+            leg.shin.rotation.z=(leg.isFront?0.26:-0.24)+(-swing*.62)+(lift*.2*(leg.isFront?1:-1));
+            leg.shin.position.x=leg.baseShinX+(lift*.12*(leg.isFront?1:-1));
+            leg.shin.position.y=-5.08+lift*.42;
+        });
         h.model.jG.position.y=9.02+bound*.22;
         h.model.jG.position.x=-0.18;
         updateHeadAngle(h.model.root,h.model.jG,camera);
