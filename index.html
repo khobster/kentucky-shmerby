@@ -115,10 +115,13 @@ function titleCase(w){return w.charAt(0).toUpperCase()+w.slice(1);}
 function genName(){let a=pickWord(),b=pickWord();while(b===a)b=pickWord();return`${titleCase(a)} ${titleCase(b)}`;}
 async function bootstrapNamePool(){try{const r=await fetch(NAME_FILE,{cache:'no-store'});if(!r.ok)throw new Error('missing');const t=await r.text();NAME_WORDS=[...new Set([...NAME_WORDS,...extractWords(t)])];if(playerHorse){playerHorse.name=genName();document.getElementById('player-horse-name').innerText=`#${playerHorse.number} ${playerHorse.name}`;}console.log(`Loaded ${NAME_WORDS.length} words.`);}catch(e){console.warn('Built-in pool only.',e);}}
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
-let playerHorse={name:genName(),taps:0,isPlayer:true,color:"#e91e63",number:Math.floor(Math.random()*20)+1};
+let playerHorse={name:genName(),taps:0,isPlayer:true,color:colorForHumanSlot(0),number:Math.floor(Math.random()*20)+1};
 let gameHorses=[],finishOrder=[],raceFinished=false,stretchCalled=false,raceStartTime=0;
 let tapping=false,tappingDone=false,tapCountdownStarted=false,tapInterval=null;
 const botColors=["#2196f3","#4caf50","#ff9800","#9c27b0","#00bcd4"];
+const humanColors=["#e91e63","#4caf50","#2196f3","#ff9800","#9c27b0","#00bcd4"];
+function colorForHumanSlot(slot){return humanColors[((slot%humanColors.length)+humanColors.length)%humanColors.length];}
+function genNameRng(rng){const pool=(NAME_WORDS&&NAME_WORDS.length)?NAME_WORDS:DW;let a=Math.floor(rng()*pool.length),b=Math.floor(rng()*pool.length);while(b===a)b=Math.floor(rng()*pool.length);return `${titleCase(pool[a])} ${titleCase(pool[b])}`;}
 const TRACK_SX=1.8,BASE_R=280,DIRT_W=75;
 const START_ANGLE=-Math.PI/2,FINISH_ANGLE=START_ANGLE+2*Math.PI;
 const AVG_SPEED=0.0011;
@@ -343,8 +346,8 @@ function createHorse(colorHex,number,mascotPoolIdx){
     // Head
     const mHead=buildMascotHead(mascotPoolIdx);
     const headMeta=mHead.userData.multiAngle||{};const headOffset=headMeta.headOffset||{x:0,y:0,z:0};
-    if(headMeta.name==='liberty'){jNeck.position.x+=0.12;jNeck.position.y+=0.28;}
     mHead.position.set(1.05+(headOffset.x||0),4.45+(headOffset.y||0)+(headMeta.headLift||0),(headOffset.z||0));
+    if(headMeta.name==='liberty'){jNeck.visible=false;mHead.position.y-=0.16;}
     mHead.userData.basePos=mHead.position.clone();jG.add(mHead);
     return{root,body,tailG,legs,jG};
 }
@@ -394,8 +397,8 @@ document.getElementById('tap-start-btn').addEventListener('click',()=>startTappi
 async function endTapping(){tapping=false;tappingDone=true;setTapZoneEnabled(false);document.getElementById('tap-zone').innerHTML='TAPS LOCKED IN';if(isMultiplayer&&gameDocRef){let allDone=false,remaining=0;await db.runTransaction(async(t)=>{const s=await t.get(gameDocRef);const d=s.data();const players=(d.players||[]).slice();if(players[myPlayerSlot])players[myPlayerSlot].taps=playerHorse.taps;allDone=players.every(p=>p.taps!==null);remaining=players.filter(p=>p.taps===null).length;t.update(gameDocRef,{players,status:allDone?'racing':'tapping'});});const status=document.getElementById('tap-status');status.textContent=allDone?'LOCKED IN. BREAKING FROM THE GATE...':`TAPS LOCKED IN — WAITING FOR ${remaining} MORE...`;status.classList.remove('hidden');}else{document.getElementById('tapping-phase').classList.add('hidden');startSoloRace();}}
 // --- RACE ---
 let raceStarted=false;
-function startRaceFromData(d){if(raceStarted)return;raceStarted=true;const rng=mulberry32(d.seed);const humans=d.players||[];humans.forEach(p=>{gameHorses.push({name:p.name,taps:p.taps,isPlayer:p.id===myPlayerId,color:p.color,number:p.number,isHuman:true,style:Math.floor(rng()*3)});});const usedNums=new Set(humans.map(p=>p.number));const botsNeeded=6-humans.length;for(let i=0;i<botsNeeded;i++){let n;do{n=Math.floor(rng()*20)+1;}while(usedNums.has(n));usedNums.add(n);gameHorses.push({name:genName(),taps:Math.floor(rng()*45)+20,isPlayer:false,color:botColors[i%botColors.length],number:n,style:Math.floor(rng()*3),isHuman:false});}buildAndStartRace(rng);}
-function startSoloRace(){if(raceStarted)return;raceStarted=true;const rng=mulberry32(Date.now());gameHorses.push(playerHorse);for(let i=0;i<5;i++){let n;do{n=Math.floor(rng()*20)+1;}while(gameHorses.some(h=>h.number===n));gameHorses.push({name:genName(),taps:Math.floor(rng()*45)+20,isPlayer:false,color:botColors[i],number:n,style:Math.floor(rng()*3),isHuman:false});}buildAndStartRace(rng);}
+function startRaceFromData(d){if(raceStarted)return;raceStarted=true;const rng=mulberry32(d.seed);const humans=(d.players||[]).map((p,idx)=>({...p,color:colorForHumanSlot(idx)}));humans.forEach(p=>{gameHorses.push({name:p.name,taps:p.taps,isPlayer:p.id===myPlayerId,color:p.color,number:p.number,isHuman:true,style:Math.floor(rng()*3)});});const usedNums=new Set(humans.map(p=>p.number));const botsNeeded=6-humans.length;for(let i=0;i<botsNeeded;i++){let n;do{n=Math.floor(rng()*20)+1;}while(usedNums.has(n));usedNums.add(n);gameHorses.push({name:genNameRng(rng),taps:Math.floor(rng()*45)+20,isPlayer:false,color:botColors[i%botColors.length],number:n,style:Math.floor(rng()*3),isHuman:false});}buildAndStartRace(rng);}
+function startSoloRace(){if(raceStarted)return;raceStarted=true;const rng=mulberry32(Date.now());gameHorses.push(playerHorse);for(let i=0;i<5;i++){let n;do{n=Math.floor(rng()*20)+1;}while(gameHorses.some(h=>h.number===n));gameHorses.push({name:genNameRng(rng),taps:Math.floor(rng()*45)+20,isPlayer:false,color:botColors[i],number:n,style:Math.floor(rng()*3),isHuman:false});}buildAndStartRace(rng);}
 function buildAndStartRace(rng){document.getElementById('main-title').classList.add('hidden');document.getElementById('race-phase').classList.remove('hidden');raceStartTime=Date.now();for(let i=gameHorses.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[gameHorses[i],gameHorses[j]]=[gameHorses[j],gameHorses[i]];}const mascotPool=[0,1,2,3,4,5];for(let i=mascotPool.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[mascotPool[i],mascotPool[j]]=[mascotPool[j],mascotPool[i]];}
 const tapVals=gameHorses.map(h=>Number.isFinite(h.taps)?h.taps:0);const minTap=Math.min(...tapVals),maxTap=Math.max(...tapVals),tapRange=Math.max(1,maxTap-minTap);
 gameHorses.forEach((h,i)=>{h.angle=START_ANGLE-(0.02+i*.015);h.tapNorm=((Number.isFinite(h.taps)?h.taps:0)-minTap)/tapRange;h.baseSpeed=0.0478+(h.tapNorm*0.0048)+((rng()-0.5)*0.0007);h.earlyMod=h.style===0?1.04:h.style===1?0.995:0.965;h.lateMod=h.style===0?0.975:h.style===1?1.02:1.055;h.energy=1;h.finished=false;h.laneOffset=5+i*8;const model=createHorse(h.color,h.number,mascotPool[i]);scene.add(model.root);h.model=model;});updateLB();animate();}
