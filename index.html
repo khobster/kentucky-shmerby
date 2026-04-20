@@ -221,7 +221,7 @@ function updateHeadAngle(horseRoot,jockeyGroup,cam){
     const sideSign=deg>=0?1:-1;const headSpan=Math.max(texSet.frontSize||10.5,texSet.sideSize||10.5);const sizeBoost=Math.max(0,headSpan-10.5);
     if(headGroup.userData.basePos){const base=headGroup.userData.basePos;const fl=(texSet.headForward||0)+(sizeBoost*0.12);const sl=(zone==='front'||zone==='back')?sideSign*0.04:sideSign*Math.min(0.12,0.05+sizeBoost*0.03);_desiredHeadPos.set(base.x+fl,base.y+(sizeBoost*0.08),base.z+sl);headGroup.position.lerp(_desiredHeadPos,0.16);}
     const riderBody=jockeyGroup.userData.riderBody;
-    if(riderBody){const bp=(texSet.bodyPeek??0.68)+(sizeBoost*0.05);const rs=texSet.riderScale??1;const tz2=(zone==='front'||zone==='back')?sideSign*(bp*0.16):sideSign*(bp*0.34);const ty=(texSet.name==='liberty'?-0.08:-0.02)+(texSet.riderDrop||0);const tx=(zone==='front'||zone==='back')?-0.2-(sizeBoost*0.03):-0.26-(sizeBoost*0.035);riderBody.position.x+=(tx-riderBody.position.x)*0.16;riderBody.position.z+=(tz2-riderBody.position.z)*0.18;riderBody.position.y+=(ty-riderBody.position.y)*0.18;riderBody.scale.x+=(rs-riderBody.scale.x)*0.16;riderBody.scale.y+=(rs-riderBody.scale.y)*0.16;riderBody.scale.z+=(rs-riderBody.scale.z)*0.16;
+    if(riderBody){const bp=(texSet.bodyPeek??0.68)+(sizeBoost*0.05);const rs=texSet.riderScale??1;const tz2=(zone==='front'||zone==='back')?sideSign*(bp*0.16):sideSign*(bp*0.34);const ty=(texSet.name==='liberty'?-0.02:0.08)+(texSet.riderDrop||0);const tx=(zone==='front'||zone==='back')?-0.2-(sizeBoost*0.03):-0.26-(sizeBoost*0.035);riderBody.position.x+=(tx-riderBody.position.x)*0.16;riderBody.position.z+=(tz2-riderBody.position.z)*0.18;riderBody.position.y+=(ty-riderBody.position.y)*0.18;riderBody.scale.x+=(rs-riderBody.scale.x)*0.16;riderBody.scale.y+=(rs-riderBody.scale.y)*0.16;riderBody.scale.z+=(rs-riderBody.scale.z)*0.16;
     const parts=riderBody.userData.parts||{};const sv=(zone==='side'||zone==='side_r');const snl=sideSign>0;
     if(parts.leftUpperArm)parts.leftUpperArm.visible=!sv||snl;if(parts.leftThigh)parts.leftThigh.visible=!sv||snl;if(parts.rightUpperArm)parts.rightUpperArm.visible=!sv||!snl;if(parts.rightThigh)parts.rightThigh.visible=!sv||!snl;
     if(parts.chestSilk){const tz3=sv?sideSign*0.1:0;parts.chestSilk.position.z+=(tz3-parts.chestSilk.position.z)*0.2;}if(parts.hips){const hz=sv?sideSign*0.08:0;parts.hips.position.z+=(hz-parts.hips.position.z)*0.2;}}
@@ -273,7 +273,7 @@ function createHorse(colorHex,number,mascotPoolIdx){
     const trim=toon({color:0xf0f4ff});
     const pants=toon({color:0x79d9ef});
     const pantsDark=toon({color:0x63c7dd});
-    const gloves=toon({color:0x9b6550});
+    const gloves=toon({color:0xf0c51a});
     const bootsMat=toon({color:0x2a2a2a});
     const skin=toon({color:0xd8a07a});
 
@@ -286,6 +286,9 @@ function createHorse(colorHex,number,mascotPoolIdx){
     upperSilk.position.set(0.18,4.1,0);
     upperSilk.rotation.z=-0.08;
     riderBody.add(upperSilk);
+    const upperStripe=new THREE.Mesh(new THREE.BoxGeometry(0.18,1.95,1.06),gloves);
+    upperStripe.position.set(0.08,0.0,0.02);
+    upperSilk.add(upperStripe);
 
     const chestTrim=new THREE.Mesh(new THREE.BoxGeometry(0.22,3.0,1.42),trim);
     chestTrim.position.set(0.32,0.0,0.02);
@@ -391,7 +394,7 @@ function createHorse(colorHex,number,mascotPoolIdx){
     // Head
     const mHead=buildMascotHead(mascotPoolIdx);
     const headMeta=mHead.userData.multiAngle||{};const headOffset=headMeta.headOffset||{x:0,y:0,z:0};
-    mHead.position.set(1.05+(headOffset.x||0),4.45+(headOffset.y||0)+(headMeta.headLift||0),(headOffset.z||0));
+    mHead.position.set(1.05+(headOffset.x||0),4.68+(headOffset.y||0)+(headMeta.headLift||0),(headOffset.z||0));
     if(headMeta.name==='liberty'){jNeck.visible=false;mHead.position.y-=0.16;}
     mHead.userData.basePos=mHead.position.clone();jG.add(mHead);
     return{root,body,tailG,legs,jG};
