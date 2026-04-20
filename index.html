@@ -194,12 +194,12 @@ const fl=new THREE.Mesh(new THREE.PlaneGeometry(DIRT_W+6,5),new THREE.MeshBasicM
 g.scale.set(TRACK_SX,1,1);scene.add(g);})();
 // --- MASCOT SYSTEM ---
 const texLoader=new THREE.TextureLoader();
-const LT_SET={name:'lt',front:"lt-front.png",side:"lt-side.png",side_r:"lt-side-r.png",back:"lt-back.png",frontSize:12,sideSize:13.5,bodyPeek:0.58,riderScale:1.0,headForward:0.08};
-const GEO_SET={name:'george',front:"george-front.png",side:"george-side.png",side_r:"george-side-r.png",back:"george-back.png",bodyPeek:0.72,riderScale:1.04,headLift:0.24,headForward:0.16};
-const DAV_SET={name:'david',front:"david-front.png",side:"david-side.png",side_r:"david-side-r.png",back:"david-back.png",swapSideViews:true,bodyPeek:0.8,riderScale:1.04,headLift:0.38,headForward:0.18};
-const LIB_SET={name:'liberty',front:"liberty-front.png",side:"liberty-side.png",side_r:"liberty-side-r.png",back:"liberty-back.png",frontSize:12.6,sideSize:10.2,swapSideViews:true,headOffset:{x:0.38,y:1.48,z:0},bodyPeek:0.82,riderScale:1.05,headLift:0.34,headForward:0.24};
-const BUN_SET={name:'bunny',front:"bunny-front.png",side:"bunny-side.png",side_r:"bunny-side-r.png",back:"bunny-back.png",swapSideViews:true,bodyPeek:0.92,riderScale:1.08,headLift:0.26,headForward:0.14};
-const TOM_SET={name:'tomato',front:"tomato-front.png",side:"tomato-side.png",side_r:"tomato-side-r.png",back:"tomato-back.png",swapSideViews:true,bodyPeek:0.95,riderScale:1.08,headLift:0.62,headForward:0.22};
+const LT_SET={name:'lt',front:"lt-front.png",side:"lt-side.png",side_r:"lt-side-r.png",back:"lt-back.png",frontSize:12,sideSize:13.5,bodyPeek:0.58,riderScale:1.0,headForward:0.08,bodyShowLift:0.0};
+const GEO_SET={name:'george',front:"george-front.png",side:"george-side.png",side_r:"george-side-r.png",back:"george-back.png",bodyPeek:0.72,riderScale:1.04,headLift:0.24,headForward:0.16,bodyShowLift:0.26};
+const DAV_SET={name:'david',front:"david-front.png",side:"david-side.png",side_r:"david-side-r.png",back:"david-back.png",swapSideViews:true,bodyPeek:0.8,riderScale:1.04,headLift:0.38,headForward:0.18,bodyShowLift:0.3};
+const LIB_SET={name:'liberty',front:"liberty-front.png",side:"liberty-side.png",side_r:"liberty-side-r.png",back:"liberty-back.png",frontSize:12.6,sideSize:10.2,swapSideViews:true,headOffset:{x:0.38,y:1.48,z:0},bodyPeek:0.82,riderScale:1.05,headLift:0.34,headForward:0.24,bodyShowLift:0.18};
+const BUN_SET={name:'bunny',front:"bunny-front.png",side:"bunny-side.png",side_r:"bunny-side-r.png",back:"bunny-back.png",swapSideViews:true,bodyPeek:0.92,riderScale:1.08,headLift:0.26,headForward:0.14,bodyShowLift:0.34};
+const TOM_SET={name:'tomato',front:"tomato-front.png",side:"tomato-side.png",side_r:"tomato-side-r.png",back:"tomato-back.png",swapSideViews:true,bodyPeek:0.95,riderScale:1.08,headLift:0.62,headForward:0.22,bodyShowLift:0.34};
 const ALL_SETS=[LT_SET,GEO_SET,DAV_SET,LIB_SET,BUN_SET,TOM_SET];
 const loadedTextures=[];
 ALL_SETS.forEach(s=>{loadedTextures.push({...s,front:texLoader.load(s.front),side:texLoader.load(s.side),side_r:texLoader.load(s.side_r),back:texLoader.load(s.back)});});
@@ -219,7 +219,7 @@ function updateHeadAngle(horseRoot,jockeyGroup,cam){
     const deg=angle*180/Math.PI;
     let zone='front';if(deg<=-135||deg>=135)zone='back';else if(deg>=45&&deg<135)zone=texSet.swapSideViews?'side_r':'side';else if(deg<=-45&&deg>-135)zone=texSet.swapSideViews?'side':'side_r';
     const sideSign=deg>=0?1:-1;const headSpan=Math.max(texSet.frontSize||10.5,texSet.sideSize||10.5);const sizeBoost=Math.max(0,headSpan-10.5);
-    if(headGroup.userData.basePos){const base=headGroup.userData.basePos;const fl=(texSet.headForward||0)+(sizeBoost*0.12);const sl=(zone==='front'||zone==='back')?sideSign*0.04:sideSign*Math.min(0.12,0.05+sizeBoost*0.03);_desiredHeadPos.set(base.x+fl,base.y+(sizeBoost*0.08),base.z+sl);headGroup.position.lerp(_desiredHeadPos,0.16);}
+    if(headGroup.userData.basePos){const base=headGroup.userData.basePos;const fl=(texSet.headForward||0)+(sizeBoost*0.12);const sl=(zone==='front'||zone==='back')?sideSign*0.04:sideSign*Math.min(0.12,0.05+sizeBoost*0.03);const lift=(texSet.bodyShowLift||0);_desiredHeadPos.set(base.x+fl,base.y+(sizeBoost*0.08)+lift,base.z+sl);headGroup.position.lerp(_desiredHeadPos,0.16);}
     const riderBody=jockeyGroup.userData.riderBody;
     if(riderBody){const bp=(texSet.bodyPeek??0.68)+(sizeBoost*0.05);const rs=texSet.riderScale??1;const tz2=(zone==='front'||zone==='back')?sideSign*(bp*0.16):sideSign*(bp*0.34);const ty=(texSet.name==='liberty'?-0.02:0.08)+(texSet.riderDrop||0);const tx=(zone==='front'||zone==='back')?-0.2-(sizeBoost*0.03):-0.26-(sizeBoost*0.035);riderBody.position.x+=(tx-riderBody.position.x)*0.16;riderBody.position.z+=(tz2-riderBody.position.z)*0.18;riderBody.position.y+=(ty-riderBody.position.y)*0.18;riderBody.scale.x+=(rs-riderBody.scale.x)*0.16;riderBody.scale.y+=(rs-riderBody.scale.y)*0.16;riderBody.scale.z+=(rs-riderBody.scale.z)*0.16;
     const parts=riderBody.userData.parts||{};const sv=(zone==='side'||zone==='side_r');const snl=sideSign>0;
@@ -282,12 +282,12 @@ function createHorse(colorHex,number,mascotPoolIdx){
     chestSilk.rotation.z=-0.12;
     riderBody.add(chestSilk);
 
-    const upperSilk=new THREE.Mesh(new THREE.BoxGeometry(0.92,1.95,1.0),shirt);
-    upperSilk.position.set(0.18,4.1,0);
-    upperSilk.rotation.z=-0.08;
+    const upperSilk=new THREE.Mesh(new THREE.BoxGeometry(1.12,3.1,1.18),shirt);
+    upperSilk.position.set(0.22,4.78,0);
+    upperSilk.rotation.z=-0.06;
     riderBody.add(upperSilk);
-    const upperStripe=new THREE.Mesh(new THREE.BoxGeometry(0.18,1.95,1.06),gloves);
-    upperStripe.position.set(0.08,0.0,0.02);
+    const upperStripe=new THREE.Mesh(new THREE.BoxGeometry(0.22,3.0,1.24),gloves);
+    upperStripe.position.set(0.02,0.0,0.02);
     upperSilk.add(upperStripe);
 
     const chestTrim=new THREE.Mesh(new THREE.BoxGeometry(0.22,3.0,1.42),trim);
