@@ -20,24 +20,19 @@
         .overlay{position:relative;z-index:10;text-align:center;}
         h1{color:#ffd700;font-size:22px;text-shadow:4px 4px 0 #000;margin:18px 0;position:relative;z-index:10;}
         .panel{background:rgba(0,0,0,0.7);padding:24px 32px;border-radius:12px;border:3px solid #ffd700;margin-top:40px;max-width:500px;width:90%;}
-        #tap-zone{width:90%;max-width:600px;height:260px;margin:16px auto;background:#e53935;border:8px solid #000;
-            box-shadow:0 10px 0 #b71c1c;display:flex;align-items:center;justify-content:center;
-            font-size:13px;cursor:pointer;color:#fff;line-height:1.8;text-shadow:2px 2px 0 #000;border-radius:8px;}
+        #tap-zone{width:90%;max-width:600px;height:260px;margin:16px auto;background:#e53935;border:8px solid #000;box-shadow:0 10px 0 #b71c1c;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;color:#fff;line-height:1.8;text-shadow:2px 2px 0 #000;border-radius:8px;}
         #tap-zone:active{transform:translateY(10px);box-shadow:0 0 0 #b71c1c;}
         #tap-zone.disabled{background:#6a6a6a;box-shadow:0 10px 0 #444;cursor:default;opacity:.72;}
         #tap-status{font-size:10px;color:#ffd700;margin-top:14px;line-height:1.7;text-shadow:2px 2px 0 #000;min-height:34px;}
-        button{padding:12px 24px;font-size:12px;font-family:inherit;cursor:pointer;background:#ffeb3b;color:#000;
-            border:5px solid #000;box-shadow:0 5px 0 #f57f17;margin-top:14px;text-transform:uppercase;}
+        button{padding:12px 24px;font-size:12px;font-family:inherit;cursor:pointer;background:#ffeb3b;color:#000;border:5px solid #000;box-shadow:0 5px 0 #f57f17;margin-top:14px;text-transform:uppercase;}
         button:hover{background:#fff176;}
         .share-box{margin-top:14px;}
         .share-box input{font-family:inherit;font-size:8px;padding:8px;width:100%;background:#222;color:#ffd700;border:2px solid #ffd700;border-radius:4px;margin-bottom:8px;}
         .share-box button{font-size:10px;padding:8px 16px;}
         .waiting{color:#ffd700;font-size:10px;margin-top:14px;animation:pulse 1.5s infinite;}
         @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
-        #notifications-container{position:absolute;top:80px;left:50%;transform:translateX(-50%);
-            z-index:1000;display:flex;flex-direction:column;align-items:center;pointer-events:none;}
-        .finish-notif{background:rgba(0,0,0,0.9);border:2px solid #ffd700;color:#fff;
-            padding:10px 20px;margin-bottom:6px;font-size:10px;border-radius:4px;transition:opacity 0.5s ease;}
+        #notifications-container{position:absolute;top:80px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;flex-direction:column;align-items:center;pointer-events:none;}
+        .finish-notif{background:rgba(0,0,0,0.9);border:2px solid #ffd700;color:#fff;padding:10px 20px;margin-bottom:6px;font-size:10px;border-radius:4px;transition:opacity 0.5s ease;}
         #leaderboard{position:absolute;bottom:20px;left:20px;z-index:100;background:rgba(245,245,245,0.95);border:2px solid #333;border-radius:4px;padding:0;min-width:280px;font-family:Arial,sans-serif;}
         #lb-header{background:#1a1a1a;color:#fff;padding:6px 10px;font-size:10px;font-weight:bold;letter-spacing:1px;font-family:'Press Start 2P',monospace;}
         #standings-list{display:flex;flex-direction:column;}
@@ -47,21 +42,17 @@
         .lb-color{width:18px;height:14px;border:1px solid #000;margin-right:8px;display:inline-block;flex-shrink:0;}
         .lb-name{font-weight:bold;flex-grow:1;text-transform:uppercase;letter-spacing:.5px;}
         .lb-row.you{background:#fff8c4;}
-        #results-modal{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-            background:rgba(0,0,0,0.95);border:6px solid #ffd700;padding:24px;
-            z-index:1000;text-align:left;width:90%;max-width:480px;display:none;flex-direction:column;}
+        #results-modal{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.95);border:6px solid #ffd700;padding:24px;z-index:1000;text-align:left;width:90%;max-width:480px;display:none;flex-direction:column;}
         .result-row{display:flex;align-items:center;margin:6px 0;font-size:10px;border-bottom:2px dashed #444;padding-bottom:6px;}
         .result-place{width:50px;color:#ffd700;}
         #timer-display{font-size:34px;color:#fff;text-shadow:4px 4px #000;margin-top:60px;}
-        #race-header{position:absolute;top:calc(env(safe-area-inset-top, 0px) + 18px);left:0;width:100%;z-index:100;text-align:center;padding:0 70px 0 12px;pointer-events:none;}
-        #race-status{text-shadow:4px 4px 0 #000,8px 8px 0 rgba(0,0,0,0.28);font-size:18px;letter-spacing:1px;display:none;}
-        #race-timer{position:absolute;top:calc(env(safe-area-inset-top, 0px) + 18px);right:16px;z-index:100;font-size:12px;color:#fff;text-shadow:2px 2px #000;}
-        #stretch-call{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-            z-index:500;font-size:24px;color:#fff;text-shadow:6px 6px 0 #000,-2px -2px 0 #ffd700;
-            pointer-events:none;opacity:0;transition:opacity 0.4s;white-space:nowrap;text-align:center;line-height:1.5;}
+        #race-header{position:absolute;top:10px;left:0;width:100%;z-index:100;text-align:center;padding:0 12px;}
+        #race-status{text-shadow:3px 3px #000;font-size:15px;color:#ffd700;}
+        #race-timer{position:absolute;top:10px;right:16px;z-index:100;font-size:12px;color:#fff;text-shadow:2px 2px #000;}
+        #stretch-call{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:500;font-size:24px;color:#fff;text-shadow:6px 6px 0 #000,-2px -2px 0 #ffd700;pointer-events:none;opacity:0;transition:opacity 0.4s;white-space:nowrap;text-align:center;line-height:1.5;}
         #stretch-call.show{opacity:1;}
         .you-tag{font-size:7px;color:#ffeb3b;background:#000;padding:1px 4px;border-radius:2px;margin-left:4px;}
-        #furlong-bar{position:absolute;top:60px;left:50%;transform:translateX(-50%);z-index:100;width:280px;}
+        #furlong-bar{position:absolute;top:45px;left:50%;transform:translateX(-50%);z-index:100;width:280px;}
         #furlong-track{width:100%;height:10px;background:rgba(0,0,0,.6);border:2px solid #ffd700;border-radius:5px;overflow:hidden;}
         #furlong-fill{height:100%;width:0%;background:linear-gradient(90deg,#4caf50,#ffeb3b,#ff5722);border-radius:3px;transition:width .3s;}
         #furlong-labels{display:flex;justify-content:space-between;font-size:6px;color:#ffd700;margin-top:2px;text-shadow:1px 1px #000;}
@@ -114,55 +105,42 @@
     <div id="results-modal">
         <h2 id="results-title" style="text-align:center;margin-bottom:16px;"></h2>
         <div id="results-list"></div>
-        <button onclick="raceAgain()" style="margin:16px auto 0;display:block;">Race Again</button>
+        <button onclick="location.reload()" style="margin:16px auto 0;display:block;">Race Again</button>
     </div>
 </div>
+
 <script>
+// --- FIREBASE & GLOBAL DECS ---
 firebase.initializeApp({apiKey:"AIzaSyDicI1nKcrMDaaYkL_8q70yj1mM05tW5Ak",authDomain:"mookie-pig-challenge.firebaseapp.com",projectId:"mookie-pig-challenge",storageBucket:"mookie-pig-challenge.appspot.com",messagingSenderId:"96530997300",appId:"1:96530997300:web:96400cf87b98c8e19eaa61"});
 const db=firebase.firestore();
 let myPlayerId=localStorage.getItem('shmerbyId');
 if(!myPlayerId){myPlayerId=Math.random().toString(36).substr(2,9);localStorage.setItem('shmerbyId',myPlayerId);}
 let gameDocRef=null,unsubGame=null,isMultiplayer=false,isHost=false,myPlayerSlot=0;
+
+// Ensuring raceStarted is safely declared up top to prevent ReferenceError
+let raceStarted=false, gatesOpen=false, gateOpenTime=0, startGates=[];
+let gameHorses=[], finishOrder=[], raceFinished=false, stretchCalled=false, raceStartTime=0;
+let tapping=false, tappingDone=false, tapCountdownStarted=false, tapInterval=null;
+
 const DW=["Affirmed","Agile","Alysheba","American","Pharoah","Animal","Kingdom","Apollo","Aristides","Assault","Authentic","Barbaro","Black","Gold","Bold","Venture","Brokers","Tip","Bubbling","Over","Burgoo","King","California","Chrome","Cannonade","Carry","Back","Cavalcade","Charismatic","Citation","Count","Fleet","Dark","Star","Decidedly","Donerail","Dust","Commander","Elwood","Exterminator","Ferdinand","Flying","Ebony","Foolish","Pleasure","Funny","Cide","Fusaichi","Pegasus","Gallant","Fox","Genuine","Risk","Giacomo","Grindstone","Hindoo","Iron","Liege","Jet","Pilot","Justify","Lawrin","Lucky","Debonair","Mage","Majestic","Prince","Monarchos","Mystik","Dan","Needles","Northern","Dancer","Nyquist","Omaha","Orb","Pensive","Plaudit","Pleasant","Colony","Ponder","Real","Quiet","Regret","Riva","Ridge","Sea","Hero","Seattle","Slew","Secretariat","Silver","Charm","Smarty","Spectacular","Bid","Spend","Buck","Sunday","Silence","Super","Saver","Swale","Swaps","Thunder","Gulch","Unbridled","War","Admiral","Whirlaway","Zev"];
-const NAME_FILE='list%20of%20words.txt';
-const WORD_BLACKLIST=new Set(['act','scene','enter','reenter','exit','exeunt','lord','lady','sir','madam','king','queen','duke','prince','servant','first','second','third','fourth']);
 function cleanToken(t){return t.toLowerCase().replace(/['']/g,'').replace(/[^a-z-]/g,'').replace(/^-+|-+$/g,'');}
-function extractWords(text){const m=text.match(/[A-Za-z][A-Za-z'-]{2,18}/g)||[];const o=[];for(const r of m){const w=cleanToken(r);if(!w||w.length<3||WORD_BLACKLIST.has(w)||/^[ivxlcdm]+$/i.test(w))continue;o.push(w);}return[...new Set(o)];}
 let NAME_WORDS=[...new Set(DW.map(cleanToken).filter(Boolean))];
 function pickWord(){return NAME_WORDS[(Math.random()*NAME_WORDS.length)|0];}
 function titleCase(w){return w.charAt(0).toUpperCase()+w.slice(1);}
 function genName(){let a=pickWord(),b=pickWord();while(b===a)b=pickWord();return`${titleCase(a)} ${titleCase(b)}`;}
-async function bootstrapNamePool(){try{const r=await fetch(NAME_FILE,{cache:'no-store'});if(!r.ok)throw new Error('missing');const t=await r.text();NAME_WORDS=[...new Set([...NAME_WORDS,...extractWords(t)])];if(playerHorse){playerHorse.name=genName();document.getElementById('player-horse-name').innerText=`#${playerHorse.number} ${playerHorse.name}`;}console.log(`Loaded ${NAME_WORDS.length} words.`);}catch(e){console.warn('Built-in pool only.',e);}}
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
 let playerHorse={name:genName(),taps:0,isPlayer:true,color:"#e91e63",number:Math.floor(Math.random()*20)+1};
-let latestGameData=null,currentRaceSeed=null;
-
-async function raceAgain(){
-    if(isMultiplayer&&gameDocRef){
-        try{
-            const snap=await gameDocRef.get();const d=snap.data()||{};
-            const players=(d.players||[]).map((p,idx)=>({...p,taps:null,color:colorForHumanSlot(idx)}));
-            await gameDocRef.set({seed:Math.floor(Math.random()*2147483647),status:'tapping',players},{merge:true});
-        }catch(e){console.error(e);}
-    } 
-    location.reload();
-}
-window.raceAgain=raceAgain;
-
-let gameHorses=[],finishOrder=[],raceFinished=false,stretchCalled=false,raceStartTime=0;
-let tapping=false,tappingDone=false,tapCountdownStarted=false,tapInterval=null;
-let gateTimer = 3.5, gateOpened = false, gateGroup = null, gateDoors = [];
-
 const botColors=["#2196f3","#4caf50","#ff9800","#9c27b0","#00bcd4"];
 const humanColors=["#e91e63","#4caf50","#2196f3","#ff9800","#9c27b0","#00bcd4"];
 function colorForHumanSlot(slot){return humanColors[((slot%humanColors.length)+humanColors.length)%humanColors.length];}
-function genNameRng(rng){const pool=(NAME_WORDS&&NAME_WORDS.length)?NAME_WORDS:DW;let a=Math.floor(rng()*pool.length),b=Math.floor(rng()*pool.length);while(b===a)b=Math.floor(rng()*pool.length);return `${titleCase(pool[a])} ${titleCase(pool[b])}`;}
 
 const TRACK_SX=1.8,BASE_R=280,DIRT_W=75;
 const START_ANGLE=-Math.PI/2,FINISH_ANGLE=START_ANGLE+2*Math.PI;
-const AVG_SPEED=0.0011;
+const AVG_SPEED=0.00062; // ~120s race duration
 let camMode='broadcast';
 
+// --- THREE.JS ---
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x87CEEB);scene.fog=new THREE.Fog(0x87CEEB,600,1200);
 const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,1,3000);
 const camTarget=new THREE.Vector3();
@@ -193,17 +171,32 @@ g.scale.set(TRACK_SX,1,1);scene.add(g);})();
 
 // --- MASCOT SYSTEM ---
 const texLoader=new THREE.TextureLoader();
+// Added swapSideViews to properly flip Tomato, David, and Bunny
 const LT_SET={name:'lt',front:"lt-front.png",side:"lt-side.png",side_r:"lt-side-r.png",back:"lt-back.png",frontSize:12,sideSize:13.5,bodyPeek:0.58,riderScale:1.0,headForward:0.08,bodyShowLift:0.0};
 const GEO_SET={name:'george',front:"george-front.png",side:"george-side.png",side_r:"george-side-r.png",back:"george-back.png",bodyPeek:0.72,riderScale:1.04,headLift:0.24,headForward:0.16,bodyShowLift:0.4};
 const DAV_SET={name:'david',front:"david-front.png",side:"david-side.png",side_r:"david-side-r.png",back:"david-back.png",swapSideViews:true,bodyPeek:0.8,riderScale:1.04,headLift:0.38,headForward:0.18,bodyShowLift:0.44};
 const LIB_SET={name:'liberty',front:"liberty-front.png",side:"liberty-side.png",side_r:"liberty-side-r.png",back:"liberty-back.png",frontSize:14.5,sideSize:10.2,swapSideViews:true,headOffset:{x:0.38,y:1.48,z:0},bodyPeek:0.82,riderScale:1.05,headLift:0.34,headForward:0.24,bodyShowLift:0.3};
 const BUN_SET={name:'bunny',front:"bunny-front.png",side:"bunny-side.png",side_r:"bunny-side-r.png",back:"bunny-back.png",swapSideViews:true,bodyPeek:0.92,riderScale:1.08,headLift:0.26,headForward:0.14,bodyShowLift:0.444};
 const TOM_SET={name:'tomato',front:"tomato-front.png",side:"tomato-side.png",side_r:"tomato-side-r.png",back:"tomato-back.png",swapSideViews:true,bodyPeek:0.95,riderScale:1.08,headLift:0.62,headForward:0.22,bodyShowLift:0.444};
+
 const ALL_SETS=[LT_SET,GEO_SET,DAV_SET,LIB_SET,BUN_SET,TOM_SET];
 const loadedTextures=[];
 ALL_SETS.forEach(s=>{loadedTextures.push({...s,front:texLoader.load(s.front),side:texLoader.load(s.side),side_r:texLoader.load(s.side_r),back:texLoader.load(s.back)});});
 
-function buildMascotHead(idx){const charData=loadedTextures[idx%loadedTextures.length];const g=new THREE.Group();const mat=new THREE.MeshBasicMaterial({transparent:true,alphaTest:0.5,side:THREE.DoubleSide});const hsf=charData.frontSize||10.5;const hss=charData.sideSize||10.5;const gF=new THREE.PlaneGeometry(hsf,hsf);const gS=new THREE.PlaneGeometry(hss,hsf);const plane=new THREE.Mesh(gF,mat);plane.position.z=1.3;g.add(plane);g.userData.multiAngle=charData;g.userData.headMat=mat;g.userData.headMesh=plane;g.userData.isHead=true;g.userData.sideGeo=gS;g.userData.frontGeo=gF;return g;}
+function buildMascotHead(idx){
+    const charData=loadedTextures[idx%loadedTextures.length];
+    const g=new THREE.Group();
+    const mat=new THREE.MeshBasicMaterial({transparent:true,alphaTest:0.5,side:THREE.DoubleSide});
+    const hsf=charData.frontSize||10.5;
+    const hss=charData.sideSize||10.5;
+    const gF=new THREE.PlaneGeometry(hsf,hsf);
+    const gS=new THREE.PlaneGeometry(hss,hsf);
+    const plane=new THREE.Mesh(gF,mat);
+    plane.position.z=1.3;
+    g.add(plane);
+    g.userData={multiAngle:charData,headMat:mat,headMesh:plane,isHead:true,sideGeo:gS,frontGeo:gF};
+    return g;
+}
 
 const _headWorldPos=new THREE.Vector3(),_camToHead=new THREE.Vector3(),_horseForward=new THREE.Vector3();
 const _parentWorldQuat=new THREE.Quaternion(),_targetQuat=new THREE.Quaternion(),_lookMatrix=new THREE.Matrix4(),_desiredHeadPos=new THREE.Vector3();
@@ -214,48 +207,85 @@ function updateHeadAngle(horseRoot,jockeyGroup,cam){
     _lookMatrix.lookAt(cam.position,_headWorldPos,THREE.Object3D.DefaultUp);_targetQuat.setFromRotationMatrix(_lookMatrix);
     headGroup.parent.updateWorldMatrix(true,false);headGroup.parent.getWorldQuaternion(_parentWorldQuat);_parentWorldQuat.invert();
     headGroup.quaternion.copy(_targetQuat.premultiply(_parentWorldQuat));
+    
     const texSet=headGroup.userData.multiAngle,mat=headGroup.userData.headMat,mesh=headGroup.userData.headMesh;
     const rotY=horseRoot.rotation.y;_horseForward.set(Math.cos(rotY),0,-Math.sin(rotY)).normalize();
     _camToHead.subVectors(cam.position,_headWorldPos);_camToHead.y=0;_camToHead.normalize();
+    
     const angle=Math.atan2(_horseForward.x*_camToHead.z-_horseForward.z*_camToHead.x,_horseForward.x*_camToHead.x+_horseForward.z*_camToHead.z);
     const deg=angle*180/Math.PI;
-    let zone='front';if(deg<=-135||deg>=135)zone='back';else if(deg>=45&&deg<135)zone=texSet.swapSideViews?'side_r':'side';else if(deg<=-45&&deg>-135)zone=texSet.swapSideViews?'side':'side_r';
-    const sideSign=deg>=0?1:-1;const headSpan=Math.max(texSet.frontSize||10.5,texSet.sideSize||10.5);const sizeBoost=Math.max(0,headSpan-10.5);
-    if(headGroup.userData.basePos){const base=headGroup.userData.basePos;const fl=(texSet.headForward||0)+(sizeBoost*0.12);const sl=(zone==='front'||zone==='back')?sideSign*0.04:sideSign*Math.min(0.12,0.05+sizeBoost*0.03);const lift=(texSet.bodyShowLift||0);_desiredHeadPos.set(base.x+fl,base.y+(sizeBoost*0.08)+lift,base.z+sl);headGroup.position.lerp(_desiredHeadPos,0.16);}
+    
+    let zone='front';
+    if(deg<=-135||deg>=135) zone='back';
+    else if(deg>=45&&deg<135) zone=texSet.swapSideViews?'side_r':'side';
+    else if(deg<=-45&&deg>-135) zone=texSet.swapSideViews?'side':'side_r';
+    
+    const sideSign=deg>=0?1:-1;
+    const headSpan=Math.max(texSet.frontSize||10.5,texSet.sideSize||10.5);
+    const sizeBoost=Math.max(0,headSpan-10.5);
+    
+    if(headGroup.userData.basePos){
+        const base=headGroup.userData.basePos;
+        const fl=(texSet.headForward||0)+(sizeBoost*0.12);
+        const sl=(zone==='front'||zone==='back')?sideSign*0.04:sideSign*Math.min(0.12,0.05+sizeBoost*0.03);
+        const lift=(texSet.bodyShowLift||0);
+        _desiredHeadPos.set(base.x+fl,base.y+(sizeBoost*0.08)+lift,base.z+sl);
+        headGroup.position.lerp(_desiredHeadPos,0.16);
+    }
+    
     const riderBody=jockeyGroup.userData.riderBody;
-    if(riderBody){const bp=(texSet.bodyPeek??0.68)+(sizeBoost*0.05);const rs=texSet.riderScale??1;const tz2=(zone==='front'||zone==='back')?sideSign*(bp*0.16):sideSign*(bp*0.34);const ty=(texSet.name==='liberty'?-0.02:0.08)+(texSet.riderDrop||0);const tx=(zone==='front'||zone==='back')?-0.2-(sizeBoost*0.03):-0.26-(sizeBoost*0.035);riderBody.position.x+=(tx-riderBody.position.x)*0.16;riderBody.position.z+=(tz2-riderBody.position.z)*0.18;riderBody.position.y+=(ty-riderBody.position.y)*0.18;riderBody.scale.x+=(rs-riderBody.scale.x)*0.16;riderBody.scale.y+=(rs-riderBody.scale.y)*0.16;riderBody.scale.z+=(rs-riderBody.scale.z)*0.16;
-    const parts=riderBody.userData.parts||{};const sv=(zone==='side'||zone==='side_r');const snl=sideSign>0;
-    if(parts.leftUpperArm)parts.leftUpperArm.visible=!sv||snl;if(parts.leftThigh)parts.leftThigh.visible=!sv||snl;if(parts.rightUpperArm)parts.rightUpperArm.visible=!sv||!snl;if(parts.rightThigh)parts.rightThigh.visible=!sv||!snl;
-    if(parts.chestSilk){const tz3=sv?sideSign*0.1:0;parts.chestSilk.position.z+=(tz3-parts.chestSilk.position.z)*0.2;}if(parts.hips){const hz=sv?sideSign*0.08:0;parts.hips.position.z+=(hz-parts.hips.position.z)*0.2;}}
-    if(texSet.name==='liberty'||texSet.name==='lt'){const tg=(zone==='front'||zone==='back')?headGroup.userData.frontGeo:headGroup.userData.sideGeo;if(mesh.geometry!==tg)mesh.geometry=tg;}
-    const newTex=texSet[zone];if(newTex&&mat.map!==newTex){mat.map=newTex;mat.needsUpdate=true;}
+    if(riderBody){
+        const bp=(texSet.bodyPeek??0.68)+(sizeBoost*0.05);
+        const rs=texSet.riderScale??1;
+        const tz2=(zone==='front'||zone==='back')?sideSign*(bp*0.16):sideSign*(bp*0.34);
+        const ty=(texSet.name==='liberty'?-0.02:0.08)+(texSet.riderDrop||0);
+        const tx=(zone==='front'||zone==='back')?-0.2-(sizeBoost*0.03):-0.26-(sizeBoost*0.035);
+        riderBody.position.x+=(tx-riderBody.position.x)*0.16;
+        riderBody.position.z+=(tz2-riderBody.position.z)*0.18;
+        riderBody.position.y+=(ty-riderBody.position.y)*0.18;
+        riderBody.scale.x+=(rs-riderBody.scale.x)*0.16;
+        riderBody.scale.y+=(rs-riderBody.scale.y)*0.16;
+        riderBody.scale.z+=(rs-riderBody.scale.z)*0.16;
+    }
+    
+    if(texSet.name==='liberty'||texSet.name==='lt'){
+        const tg=(zone==='front'||zone==='back')?headGroup.userData.frontGeo:headGroup.userData.sideGeo;
+        if(mesh.geometry!==tg) mesh.geometry=tg;
+    }
+    const newTex=texSet[zone];
+    if(newTex&&mat.map!==newTex){mat.map=newTex;mat.needsUpdate=true;}
 }
 
-// --- HORSE ---
+// --- HORSE & SOLID JOCKEY ---
 function createHorse(colorHex,number,mascotPoolIdx){
     const root=new THREE.Group(),body=new THREE.Group();root.add(body);
     const brown=toon({color:0x6B4226}),ltBr=toon({color:0x8B6B4A}),dkBr=toon({color:0x3a2212});
     const hoofM=toon({color:0x161616}),maneM=toon({color:0x57331c}),tailM=toon({color:0x1a0f00}),hoodC=toon({color:new THREE.Color(colorHex)});
+    
     const torso=new THREE.Mesh(new THREE.SphereGeometry(1,14,10),brown);torso.scale.set(7.25,2.2,2.1);torso.position.y=6.4;torso.castShadow=true;body.add(torso);
     const rump=new THREE.Mesh(new THREE.SphereGeometry(3,10,10),brown);rump.scale.set(0.98,0.9,0.96);rump.position.set(-5.0,6.95,0);body.add(rump);
     const chest=new THREE.Mesh(new THREE.SphereGeometry(2.6,10,10),brown);chest.scale.set(1.0,1.05,0.95);chest.position.set(4.95,6.95,0);body.add(chest);
+    
     const st=saddleTex(number.toString(),colorHex),sm=toon({map:st});
     const sR=new THREE.Mesh(new THREE.PlaneGeometry(5.5,4),sm);sR.position.set(-.5,7,2.7);body.add(sR);
     const sL=new THREE.Mesh(new THREE.PlaneGeometry(5.5,4),sm);sL.position.set(-.5,7,-2.7);sL.rotation.y=Math.PI;body.add(sL);
+    
     const neckCurve=new THREE.QuadraticBezierCurve3(new THREE.Vector3(5.2,7.2,0),new THREE.Vector3(7.45,11.1,0),new THREE.Vector3(10.35,14.15,0));
     const neck=new THREE.Mesh(new THREE.TubeGeometry(neckCurve,14,1.32,8,false),brown);neck.castShadow=true;body.add(neck);
+    
     const skull=new THREE.Mesh(new THREE.SphereGeometry(1,12,10),brown);skull.scale.set(3.05,1.35,1.36);skull.position.set(11.55,14.2,0);body.add(skull);
     const muzzle=new THREE.Mesh(new THREE.SphereGeometry(1,10,8),ltBr);muzzle.scale.set(1.9,0.95,1.02);muzzle.position.set(14.15,13.25,0);body.add(muzzle);
     const nm=new THREE.MeshBasicMaterial({color:0x333333});
     for(let s of[-1,1]){const n=new THREE.Mesh(new THREE.SphereGeometry(.3,6,6),nm);n.position.set(15,13.3,s*.6);body.add(n);}
+    
     const hoodMesh=new THREE.Mesh(new THREE.SphereGeometry(1,12,10),hoodC);hoodMesh.scale.set(3.28,1.45,1.52);hoodMesh.position.set(11.55,14.2,0);body.add(hoodMesh);
     const ehm=new THREE.MeshBasicMaterial({color:0x111111});
     for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.CircleGeometry(.65,8),ehm);e.position.set(12.5,14.5,s*1.66);if(s<0)e.rotation.y=Math.PI;body.add(e);}
     for(let s of[-1,1]){const e=new THREE.Mesh(new THREE.ConeGeometry(.48,2.35,6),hoodC);e.position.set(10.35,16.15,s*.82);e.rotation.z=.1;body.add(e);}
+    
     const maneStrip=new THREE.Mesh(new THREE.BoxGeometry(4.8,.38,.46),maneM);maneStrip.position.set(8.25,12.15,0);maneStrip.rotation.z=.93;body.add(maneStrip);
     const tailG=new THREE.Group();const tail1=new THREE.Mesh(new THREE.SphereGeometry(.4,6,6),tailM);tail1.scale.set(1,2.5,1);tail1.position.y=-1.2;tailG.add(tail1);const tail2=new THREE.Mesh(new THREE.SphereGeometry(.35,6,6),tailM);tail2.scale.set(1,2,1);tail2.position.set(-.4,-2.5,0);tailG.add(tail2);tailG.position.set(-7.5,8.5,0);tailG.rotation.z=.6;body.add(tailG);
     
-    // Legs
     const legs=[];
     const thighGeo=new THREE.CylinderGeometry(.38,.50,4.2,8);thighGeo.translate(0,-2.1,0);
     const shinGeo=new THREE.CylinderGeometry(.28,.40,5.2,8);shinGeo.translate(0,-2.6,0);
@@ -269,68 +299,26 @@ function createHorse(colorHex,number,mascotPoolIdx){
         legs.push({thigh,shin,isFront,baseShinX});
     });
 
-    // Jockey Body
+    // SOLID JOCKEY MODEL
     const jG=new THREE.Group();jG.position.set(1.0,8.25,0);body.add(jG);
     const riderBody=new THREE.Group();riderBody.position.set(0,0,0);riderBody.rotation.z=-0.08;riderBody.scale.setScalar(0.96);jG.add(riderBody);
     jG.userData.riderBody=riderBody;
+    const jm=toon({color:new THREE.Color(colorHex)});
+    const white=toon({color:0xffffff});
 
-    const shirt=toon({color:new THREE.Color(colorHex)});
-    const trim=toon({color:0xf0f4ff});
-    const pants=toon({color:0x79d9ef});
-    const pantsDark=toon({color:0x63c7dd});
-    const gloves=toon({color:0xf0c51a});
-    const bootsMat=toon({color:0x2a2a2a});
-    const skin=toon({color:0xd8a07a});
-
-    const chestSilk=new THREE.Mesh(new THREE.BoxGeometry(2.0,3.15,1.35),shirt);
-    chestSilk.position.set(0.1,2.45,0); chestSilk.rotation.z=-0.12; riderBody.add(chestSilk);
-    const upperSilk=new THREE.Mesh(new THREE.BoxGeometry(1.04,2.8,0.74),shirt);
-    upperSilk.position.set(0.22,4.72,-0.14); upperSilk.rotation.z=-0.06; riderBody.add(upperSilk);
-    const upperStripe=new THREE.Mesh(new THREE.BoxGeometry(0.16,2.55,0.54),gloves);
-    upperStripe.position.set(0.0,0.0,0.02); upperSilk.add(upperStripe);
-    const chestTrim=new THREE.Mesh(new THREE.BoxGeometry(0.22,3.0,1.42),trim);
-    chestTrim.position.set(0.32,0.0,0.02); chestSilk.add(chestTrim);
-
-    const leftShoulder=new THREE.Mesh(new THREE.SphereGeometry(0.36,8,8),shirt);
-    leftShoulder.scale.set(1.2,0.9,1.0); leftShoulder.position.set(0.78,1.2,0.55); chestSilk.add(leftShoulder);
-    const rightShoulder=new THREE.Mesh(new THREE.SphereGeometry(0.36,8,8),shirt);
-    rightShoulder.scale.set(1.2,0.9,1.0); rightShoulder.position.set(0.78,1.2,-0.55); chestSilk.add(rightShoulder);
-
-    const hips=new THREE.Mesh(new THREE.BoxGeometry(1.9,1.75,1.3),pants);
-    hips.position.set(-0.35,0.7,0); hips.rotation.z=0.08; riderBody.add(hips);
-
-    const riderArmGeo=new THREE.BoxGeometry(0.62,2.05,0.62);
-    const riderForeGeo=new THREE.BoxGeometry(0.56,1.7,0.56);
-    const riderThighGeo=new THREE.BoxGeometry(0.78,2.15,0.82);
-    const riderCalfGeo=new THREE.BoxGeometry(0.68,1.9,0.72);
-
-    const leftUpperArm=new THREE.Group(); leftUpperArm.position.set(1.08,3.0,0.72); leftUpperArm.rotation.z=-0.95; riderBody.add(leftUpperArm);
-    const leftUpperArmMesh=new THREE.Mesh(riderArmGeo,shirt); leftUpperArmMesh.position.set(0,-1.0,0); leftUpperArm.add(leftUpperArmMesh);
-    const leftForeArm=new THREE.Mesh(riderForeGeo,gloves); leftForeArm.position.set(0.55,-1.65,0); leftForeArm.rotation.z=-0.48; leftUpperArm.add(leftForeArm);
-    const leftHand=new THREE.Mesh(new THREE.SphereGeometry(0.38,8,8),gloves); leftHand.scale.set(1.35,0.9,0.95); leftHand.position.set(0.72,-0.78,0); leftForeArm.add(leftHand);
-
-    const rightUpperArm=new THREE.Group(); rightUpperArm.position.set(1.08,3.0,-0.72); rightUpperArm.rotation.z=-0.95; riderBody.add(rightUpperArm);
-    const rightUpperArmMesh=new THREE.Mesh(riderArmGeo,shirt); rightUpperArmMesh.position.set(0,-1.0,0); rightUpperArm.add(rightUpperArmMesh);
-    const rightForeArm=new THREE.Mesh(riderForeGeo,gloves); rightForeArm.position.set(0.55,-1.65,0); rightForeArm.rotation.z=-0.48; rightUpperArm.add(rightForeArm);
-    const rightHand=new THREE.Mesh(new THREE.SphereGeometry(0.38,8,8),gloves); rightHand.scale.set(1.35,0.9,0.95); rightHand.position.set(0.72,-0.78,0); rightForeArm.add(rightHand);
-
-    const leftThigh=new THREE.Group(); leftThigh.position.set(-0.9,1.0,0.72); leftThigh.rotation.z=1.18; leftThigh.rotation.x=-0.18; riderBody.add(leftThigh);
-    const leftThighMesh=new THREE.Mesh(riderThighGeo,pants); leftThighMesh.position.set(0,-0.95,0); leftThigh.add(leftThighMesh);
-    const leftCalf=new THREE.Mesh(riderCalfGeo,pantsDark); leftCalf.position.set(0.18,-1.72,0); leftCalf.rotation.z=-0.52; leftThigh.add(leftCalf);
-    const leftStripe=new THREE.Mesh(new THREE.BoxGeometry(0.12,1.9,0.78),trim); leftStripe.position.set(0.14,0.0,0.02); leftCalf.add(leftStripe);
-    const leftBoot=new THREE.Mesh(new THREE.BoxGeometry(1.08,0.52,0.78),bootsMat); leftBoot.position.set(0.45,-1.08,0.05); leftBoot.rotation.z=0.08; leftCalf.add(leftBoot);
-
-    const rightThigh=new THREE.Group(); rightThigh.position.set(-0.9,1.0,-0.72); rightThigh.rotation.z=1.18; rightThigh.rotation.x=0.18; riderBody.add(rightThigh);
-    const rightThighMesh=new THREE.Mesh(riderThighGeo,pants); rightThighMesh.position.set(0,-0.95,0); rightThigh.add(rightThighMesh);
-    const rightCalf=new THREE.Mesh(riderCalfGeo,pantsDark); rightCalf.position.set(0.18,-1.72,0); rightCalf.rotation.z=-0.52; rightThigh.add(rightCalf);
-    const rightStripe=new THREE.Mesh(new THREE.BoxGeometry(0.12,1.9,0.78),trim); rightStripe.position.set(0.14,0.0,0.02); rightCalf.add(rightStripe);
-    const rightBoot=new THREE.Mesh(new THREE.BoxGeometry(1.08,0.52,0.78),bootsMat); rightBoot.position.set(0.45,-1.08,0.05); rightBoot.rotation.z=0.08; rightCalf.add(rightBoot);
-
-    const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.28,0.34,0.55,6),skin);
-    jNeck.position.set(0.18,4.0,0); jNeck.rotation.z=-0.1; riderBody.add(jNeck);
-    riderBody.userData.parts={chestSilk,hips,leftUpperArm,rightUpperArm,leftThigh,rightThigh};
+    const jTorso=new THREE.Mesh(new THREE.SphereGeometry(1.4, 8, 8), jm); 
+    jTorso.scale.set(1.5, 1, 1.2); jTorso.position.set(-0.8, 1.5, 0); riderBody.add(jTorso);
     
-    // Head
+    const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.5, 1, 3, 6), jm);
+    jNeck.position.set(0.5, 3.8, 0); jNeck.rotation.z = -0.6; riderBody.add(jNeck);
+
+    for(let s of[-1,1]){
+        const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.25, 4, 6), jm);
+        arm.position.set(1.2, 1.2, s*1.0); arm.rotation.z = -1.3; riderBody.add(arm);
+        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.35, 2.5, 6), white); 
+        leg.position.set(-1.2, -0.2, s*1.1); leg.rotation.z=0.4; riderBody.add(leg);
+    }
+
     const mHead=buildMascotHead(mascotPoolIdx);
     const headMeta=mHead.userData.multiAngle||{};const headOffset=headMeta.headOffset||{x:0,y:0,z:0};
     mHead.position.set(1.05+(headOffset.x||0),4.68+(headOffset.y||0)+(headMeta.headLift||0),(headOffset.z||0));
@@ -340,7 +328,6 @@ function createHorse(colorHex,number,mascotPoolIdx){
     return{root,body,tailG,legs,jG};
 }
 
-// --- GALLOP KEYFRAMES (12 frames matching real thoroughbred gallop cycle) ---
 const FRONT_GALLOP_KF=[
   {th:0.45,sh:-0.41,x:-0.30,y:-0.10},{th:0.59,sh:-0.71,x:-0.22,y:-0.10},{th:0.69,sh:-0.01,x:-0.24,y:-0.04},
   {th:-0.31,sh:-0.60,x:-0.19,y:0.16},{th:-0.42,sh:-0.79,x:-0.11,y:0.00},{th:-0.28,sh:-0.29,x:-0.13,y:0.00},
@@ -357,29 +344,33 @@ function sampleGallop(cycle,t){const n=cycle.length;const ft=((t%n)+n)%n;const i
 
 // --- UI ---
 document.getElementById('player-horse-name').innerText=`#${playerHorse.number} ${playerHorse.name}`;
-bootstrapNamePool();
-document.getElementById('solo-btn').addEventListener('click',()=>{isMultiplayer=false;latestGameData={players:[{id:myPlayerId,name:playerHorse.name,number:playerHorse.number,color:colorForHumanSlot(0),taps:null}]};currentRaceSeed=Math.floor(Math.random()*2147483647);showTappingPhase(true);});
+
+document.getElementById('solo-btn').addEventListener('click',()=>{
+    isMultiplayer=false; document.getElementById('lobby').classList.add('hidden');
+    document.getElementById('tapping-phase').classList.remove('hidden'); startTapping();
+});
+
 document.getElementById('create-btn').addEventListener('click',async()=>{
     isMultiplayer=true;isHost=true;myPlayerSlot=0;
     const seed=Math.floor(Math.random()*2147483647);
-    const doc=await db.collection('shmerbyGames').add({hostId:myPlayerId,seed,status:'waiting',players:[{id:myPlayerId,name:playerHorse.name,number:playerHorse.number,color:playerHorse.color,taps:null}],created:firebase.firestore.FieldValue.serverTimestamp()});currentRaceSeed=seed;
+    const doc=await db.collection('shmerbyGames').add({hostId:myPlayerId,seed,status:'waiting',players:[{id:myPlayerId,name:playerHorse.name,number:playerHorse.number,color:playerHorse.color,taps:null}],created:firebase.firestore.FieldValue.serverTimestamp()});
     gameDocRef=doc;document.getElementById('game-url').value=location.origin+location.pathname+'?gameId='+doc.id;
     document.getElementById('share-area').classList.remove('hidden');document.getElementById('create-btn').classList.add('hidden');document.getElementById('solo-btn').classList.add('hidden');document.getElementById('start-race-btn').classList.remove('hidden');
-    unsubGame=gameDocRef.onSnapshot(snap=>{const d=snap.data();if(!d)return;latestGameData=d;currentRaceSeed=d.seed||currentRaceSeed;const count=(d.players||[]).length;document.getElementById('waiting-msg').textContent=`PLAYERS: ${count}/6 - SHARE LINK`;
+    unsubGame=gameDocRef.onSnapshot(snap=>{const d=snap.data();if(!d)return;const count=(d.players||[]).length;document.getElementById('waiting-msg').textContent=`PLAYERS: ${count}/6 - SHARE LINK`;
     if(d.status==='tapping'&&!tappingDone){showTappingPhase(true);}
     if(d.status==='racing'&&d.players&&d.players.every(p=>p.taps!==null)){document.getElementById('tap-prep').classList.add('hidden');document.getElementById('tap-status').classList.add('hidden');document.getElementById('tapping-phase').classList.add('hidden');startRaceFromData(d);}});
 });
+
 document.getElementById('copy-btn').addEventListener('click',()=>{const inp=document.getElementById('game-url');inp.select();document.execCommand('copy');document.getElementById('copy-btn').textContent='COPIED!';setTimeout(()=>document.getElementById('copy-btn').textContent='COPY LINK',2000);});
 const srb=document.getElementById('start-race-btn');if(srb)srb.addEventListener('click',async()=>await gameDocRef.update({status:'tapping'}));
 document.getElementById('ready-btn').addEventListener('click',async()=>await gameDocRef.update({status:'tapping'}));
 const urlParams=new URLSearchParams(location.search);const joinId=urlParams.get('gameId');
 if(joinId){isMultiplayer=true;isHost=false;document.getElementById('create-btn').classList.add('hidden');document.getElementById('solo-btn').classList.add('hidden');
 gameDocRef=db.collection('shmerbyGames').doc(joinId);
-gameDocRef.get().then(async snap=>{const d=snap.data();latestGameData=d;currentRaceSeed=d&&d.seed?d.seed:currentRaceSeed;
+gameDocRef.get().then(async snap=>{const d=snap.data();
 if(d&&d.status==='waiting'){const players=d.players||[];if(!players.some(p=>p.id===myPlayerId)&&players.length<6){myPlayerSlot=players.length;players.push({id:myPlayerId,name:playerHorse.name,number:playerHorse.number,color:playerHorse.color,taps:null});await gameDocRef.update({players});}else{myPlayerSlot=players.findIndex(p=>p.id===myPlayerId);}document.getElementById('join-msg').classList.remove('hidden');document.getElementById('join-msg').querySelector('p').textContent='Waiting for host to start race...';document.getElementById('ready-btn').classList.add('hidden');}
-unsubGame=gameDocRef.onSnapshot(snap2=>{const d2=snap2.data();if(!d2)return;latestGameData=d2;currentRaceSeed=d2.seed||currentRaceSeed;if(d2.status==='tapping'&&!tappingDone){showTappingPhase(true);}if(d2.status==='racing'&&d2.players&&d2.players.every(p=>p.taps!==null)){document.getElementById('tap-prep').classList.add('hidden');document.getElementById('tap-status').classList.add('hidden');document.getElementById('tapping-phase').classList.add('hidden');startRaceFromData(d2);}});});}
+unsubGame=gameDocRef.onSnapshot(snap2=>{const d2=snap2.data();if(!d2)return;if(d2.status==='tapping'&&!tappingDone){showTappingPhase(true);}if(d2.status==='racing'&&d2.players&&d2.players.every(p=>p.taps!==null)){document.getElementById('tap-prep').classList.add('hidden');document.getElementById('tap-status').classList.add('hidden');document.getElementById('tapping-phase').classList.add('hidden');startRaceFromData(d2);}});});}
 
-// --- TAPPING ---
 function setTapZoneEnabled(e){const z=document.getElementById('tap-zone');z.classList.toggle('disabled',!e);z.style.pointerEvents=e?'auto':'none';}
 function showTappingPhase(manualStart=false){document.getElementById('lobby').classList.add('hidden');document.getElementById('main-title').classList.add('hidden');document.getElementById('tapping-phase').classList.remove('hidden');const prep=document.getElementById('tap-prep');const status=document.getElementById('tap-status');if(!tappingDone)document.getElementById('timer-display').innerText=tapCountdownStarted?'10.0':'READY';document.getElementById('tap-zone').innerHTML='TAP HERE!<br><br>Speed, not force.<br>Your count is hidden!';if(manualStart&&!tapCountdownStarted&&!tappingDone){prep.classList.remove('hidden');status.classList.add('hidden');setTapZoneEnabled(false);}else if(!tappingDone){prep.classList.add('hidden');status.classList.add('hidden');setTapZoneEnabled(true);}}
 function startTapping(){if(tapping||tappingDone)return;tapping=true;tapCountdownStarted=true;playerHorse.taps=0;document.getElementById('tap-prep').classList.add('hidden');document.getElementById('tap-status').classList.add('hidden');setTapZoneEnabled(true);document.getElementById('timer-display').innerText='10.0';if(tapInterval)clearInterval(tapInterval);const st=Date.now();tapInterval=setInterval(()=>{let r=(10-(Date.now()-st)/1000).toFixed(1);if(r<=0){r='0.0';clearInterval(tapInterval);tapInterval=null;endTapping();}document.getElementById('timer-display').innerText=r;},100);}
@@ -390,82 +381,64 @@ async function endTapping(){tapping=false;tappingDone=true;setTapZoneEnabled(fal
 
 // --- RACE ---
 function startRaceFromData(d){
-    if(raceStarted)return;raceStarted=true;currentRaceSeed=d.seed;const rng=mulberry32(d.seed);
-    const humans=(d.players||[]).map((p,idx)=>({...p,color:colorForHumanSlot(idx)}));
+    if(raceStarted)return;raceStarted=true;const rng=mulberry32(d.seed);const humans=d.players||[];
     humans.forEach(p=>{gameHorses.push({name:p.name,taps:p.taps,isPlayer:p.id===myPlayerId,color:p.color,number:p.number,isHuman:true,style:Math.floor(rng()*3)});});
-    const botsNeeded=6-humans.length;
-    for(let i=0;i<botsNeeded;i++){
-        let n;do{n=Math.floor(rng()*20)+1;}while(gameHorses.some(h=>h.number===n));
-        gameHorses.push({name:genNameRng(rng),taps:Math.floor(rng()*45)+20,isPlayer:false,color:botColors[i%botColors.length],number:n,style:Math.floor(rng()*3),isHuman:false});
-    }
+    const usedNums=new Set(humans.map(p=>p.number));const botsNeeded=6-humans.length;
+    for(let i=0;i<botsNeeded;i++){let n;do{n=Math.floor(rng()*20)+1;}while(usedNums.has(n));usedNums.add(n);gameHorses.push({name:genName(),taps:Math.floor(rng()*45)+20,isPlayer:false,color:botColors[i%botColors.length],number:n,style:Math.floor(rng()*3),isHuman:false});}
     buildAndStartRace(rng);
 }
 
 function startSoloRace(){
-    if(raceStarted)return;raceStarted=true;const seed=ensureRaceSeed();const rng=mulberry32(seed);
-    gameHorses.push(playerHorse);
-    for(let i=0;i<5;i++){
-        let n;do{n=Math.floor(rng()*20)+1;}while(gameHorses.some(h=>h.number===n));
-        gameHorses.push({name:genNameRng(rng),taps:Math.floor(rng()*45)+20,isPlayer:false,color:botColors[i%botColors.length],number:n,style:Math.floor(rng()*3),isHuman:false});
-    }
+    if(raceStarted)return;raceStarted=true;const rng=mulberry32(Date.now());gameHorses.push(playerHorse);
+    for(let i=0;i<5;i++){let n;do{n=Math.floor(rng()*20)+1;}while(gameHorses.some(h=>h.number===n));gameHorses.push({name:genName(),taps:Math.floor(rng()*45)+20,isPlayer:false,color:botColors[i],number:n,style:Math.floor(rng()*3),isHuman:false});}
     buildAndStartRace(rng);
+}
+
+function buildStartingGates(){
+    const frameMat=toon({color:0xeeeeee});const barMat=toon({color:0xbbbbbb});const padMat = toon({color: 0xddaa22}); 
+    const truss = new THREE.Mesh(new THREE.BoxGeometry(8, 4, DIRT_W + 10), toon({color: 0x888888}));
+    truss.position.set(0, 21, -(BASE_R + DIRT_W/2));
+    scene.add(truss);
+    
+    for(let i=0;i<6;i++){
+        const stall=new THREE.Group();const laneOff=5+i*8;const r=BASE_R+laneOff;const a=START_ANGLE-0.05;
+        const x=Math.cos(a)*r*TRACK_SX,z=Math.sin(a)*r;const dx=-Math.sin(a)*r*TRACK_SX,dz=Math.cos(a)*r;
+        stall.position.set(x,0,z);stall.rotation.y=Math.atan2(-dz,dx);
+        const w=14,d=8,h=16;
+        
+        // Side dividers
+        const divL=new THREE.Mesh(new THREE.BoxGeometry(10, 19, 1.2), toon({color: 0x1a4f1a})); divL.position.set(-1, 9.5, -d/2); stall.add(divL);
+        const p1 = new THREE.Mesh(new THREE.BoxGeometry(8, 3, 0.4), padMat); p1.position.set(-1, 13, -d/2+0.6); stall.add(p1);
+        
+        if (i===5) { // Rightmost wall for the last stall
+            const divR=new THREE.Mesh(new THREE.BoxGeometry(10, 19, 1.2), toon({color: 0x1a4f1a})); divR.position.set(-1, 9.5, d/2); stall.add(divR);
+            const p2 = new THREE.Mesh(new THREE.BoxGeometry(8, 3, 0.4), padMat); p2.position.set(-1, 13, d/2-0.6); stall.add(p2);
+        }
+
+        const frontGate=new THREE.Group();frontGate.position.set(-w/2,0,-d/2);
+        for(let by=2;by<h-1;by+=2.4){const fb=new THREE.Mesh(new THREE.BoxGeometry(w,0.3,0.3),barMat);fb.position.set(w/2,by,0);frontGate.add(fb);}
+        stall.add(frontGate);
+        
+        const numCanvas=document.createElement('canvas');numCanvas.width=128;numCanvas.height=128;const nctx=numCanvas.getContext('2d');nctx.fillStyle='#fff';nctx.fillRect(0,0,128,128);nctx.strokeStyle='#000';nctx.lineWidth=4;nctx.strokeRect(2,2,124,124);nctx.fillStyle='#000';nctx.font='bold 88px "Press Start 2P",monospace';nctx.textAlign='center';nctx.textBaseline='middle';nctx.fillText(String(i+1),64,72);
+        const numTex=new THREE.CanvasTexture(numCanvas);const numPlate=new THREE.Mesh(new THREE.PlaneGeometry(3.2,3.2),new THREE.MeshBasicMaterial({map:numTex,side:THREE.DoubleSide}));numPlate.position.set(0,h+1.8,-d/2-0.2);stall.add(numPlate);
+        
+        stall.userData.frontGate=frontGate;startGates.push(stall);scene.add(stall);
+    }
 }
 
 function buildAndStartRace(rng){
     document.getElementById('main-title').classList.add('hidden');
     document.getElementById('race-phase').classList.remove('hidden');
+    raceStartTime=Date.now();gatesOpen=false;gateOpenTime=Date.now()+3500;startGates=[];
+    buildStartingGates();
+    showRaceStatus("HORSES IN THE GATE...",2800);
     
-    // Starting Gate Logic
-    if(gateGroup) scene.remove(gateGroup);
-    gateGroup = new THREE.Group();
-    const gateMat = toon({color: 0x1a4f1a}); 
-    const metalMat = toon({color: 0x888888});
-    const padMat = toon({color: 0xddaa22}); 
-    const truss = new THREE.Mesh(new THREE.BoxGeometry(8, 4, DIRT_W + 10), metalMat);
-    truss.position.set(0, 21, -(BASE_R + DIRT_W/2));
-    gateGroup.add(truss);
-    
-    gateDoors = [];
-    for(let i=0; i<=6; i++) {
-        const divZ = -(BASE_R + 1 + i * 8);
-        const div = new THREE.Mesh(new THREE.BoxGeometry(10, 19, 1.2), gateMat);
-        div.position.set(-1, 9.5, divZ);
-        gateGroup.add(div);
-        if(i < 6) {
-            const p1 = new THREE.Mesh(new THREE.BoxGeometry(8, 3, 0.4), padMat);
-            p1.position.set(-1, 13, divZ - 3.8);
-            gateGroup.add(p1);
-        }
-        if(i > 0) {
-            const p2 = new THREE.Mesh(new THREE.BoxGeometry(8, 3, 0.4), padMat);
-            p2.position.set(-1, 13, divZ + 3.8);
-            gateGroup.add(p2);
-        }
-    }
-    for(let i=0; i<6; i++) {
-        const centerZ = -(BASE_R + 5 + i * 8);
-        const hingeL = new THREE.Group(); hingeL.position.set(4, 9.5, centerZ - 3.8);
-        const hingeR = new THREE.Group(); hingeR.position.set(4, 9.5, centerZ + 3.8);
-        const dL = new THREE.Mesh(new THREE.BoxGeometry(0.5, 14, 3.8), metalMat);
-        dL.position.set(0, 0, 1.9); hingeL.add(dL);
-        const dR = new THREE.Mesh(new THREE.BoxGeometry(0.5, 14, 3.8), metalMat);
-        dR.position.set(0, 0, -1.9); hingeR.add(dR);
-        gateGroup.add(hingeL, hingeR);
-        gateDoors.push({l: hingeL, r: hingeR});
-    }
-    scene.add(gateGroup);
-    
-    gateTimer = 3.5;
-    gateOpened = false;
-    showRaceStatus("LOADING THE GATE...", 0); // Stays on screen until cleared
-
     for(let i=gameHorses.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[gameHorses[i],gameHorses[j]]=[gameHorses[j],gameHorses[i]];}
-    const mascotPool = [0,1,2,3,4,5];
-    for(let i=mascotPool.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[mascotPool[i],mascotPool[j]]=[mascotPool[j],mascotPool[i]];}
+    const mascotPool=[0,1,2,3,4,5];for(let i=mascotPool.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[mascotPool[i],mascotPool[j]]=[mascotPool[j],mascotPool[i]];}
 
     const tapVals=gameHorses.map(h=>Number.isFinite(h.taps)?h.taps:0);const minTap=Math.min(...tapVals),maxTap=Math.max(...tapVals),tapRange=Math.max(1,maxTap-minTap);
     gameHorses.forEach((h,i)=>{
-        h.angle=START_ANGLE; // Start perfectly aligned in gate
+        h.angle=START_ANGLE-0.05; // Lock to gate start
         h.tapNorm=((Number.isFinite(h.taps)?h.taps:0)-minTap)/tapRange;
         h.baseSpeed=0.0478+(h.tapNorm*0.0048)+((rng()-0.5)*0.0007);
         h.earlyMod=h.style===0?1.04:h.style===1?0.995:0.965;
@@ -475,7 +448,7 @@ function buildAndStartRace(rng){
         scene.add(model.root);h.model=model;
     });
     
-    // Position camera dynamically for the gate shot
+    // Gate Camera View
     camera.position.set(45, 18, -(BASE_R + DIRT_W/2 + 15));
     camTarget.set(0, 10, -(BASE_R + DIRT_W/2));
     
@@ -485,11 +458,27 @@ function buildAndStartRace(rng){
 function updateLB(){
     const sorted=[...gameHorses].sort((a,b)=>{if(a.finished&&!b.finished)return-1;if(!a.finished&&b.finished)return 1;return b.angle-a.angle;});
     const list=document.getElementById('standings-list');list.innerHTML='';
-    sorted.forEach((h,i)=>{list.innerHTML+=`<div class="lb-row${h.isPlayer?' you':''}"><span class="lb-num">${h.number}</span><div class="lb-color" style="background:${h.color}"></div><span class="lb-name">${h.name}</span></div>`;});
+    sorted.forEach((h,i)=>{
+        const youTag=h.isPlayer?'<span class="you-tag">YOU</span>':'';
+        list.innerHTML+=`<div class="lb-row${h.isPlayer?' you':''}"><span class="lb-num">${h.number}</span><div class="lb-color" style="background:${h.color}"></div><span class="lb-name">${h.name}${youTag}</span></div>`;
+    });
 }
 
-function showNotif(t){const e=document.createElement('div');e.className='finish-notif';e.innerText=t;document.getElementById('notifications-container').appendChild(e);setTimeout(()=>{e.style.opacity=0;setTimeout(()=>e.remove(),500);},3000);}
-function showRaceStatus(msg,dur=3000){const el=document.getElementById('race-status');el.textContent=msg;el.style.display='block';clearTimeout(window._raceStatusTO);if(dur>0){window._raceStatusTO=setTimeout(()=>{el.style.display='none';},dur);}}
+function showNotif(t){
+    const e=document.createElement('div');e.className='finish-notif';e.innerText=t;
+    document.getElementById('notifications-container').appendChild(e);
+    setTimeout(()=>{e.style.opacity=0;setTimeout(()=>e.remove(),500);},3000);
+}
+
+function showRaceStatus(msg,dur=3000){
+    const el=document.getElementById('race-status');
+    el.textContent=msg;
+    el.style.display='block';
+    clearTimeout(window._raceStatusTO);
+    if(dur>0){
+        window._raceStatusTO=setTimeout(()=>{el.style.display='none';},dur);
+    }
+}
 
 const clock=new THREE.Clock();
 function animate(){
@@ -497,70 +486,52 @@ function animate(){
     const dt=Math.min(clock.getDelta(),0.05);
     const time=clock.elapsedTime,gSpeed=25;
     
-    if (gateTimer > 0) {
-        gateTimer -= dt;
-        document.getElementById('race-status').textContent = `RACE STARTS IN ${Math.ceil(gateTimer)}...`;
-    } else if (!gateOpened) {
-        gateOpened = true;
-        raceStartTime = Date.now();
-        showRaceStatus("AND THEY'RE OFF!", 3000);
+    if(!raceFinished){
+        if(!gatesOpen){
+            const r=Math.max(0,(gateOpenTime-Date.now())/1000);
+            document.getElementById('race-timer').innerText=`GATE ${r.toFixed(1)}`;
+        } else {
+            const el=((Date.now()-raceStartTime)/1000);
+            document.getElementById('race-timer').innerText=`${Math.floor(el/60)}:${(el%60).toFixed(1).padStart(4,'0')}`;
+        }
     }
     
-    if (gateOpened) {
-        gateDoors.forEach(d => {
-            d.l.rotation.y = Math.min(d.l.rotation.y + dt * 10, Math.PI/1.5);
-            d.r.rotation.y = Math.max(d.r.rotation.y - dt * 10, -Math.PI/1.5);
-        });
-        const el=((Date.now()-raceStartTime)/1000);
-        if(!raceFinished) document.getElementById('race-timer').innerText=`${Math.floor(el/60)}:${(el%60).toFixed(1).padStart(4,'0')}`;
-    } else {
-        document.getElementById('race-timer').innerText = "0:00.0";
-    }
-
     let leader=null,leaderAngle=-999,maxA=-999;
     gameHorses.forEach(h=>{if(h.angle>maxA)maxA=h.angle;});
     const progress=(maxA-START_ANGLE)/(FINISH_ANGLE-START_ANGLE);
-    if(progress>.78&&!stretchCalled){stretchCalled=true;camMode='stretch';const sc=document.getElementById('stretch-call');sc.innerHTML="AND DOWN THE<br>STRETCH THEY COME!";sc.classList.add('show');setTimeout(()=>sc.classList.remove('show'),3500);}
+    if(progress>.78&&!stretchCalled){
+        stretchCalled=true;camMode='stretch';
+        const sc=document.getElementById('stretch-call');sc.innerHTML="AND DOWN THE<br>STRETCH THEY COME!";sc.classList.add('show');
+        setTimeout(()=>sc.classList.remove('show'),3500);
+    }
+    document.getElementById('furlong-fill').style.width=Math.min(100,progress*100)+'%';
+
+    if(!gatesOpen){
+        const remaining=Math.max(0,gateOpenTime-Date.now());
+        if(remaining===0){
+            gatesOpen=true;
+            raceStartTime=Date.now();
+            showRaceStatus("AND THEY'RE OFF!",2500);
+        }
+    }
+    
+    if(gatesOpen){
+        startGates.forEach(stall=>{
+            const fg=stall.userData.frontGate;
+            if(fg.rotation.y > -Math.PI/1.5) fg.rotation.y -= dt*4.0;
+        });
+    }
     
     gameHorses.forEach((h,i)=>{
-        if (!h.model) return;
+        if(!h.model) return;
         
-        if (gateOpened) {
-            const raceMod=progress<.5?h.earlyMod:h.lateMod;
-            h.energy+=(Math.random()-.5)*.0015;h.energy=Math.max(.96,Math.min(1.04,h.energy));
-            h.angle+=Math.max((h.baseSpeed*raceMod*h.energy+((Math.random()-.5)*0.0009))*dt,0.018*dt);
+        if(!gatesOpen){
+            // Idle bobbing in gate
+            const r=BASE_R+h.laneOffset;
+            const x=Math.cos(h.angle)*r*TRACK_SX,z=Math.sin(h.angle)*r;
+            const dx=-Math.sin(h.angle)*r*TRACK_SX,dz=Math.cos(h.angle)*r;
+            h.model.root.position.set(x,0,z);h.model.root.rotation.y=Math.atan2(-dz,dx);
             
-            const rank=gameHorses.filter(o=>o.angle>h.angle).length;
-            h.targetLane=Math.max(5,Math.min(5+rank*5.5+Math.sin(time*.5+i)*2,DIRT_W-8));
-            gameHorses.forEach((other,j)=>{
-                if(i===j || !other.model)return;
-                const ad=Math.abs(h.angle-other.angle),ld=Math.abs(h.laneOffset-other.laneOffset);
-                if(ad<0.045&&ld<6.5){
-                    const push=(6.5-ld)*0.1;
-                    if(h.laneOffset>other.laneOffset)h.laneOffset+=push;else h.laneOffset-=push;
-                }
-            });
-            h.laneOffset+=(h.targetLane-h.laneOffset)*.025;
-        }
-
-        const r=BASE_R+h.laneOffset;const x=Math.cos(h.angle)*r*TRACK_SX,z=Math.sin(h.angle)*r;
-        const dx=-Math.sin(h.angle)*r*TRACK_SX,dz=Math.cos(h.angle)*r;
-        h.model.root.position.set(x,0,z);h.model.root.rotation.y=Math.atan2(-dz,dx);
-        
-        if (gateOpened) {
-            const c=time*gSpeed+i*1.7;
-            const bound=Math.max(0,Math.sin(c))*1.6;
-            h.model.body.position.y=bound;
-            h.model.body.rotation.z=Math.sin(c)*.05;
-            h.model.body.rotation.x=-0.03+Math.cos(c)*.02;
-            h.model.legs.forEach((leg)=>{
-                const tNorm=(c/(Math.PI*2))*12;
-                const pose=sampleGallop(leg.isFront?FRONT_GALLOP_KF:HIND_GALLOP_KF,tNorm);
-                leg.thigh.rotation.z=pose.th; leg.shin.rotation.z=pose.sh;
-                leg.shin.position.x=leg.baseShinX+pose.x; leg.shin.position.y=-3.9+pose.y;
-            });
-            h.model.jG.position.y=9.02+bound*.22;
-        } else {
             const idleBob = Math.sin(time * 12 + i * 2) * 0.4;
             h.model.body.position.y = Math.max(0, idleBob);
             h.model.body.rotation.z = Math.sin(time * 4 + i) * 0.02;
@@ -572,34 +543,87 @@ function animate(){
                 leg.shin.position.y += (-3.9 - leg.shin.position.y) * 0.2;
             });
             h.model.jG.position.y = 9.02 + h.model.body.position.y * 0.22;
+            h.model.jG.position.x = -0.18;
+            updateHeadAngle(h.model.root,h.model.jG,camera);
+            return;
         }
+        
+        // Racing logic
+        const raceMod=progress<.5?h.earlyMod:h.lateMod;
+        h.energy+=(Math.random()-.5)*.0015;h.energy=Math.max(.96,Math.min(1.04,h.energy));
+        h.angle+=Math.max((h.baseSpeed*raceMod*h.energy+((Math.random()-.5)*0.0009))*dt,0.018*dt);
+        
+        const rank=gameHorses.filter(o=>o.angle>h.angle).length;
+        h.targetLane=Math.max(5,Math.min(5+rank*5.5+Math.sin(time*.5+i)*2,DIRT_W-8));
+        
+        // Collision Detection
+        gameHorses.forEach((other,j)=>{
+            if(i===j || !other.model) return;
+            const ad=Math.abs(h.angle-other.angle),ld=Math.abs(h.laneOffset-other.laneOffset);
+            if(ad<0.045&&ld<6.5){
+                const push=(6.5-ld)*0.12;
+                if(h.laneOffset>other.laneOffset)h.laneOffset+=push;else h.laneOffset-=push;
+            }
+        });
 
+        h.laneOffset+=(h.targetLane-h.laneOffset)*.025;
+        const r=BASE_R+h.laneOffset;
+        const x=Math.cos(h.angle)*r*TRACK_SX,z=Math.sin(h.angle)*r;
+        const dx=-Math.sin(h.angle)*r*TRACK_SX,dz=Math.cos(h.angle)*r;
+        h.model.root.position.set(x,0,z);h.model.root.rotation.y=Math.atan2(-dz,dx);
+
+        const c=time*gSpeed+i*1.7;
+        const bound=Math.max(0,Math.sin(c))*1.6;
+        h.model.body.position.y=bound;
+        h.model.body.rotation.z=Math.sin(c)*.05;
+        h.model.body.rotation.x=-0.03+Math.cos(c)*.02;
+        
+        h.model.legs.forEach((leg)=>{
+            const tNorm=(c/(Math.PI*2))*12;
+            const pose=sampleGallop(leg.isFront?FRONT_GALLOP_KF:HIND_GALLOP_KF,tNorm);
+            leg.thigh.rotation.z=pose.th;
+            leg.shin.rotation.z=pose.sh;
+            leg.shin.position.x=leg.baseShinX+pose.x;
+            leg.shin.position.y=-3.9+pose.y;
+        });
+        
+        h.model.jG.position.y=9.02+bound*.22;
         h.model.jG.position.x=-0.18;
         updateHeadAngle(h.model.root,h.model.jG,camera);
-        if(h.angle>=FINISH_ANGLE&&!h.finished){h.finished=true;finishOrder.push(h);showNotif(`🏁 #${h.number} ${h.name} finishes.`);}
+
+        if(h.angle>=FINISH_ANGLE&&!h.finished){
+            h.finished=true;finishOrder.push(h);
+            showNotif(`🏁 #${h.number} ${h.name} finishes.`);
+        }
         if(!h.finished&&h.angle>leaderAngle){leaderAngle=h.angle;leader=h;}
     });
     updateLB();
 
-    if (!gateOpened) {
+    if(!gatesOpen){
+        // Keep camera fixed during gate loading
         const r = BASE_R + DIRT_W/2;
         const camPos = new THREE.Vector3(45, 18, -r + 15);
         camera.position.lerp(camPos, 0.1);
         camTarget.lerp(new THREE.Vector3(0, 10, -r), 0.1);
         camera.lookAt(camTarget);
-    } else if (leader && leader.model) {
+    } else if(leader){
+        // Dynamic camera during race
         const r=BASE_R+leader.laneOffset+(camMode==='broadcast'?70:25);
         const camPos=camMode==='broadcast'?new THREE.Vector3(Math.cos(leader.angle+.06)*r*TRACK_SX,32,Math.sin(leader.angle+.06)*r):new THREE.Vector3(80,55,-(BASE_R+DIRT_W/2)+15);
         camera.position.lerp(camPos,.08);
         camTarget.lerp(new THREE.Vector3(Math.cos(leader.angle)*BASE_R*TRACK_SX,5,Math.sin(leader.angle)*BASE_R),.08);
         camera.lookAt(camTarget);
     }
-    
+
     if(finishOrder.length===gameHorses.length&&!raceFinished){
         raceFinished=true;
         setTimeout(()=>{
-            const rl=document.getElementById('results-list');rl.innerHTML='';document.getElementById('results-title').textContent='OFFICIAL RESULTS';
-            finishOrder.forEach((h,i)=>{const t=i===0?'WIN':i===1?'PLACE':i===2?'SHOW':`${i+1}TH`;rl.innerHTML+=`<div class="result-row"><span class="result-place">${t}</span><div class="lb-color" style="background:${h.color}"></div><span style="color:${h.isPlayer?'#ffeb3b':'#fff'}">#${h.number} ${h.name}${h.isPlayer?' ⭐':''}</span></div>`;});
+            const rl=document.getElementById('results-list');
+            rl.innerHTML='';
+            finishOrder.forEach((h,i)=>{
+                const t=i===0?'WIN':i===1?'PLACE':i===2?'SHOW':`${i+1}TH`;
+                rl.innerHTML+=`<div class="result-row"><span class="result-place">${t}</span><div class="lb-color" style="background:${h.color}"></div><span style="color:${h.isPlayer?'#ffeb3b':'#fff'}">#${h.number} ${h.name}${h.isPlayer?' ⭐':''}</span></div>`;
+            });
             document.getElementById('results-modal').style.display='flex';
         },2000);
     }
