@@ -47,7 +47,7 @@
         .result-place{width:50px;color:#ffd700;}
         #timer-display{font-size:34px;color:#fff;text-shadow:4px 4px #000;margin-top:60px;}
         #race-header{position:absolute;top:calc(env(safe-area-inset-top, 0px) + 18px);left:0;width:100%;z-index:100;text-align:center;padding:0 70px 0 12px;pointer-events:none;}
-        #race-status{text-shadow:4px 4px 0 #000,8px 8px 0 rgba(0,0,0,0.28);font-size:18px;letter-spacing:1px;color:#ffd700;display:none;}
+        #race-status{text-shadow:4px 4px 0 #000,8px 8px 0 rgba(0,0,0,0.28);font-size:18px;letter-spacing:1px;display:none;color:#ffd700;}
         #race-timer{position:absolute;top:calc(env(safe-area-inset-top, 0px) + 18px);right:16px;z-index:100;font-size:12px;color:#fff;text-shadow:2px 2px #000;}
         #stretch-call{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:500;font-size:24px;color:#fff;text-shadow:6px 6px 0 #000,-2px -2px 0 #ffd700;pointer-events:none;opacity:0;transition:opacity 0.4s;white-space:nowrap;text-align:center;line-height:1.5;}
         #stretch-call.show{opacity:1;}
@@ -105,7 +105,7 @@
     <div id="results-modal">
         <h2 id="results-title" style="text-align:center;margin-bottom:16px;"></h2>
         <div id="results-list"></div>
-        <button onclick="location.reload()" style="margin:16px auto 0;display:block;">Race Again</button>
+        <button onclick="raceAgain()" style="margin:16px auto 0;display:block;">Race Again</button>
     </div>
 </div>
 <script>
@@ -115,12 +115,19 @@ let myPlayerId=localStorage.getItem('shmerbyId');
 if(!myPlayerId){myPlayerId=Math.random().toString(36).substr(2,9);localStorage.setItem('shmerbyId',myPlayerId);}
 let gameDocRef=null,unsubGame=null,isMultiplayer=false,isHost=false,myPlayerSlot=0;
 
-// Top level state
+// Adding gate variables and ensuring raceStarted is globally declared
 let raceStarted=false, gatesOpen=false, gateOpenTime=0, startGates=[];
-let gameHorses=[], finishOrder=[], raceFinished=false, stretchCalled=false, raceStartTime=0;
-let tapping=false, tappingDone=false, tapCountdownStarted=false, tapInterval=null;
 
-const DW=["Affirmed","Agile","Alysheba","American","Pharoah","Animal","Kingdom","Apollo","Aristides","Assault","Authentic","Barbaro","Black","Gold","Bold","Venture","Brokers","Tip","Bubbling","Over","Burgoo","King","California","Chrome","Cannonade","Carry","Back","Cavalcade","Charismatic","Citation","Count","Fleet","Dark","Star","Decidedly","Donerail","Dust","Commander","Elwood","Exterminator","Ferdinand","Flying","Ebony","Foolish","Pleasure","Funny","Cide","Fusaichi","Pegasus","Gallant","Fox","Genuine","Risk","Giacomo","Grindstone","Hindoo","Iron","Liege","Jet","Pilot","Justify","Lawrin","Lucky","Debonair","Mage","Majestic","Prince","Monarchos","Mystik","Dan","Needles","Northern","Dancer","Nyquist","Omaha","Orb","Pensive","Plaudit","Pleasant","Colony","Ponder","Real","Quiet","Regret","Riva","Ridge","Sea","Hero","Seattle","Slew","Secretariat","Silver","Charm","Smarty","Spectacular","Bid","Spend","Buck","Sunday","Silence","Super","Saver","Swale","Swaps","Thunder","Gulch","Unbridled","War","Admiral","Whirlaway","Zev"];
+async function raceAgain(){if(isMultiplayer&&gameDocRef){try{const snap=await gameDocRef.get();const d=snap.data()||{};const players=(d.players||[]).map((p,idx)=>({...p,taps:null,color:colorForHumanSlot(idx)}));await gameDocRef.set({seed:Math.floor(Math.random()*2147483647),status:'tapping',players},{merge:true});}catch(e){console.error(e);}} location.reload();}
+window.raceAgain=raceAgain;
+
+let gameHorses=[],finishOrder=[],raceFinished=false,stretchCalled=false,raceStartTime=0;
+let tapping=false,tappingDone=false,tapCountdownStarted=false,tapInterval=null;
+const botColors=["#2196f3","#4caf50","#ff9800","#9c27b0","#00bcd4"];
+const humanColors=["#e91e63","#4caf50","#2196f3","#ff9800","#9c27b0","#00bcd4"];
+function colorForHumanSlot(slot){return humanColors[((slot%humanColors.length)+humanColors.length)%humanColors.length];}
+
+const DW=["people","history","art","information","map","family","government","health","system","computer","music","person","reading","method","data","food","understanding","theory","law","bird","literature","problem","software","control","knowledge","power","ability","love","internet","television","science","library","nature","fact","product","idea","temperature","investment","area","society","activity","story","industry","media","thing","oven","community","definition","safety","quality","development","language","management","player","variety","video","week","security","country","exam","movie","organization","equipment","physics","analysis","policy","series","thought","basis","boyfriend","direction","strategy","technology","army","camera","freedom","paper","environment","child","instance","month","truth","marketing","university","writing","article","department","difference","goal","news","audience","fishing","growth","income","marriage","user","combination","failure","meaning","medicine","philosophy","teacher","communication","night","chemistry","disease","disk","energy","nation","road","role","soup","advertising","location","success","addition","apartment","education","math","moment","painting","politics","attention","decision","event","property","shopping","student","wood","competition","distribution","entertainment","office","population","president","unit","category","cigarette","context","introduction","opportunity","performance","driver","flight","length","magazine","newspaper","relationship","teaching","cell","dealer","finding","lake","member","message","phone","scene","appearance","association","concept","customer","death","discussion","housing","inflation","insurance","mood","woman","advice","blood","effort","expression","importance","opinion","payment","reality","responsibility","situation","skill","statement","wealth","application","city","county","depth","estate","foundation","grandmother","heart","perspective","photo","recipe","studio","topic","collection","depression","imagination","passion","percentage","resource","setting","ad","agency","college","connection","criticism","debt","description","memory","patience","secretary","solution","administration","aspect","attitude","director","personality","psychology","recommendation","response","selection","storage","version","alcohol","argument","complaint","contract","emphasis","highway","loss","membership","possession","preparation","steak","union","agreement","cancer","currency","employment","engineering","entry","interaction","mixture","preference","region","republic","tradition","virus","actor","classroom","delivery","device","difficulty","drama","election","engine","football","guidance","hotel","owner","priority","protection","suggestion","tension","variation","anxiety","atmosphere","awareness","bath","bread","candidate","climate","comparison","confusion","construction","elevator","emotion","employee","employer","guest","height","leadership","mall","manager","operation","recording","sample","transportation","charity","cousin","disaster","editor","efficiency","way","year","work","day","man","world","life","part","house","course","case","place","end","group","company","party","school","money","point","example","state","business","water","hand","order","john","side","home","council","use","service","room","market","court","lot","war","police","interest","car","form","face","research","sort","body","question","book","level","minister","view","door","line","south","god","father","centre","effect","staff","position","kind","job","action","act","process","north","age","evidence","west","support","sense","report","mind","church","morning","change","land","care","century","range","table","back","trade","study","street","committee","rate","word","team","other","sir","section","air","authority","reason","price","town","class","subject","bank","value","need","east","practice","type","date","figure","right","wife","friend","club","voice","lord","stage","king","us","light","tax","production","march","board","may","hospital","cost","field","award","issue","bed","project","chapter","girl","game","amount","approach","top","front","account","rest","labour","structure","hair","bill","force","movement","letter","capital","model","material","fire","chance","son","sea","record","size","space","term","plan","treatment","st","peter","cup","scheme","design","choice","pressure","hall","couple","defence","list","wall","paul","sun","summer","set","village","colour","floor","season","park","hour","test","garden","husband","style","look","deal","charge","help","economy","page","risk","picture","commission","fish","oil","doctor","film","conference","press","extent","station","window","shop","access","doubt","majority","degree","sound","parliament","site","mark","title","species","increase","return","concern","public","glass","lady","answer","earth","daughter","purpose","leader","river","eye","appeal","opposition","campaign","respect","task","sale","whole","officer","division","source","piece","pattern","lack","surface","oxford","demand","post","mouth","radio","provision","attempt","sector","firm","status","peace","show","speaker","baby","arm","base","miss","trouble","culture","character","box","past","weight","organisation","start","brother","league","condition","machine","sex","budget","english","transport","share","mum","cash","principle","exchange","aid","rule","tea","balance","afternoon","reference","district","turn","smith","review","minute","duty","survey","presence","influence","stone","dog","benefit","executive","speech","function","queen","stock","kitchen","holiday","career","attack","horse","progress","plant","visit","relation","ball","bar","quarter","impact","scale","race","image","trust","justice","edge","gas","railway","advantage","gold","network","text","forest","sister","chair","cause","foot","rise","half","winter","corner","step","damage","credit","pain","possibility","legislation","strength","speed","crime","hill","debate","will","supply","present","confidence","mary","patient","wind","band","museum","farm","pound","henry","match","assessment","football","animal","skin","stuff","play","fear","dad","proportion","island","contact","japan","claim","kingdom","tv","existence","telephone","move","traffic","distance","relief","cabinet","unemployment","target","trial","rock","spirit","accident","coffee","distribution","train","sight","factor","exercise","weekend","battle","prison","grant","aircraft","tree","bridge","contrast","background","shape","wine","star","hope","detail","path","client","search","master","rain","offer","dinner","attitude","seat","manner","favour","fig","pair","crisis","smile","prince","danger","call","capacity","output","note","procedure","theatre","tour","recognition","middle","absence","sentence","package","track","card","sign","commitment","threat","weather","element","conflict","notice","victory","bottom","finance","fund","violence","file","profit","standard","jack","route","china","expenditure","second","discipline","congress","individual","lead","consideration","option","exhibition","reform","spring","feature","touch","assembly","volume","youth","curriculum","contribution","martin","tom","boat","institute","branch","bus","waste","heat","neck","object","captain","challenge","conversation","occasion","code","crown","birth","silence","faith","hell","transfer","gentleman","bag","coal","investigation","leg","belief","total","major","document","murder","aim","manchester","conclusion","drug","pleasure","treaty","tony","alan","desire","professor","copy","ministry","acid","palace","address","institution","lunch","generation","partner","cross","reduction","welfare","key","release","vote","examination","judge","sky","breath","creation","row","guide","milk","cover","screen","intention","jones","silver","journey","explanation","green","measure","brain","significance","phase","injury","run","coast","technique","valley","drink","potential","drive","revolution","bishop","settlement","christ","metal","motion","index","adult","sport","surprise","pension","factory","tape","flow","iron","trip","lane","pool","independence","hole","flat","content","pay","noise","session","appointment","fashion","consumer","accommodation","mike","religion","author","northern","assistance","interpretation","display","shoulder","agent","gallery","proposal","sequence","simon","ship","interview","vehicle","democracy","improvement","involvement","general","enterprise","van","meal","breakfast","motor","channel","impression","tone","sheet","pollution","bob","beauty","square","vision","spot","distinction","brown","crowd","fuel","desk","sum","decline","revenue","fall","diet","bedroom","soil","reader","shock","fruit","behalf","deputy","roof","nose","steel","artist","graham","plate","song","formation","grass","spokesman","ice","talk","program","link","ring","expert","establishment","plastic","rail","passage","joe","parish","emergency","liability","identity","framework","strike","countryside","border","bottle","autumn","cat","agriculture","concentration","guy","dress","victim","mountain","theme","error","loan","stress","recovery","electricity","recession","request","lewis","white","walk","focus","chief","parent","sleep","mass","jane","bush","item","lifespan","lee","publication","decade","beach","sugar","writer","panel","struggle","dream","outcome","offence","resolution","reputation","specialist","taylor","pub","port","incident","representation","chain","initiative","clause","resistance","mistake","worker","advance","empire","notion","mirror","frank","average","expansion","block","alternative","chancellor","meat","store","self","break","corporation","convention","partnership","furniture","round","regime","inquiry","rugby","scope","gate","minority","intelligence","restaurant","consequence","mill","golf","retirement","plane","gun","gap","core","uncle","fun","arrival","snow","command","abuse","limit"];
 const NAME_FILE='list%20of%20words.txt';
 const WORD_BLACKLIST=new Set(['act','scene','enter','reenter','exit','exeunt','lord','lady','sir','madam','king','queen','duke','prince','servant','first','second','third','fourth']);
 function cleanToken(t){return t.toLowerCase().replace(/['']/g,'').replace(/[^a-z-]/g,'').replace(/^-+|-+$/g,'');}
@@ -133,7 +140,6 @@ async function bootstrapNamePool(){try{const r=await fetch(NAME_FILE,{cache:'no-
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 let playerHorse={name:genName(),taps:0,isPlayer:true,color:"#e91e63",number:Math.floor(Math.random()*20)+1};
 
-const botColors=["#2196f3","#4caf50","#ff9800","#9c27b0","#00bcd4"];
 const TRACK_SX=1.8,BASE_R=280,DIRT_W=75;
 const START_ANGLE=-Math.PI/2,FINISH_ANGLE=START_ANGLE+2*Math.PI;
 const AVG_SPEED=0.0011;
@@ -158,7 +164,7 @@ function saddleTex(num,col){const c=document.createElement('canvas');c.width=128
 const grassMesh=new THREE.Mesh(new THREE.CircleGeometry(BASE_R-3,80),toon({map:mowedGrass()}));grassMesh.rotation.x=-Math.PI/2;grassMesh.receiveShadow=true;g.add(grassMesh);
 const dirt=new THREE.Mesh(new THREE.RingGeometry(BASE_R-3,BASE_R+DIRT_W,80),toon({color:0xbd9a6c}));dirt.rotation.x=-Math.PI/2;dirt.receiveShadow=true;g.add(dirt);
 const out=new THREE.Mesh(new THREE.RingGeometry(BASE_R+DIRT_W,BASE_R+400,80),toon({color:0x5a9e4b}));out.rotation.x=-Math.PI/2;out.position.y=-.1;g.add(out);
-const rm=new THREE.MeshBasicMaterial({color:0xffffff});
+const rm=new MeshBasicMaterial({color:0xffffff});
 [BASE_R-3,BASE_R+DIRT_W].forEach(r=>{const t=new THREE.Mesh(new THREE.TorusGeometry(r,.6,8,80),rm);t.rotation.x=-Math.PI/2;t.position.y=2;g.add(t);});
 for(let i=0;i<40;i++){const a=(i/40)*Math.PI*2;const p=new THREE.Mesh(new THREE.CylinderGeometry(.2,.2,4,4),toon({color:0xdddddd}));p.position.set(Math.cos(a)*(BASE_R-3),2,Math.sin(a)*(BASE_R-3));g.add(p);}
 const fc=document.createElement('canvas');fc.width=64;fc.height=64;const fx=fc.getContext('2d');for(let r=0;r<8;r++)for(let c=0;c<8;c++){fx.fillStyle=(r+c)%2?'#000':'#fff';fx.fillRect(c*8,r*8,8,8);}
@@ -168,14 +174,12 @@ g.scale.set(TRACK_SX,1,1);scene.add(g);})();
 
 // --- MASCOT SYSTEM ---
 const texLoader=new THREE.TextureLoader();
-// EXACT SETTINGS FROM USER'S PREFERRED CODE
 const LT_SET={name:'lt',front:"lt-front.png",side:"lt-side.png",side_r:"lt-side-r.png",back:"lt-back.png",frontSize:12,sideSize:13.5,bodyPeek:0.58,riderScale:1.0,headForward:0.08,bodyShowLift:0.0};
 const GEO_SET={name:'george',front:"george-front.png",side:"george-side.png",side_r:"george-side-r.png",back:"george-back.png",bodyPeek:0.72,riderScale:1.04,headLift:0.24,headForward:0.16,bodyShowLift:0.4};
 const DAV_SET={name:'david',front:"david-front.png",side:"david-side.png",side_r:"david-side-r.png",back:"david-back.png",swapSideViews:true,bodyPeek:0.8,riderScale:1.04,headLift:0.38,headForward:0.18,bodyShowLift:0.44};
 const LIB_SET={name:'liberty',front:"liberty-front.png",side:"liberty-side.png",side_r:"liberty-side-r.png",back:"liberty-back.png",frontSize:12.6,sideSize:10.2,swapSideViews:true,headOffset:{x:0.38,y:1.48,z:0},bodyPeek:0.82,riderScale:1.05,headLift:0.34,headForward:0.24,bodyShowLift:0.3};
 const BUN_SET={name:'bunny',front:"bunny-front.png",side:"bunny-side.png",side_r:"bunny-side-r.png",back:"bunny-back.png",swapSideViews:true,bodyPeek:0.92,riderScale:1.08,headLift:0.26,headForward:0.14,bodyShowLift:0.444};
 const TOM_SET={name:'tomato',front:"tomato-front.png",side:"tomato-side.png",side_r:"tomato-side-r.png",back:"tomato-back.png",swapSideViews:true,bodyPeek:0.95,riderScale:1.08,headLift:0.62,headForward:0.22,bodyShowLift:0.444};
-
 const ALL_SETS=[LT_SET,GEO_SET,DAV_SET,LIB_SET,BUN_SET,TOM_SET];
 const loadedTextures=[];
 ALL_SETS.forEach(s=>{loadedTextures.push({...s,front:texLoader.load(s.front),side:texLoader.load(s.side),side_r:texLoader.load(s.side_r),back:texLoader.load(s.back)});});
@@ -203,7 +207,6 @@ function buildMascotHead(idx){
 const _headWorldPos=new THREE.Vector3(),_camToHead=new THREE.Vector3(),_horseForward=new THREE.Vector3();
 const _parentWorldQuat=new THREE.Quaternion(),_targetQuat=new THREE.Quaternion(),_lookMatrix=new THREE.Matrix4(),_desiredHeadPos=new THREE.Vector3();
 
-// EXACT FUNCTION FROM USER'S PREFERRED CODE
 function updateHeadAngle(horseRoot,jockeyGroup,cam){
     const headGroup=jockeyGroup.children[jockeyGroup.children.length-1];if(!headGroup||!headGroup.userData.isHead)return;
     headGroup.updateWorldMatrix(true,false);headGroup.getWorldPosition(_headWorldPos);
@@ -228,7 +231,6 @@ function updateHeadAngle(horseRoot,jockeyGroup,cam){
 }
 
 // --- HORSE ---
-// EXACT FUNCTION FROM USER'S PREFERRED CODE
 function createHorse(colorHex,number,mascotPoolIdx){
     const root=new THREE.Group(),body=new THREE.Group();root.add(body);
     const brown=toon({color:0x6B4226}),ltBr=toon({color:0x8B6B4A}),dkBr=toon({color:0x3a2212});
@@ -264,38 +266,143 @@ function createHorse(colorHex,number,mascotPoolIdx){
         const hoof=new THREE.Group();const hoofMain=new THREE.Mesh(new THREE.BoxGeometry(1.34,.56,.96),hoofM);hoofMain.position.set(.12,-5.1,0);hoofMain.rotation.z=.1;hoof.add(hoofMain);const hoofToe=new THREE.Mesh(new THREE.SphereGeometry(.38,6,6),hoofM);hoofToe.scale.set(1.42,.76,1.04);hoofToe.position.set(.46,-5.08,0);hoof.add(hoofToe);shin.add(hoof);
         legs.push({thigh,shin,isFront,baseShinX});
     });
-    // Jockey: tuned rider
-    const jG=new THREE.Group();jG.position.set(1.4,8.2,0);body.add(jG);
-    const riderBody=new THREE.Group();riderBody.position.set(0,0,0);riderBody.scale.setScalar(1.05);jG.add(riderBody);
+    // Jockey: simple chunky sprite-style rider
+    const jG=new THREE.Group();jG.position.set(1.0,8.25,0);body.add(jG);
+    const riderBody=new THREE.Group();riderBody.position.set(0,0,0);riderBody.rotation.z=-0.08;riderBody.scale.setScalar(0.96);jG.add(riderBody);
     jG.userData.riderBody=riderBody;
-    const silkColor=new THREE.Color(colorHex);
-    const silk=toon({color:silkColor});const pants=toon({color:0xeeeedd});const bootsMat=toon({color:0x222222});const skin=toon({color:0xd8a07a});
-    // Torso
-    const chestSilk=new THREE.Mesh(new THREE.SphereGeometry(1.0,8,6),silk);chestSilk.scale.set(0.95,1.60,0.75);chestSilk.position.set(0.05,2.35,0);chestSilk.rotation.z=0.06;riderBody.add(chestSilk);
-    // Hips
-    const hips=new THREE.Mesh(new THREE.SphereGeometry(0.9,8,6),pants);hips.scale.set(0.95,1.45,0.75);hips.position.set(-0.25,0.80,0);riderBody.add(hips);
-    // Left leg
-    const leftThigh=new THREE.Mesh(new THREE.CylinderGeometry(0.46,0.40,3.0,6),pants);leftThigh.position.set(-0.80,-0.50,2.0);leftThigh.rotation.z=-0.40;leftThigh.rotation.x=-0.1;riderBody.add(leftThigh);
-    const leftBoot=new THREE.Mesh(new THREE.BoxGeometry(1.20,0.60,0.4),bootsMat);leftBoot.position.set(0.1,-1.6,0);leftThigh.add(leftBoot);
-    // Right leg
-    const rightThigh=new THREE.Mesh(new THREE.CylinderGeometry(0.46,0.40,3.0,6),pants);rightThigh.position.set(-0.80,-0.50,-2.0);rightThigh.rotation.z=-0.40;rightThigh.rotation.x=0.1;riderBody.add(rightThigh);
-    const rightBoot=new THREE.Mesh(new THREE.BoxGeometry(1.20,0.60,0.4),bootsMat);rightBoot.position.set(0.1,-1.6,0);rightThigh.add(rightBoot);
-    // Arms
-    const leftUpperArm=new THREE.Mesh(new THREE.CylinderGeometry(0.39,0.32,2.5,6),silk);leftUpperArm.position.set(1.25,2.75,1.50);leftUpperArm.rotation.z=-1.30;riderBody.add(leftUpperArm);
-    const rightUpperArm=new THREE.Mesh(new THREE.CylinderGeometry(0.39,0.32,2.5,6),silk);rightUpperArm.position.set(1.25,2.75,-1.50);rightUpperArm.rotation.z=-1.30;riderBody.add(rightUpperArm);
-    // Neck
-    const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.40,0.48,0.5,6),skin);jNeck.position.set(0.05,3.80,0);riderBody.add(jNeck);
+
+    const shirt=toon({color:new THREE.Color(colorHex)});
+    const trim=toon({color:0xf0f4ff});
+    const pants=toon({color:0x79d9ef});
+    const pantsDark=toon({color:0x63c7dd});
+    const gloves=toon({color:0xf0c51a});
+    const bootsMat=toon({color:0x2a2a2a});
+    const skin=toon({color:0xd8a07a});
+
+    const chestSilk=new THREE.Mesh(new THREE.BoxGeometry(2.0,3.15,1.35),shirt);
+    chestSilk.position.set(0.1,2.45,0);
+    chestSilk.rotation.z=-0.12;
+    riderBody.add(chestSilk);
+
+    const upperSilk=new THREE.Mesh(new THREE.BoxGeometry(1.04,2.8,0.74),shirt);
+    upperSilk.position.set(0.22,4.72,-0.14);
+    upperSilk.rotation.z=-0.06;
+    riderBody.add(upperSilk);
+    const upperStripe=new THREE.Mesh(new THREE.BoxGeometry(0.16,2.55,0.54),gloves);
+    upperStripe.position.set(0.0,0.0,0.02);
+    upperSilk.add(upperStripe);
+
+    const chestTrim=new THREE.Mesh(new THREE.BoxGeometry(0.22,3.0,1.42),trim);
+    chestTrim.position.set(0.32,0.0,0.02);
+    chestSilk.add(chestTrim);
+
+    const leftShoulder=new THREE.Mesh(new THREE.SphereGeometry(0.36,8,8),shirt);
+    leftShoulder.scale.set(1.2,0.9,1.0);
+    leftShoulder.position.set(0.78,1.2,0.55);
+    chestSilk.add(leftShoulder);
+    const rightShoulder=new THREE.Mesh(new THREE.SphereGeometry(0.36,8,8),shirt);
+    rightShoulder.scale.set(1.2,0.9,1.0);
+    rightShoulder.position.set(0.78,1.2,-0.55);
+    chestSilk.add(rightShoulder);
+
+    const hips=new THREE.Mesh(new THREE.BoxGeometry(1.9,1.75,1.3),pants);
+    hips.position.set(-0.35,0.7,0);
+    hips.rotation.z=0.08;
+    riderBody.add(hips);
+
+    const riderArmGeo=new THREE.BoxGeometry(0.62,2.05,0.62);
+    const riderForeGeo=new THREE.BoxGeometry(0.56,1.7,0.56);
+    const riderThighGeo=new THREE.BoxGeometry(0.78,2.15,0.82);
+    const riderCalfGeo=new THREE.BoxGeometry(0.68,1.9,0.72);
+
+    const leftUpperArm=new THREE.Group();
+    leftUpperArm.position.set(1.08,3.0,0.72);
+    leftUpperArm.rotation.z=-0.95;
+    riderBody.add(leftUpperArm);
+    const leftUpperArmMesh=new THREE.Mesh(riderArmGeo,shirt);
+    leftUpperArmMesh.position.set(0,-1.0,0);
+    leftUpperArm.add(leftUpperArmMesh);
+    const leftForeArm=new THREE.Mesh(riderForeGeo,gloves);
+    leftForeArm.position.set(0.55,-1.65,0);
+    leftForeArm.rotation.z=-0.48;
+    leftUpperArm.add(leftForeArm);
+    const leftHand=new THREE.Mesh(new THREE.SphereGeometry(0.38,8,8),gloves);
+    leftHand.scale.set(1.35,0.9,0.95);
+    leftHand.position.set(0.72,-0.78,0);
+    leftForeArm.add(leftHand);
+
+    const rightUpperArm=new THREE.Group();
+    rightUpperArm.position.set(1.08,3.0,-0.72);
+    rightUpperArm.rotation.z=-0.95;
+    riderBody.add(rightUpperArm);
+    const rightUpperArmMesh=new THREE.Mesh(riderArmGeo,shirt);
+    rightUpperArmMesh.position.set(0,-1.0,0);
+    rightUpperArm.add(rightUpperArmMesh);
+    const rightForeArm=new THREE.Mesh(riderForeGeo,gloves);
+    rightForeArm.position.set(0.55,-1.65,0);
+    rightForeArm.rotation.z=-0.48;
+    rightUpperArm.add(rightForeArm);
+    const rightHand=new THREE.Mesh(new THREE.SphereGeometry(0.38,8,8),gloves);
+    rightHand.scale.set(1.35,0.9,0.95);
+    rightHand.position.set(0.72,-0.78,0);
+    rightForeArm.add(rightHand);
+
+    const leftThigh=new THREE.Group();
+    leftThigh.position.set(-0.9,1.0,0.72);
+    leftThigh.rotation.z=1.18;
+    leftThigh.rotation.x=-0.18;
+    riderBody.add(leftThigh);
+    const leftThighMesh=new THREE.Mesh(riderThighGeo,pants);
+    leftThighMesh.position.set(0,-0.95,0);
+    leftThigh.add(leftThighMesh);
+    const leftCalf=new THREE.Mesh(riderCalfGeo,pantsDark);
+    leftCalf.position.set(0.18,-1.72,0);
+    leftCalf.rotation.z=-0.52;
+    leftThigh.add(leftCalf);
+    const leftStripe=new THREE.Mesh(new THREE.BoxGeometry(0.12,1.9,0.78),trim);
+    leftStripe.position.set(0.14,0.0,0.02);
+    leftCalf.add(leftStripe);
+    const leftBoot=new THREE.Mesh(new THREE.BoxGeometry(1.08,0.52,0.78),bootsMat);
+    leftBoot.position.set(0.45,-1.08,0.05);
+    leftBoot.rotation.z=0.08;
+    leftCalf.add(leftBoot);
+
+    const rightThigh=new THREE.Group();
+    rightThigh.position.set(-0.9,1.0,-0.72);
+    rightThigh.rotation.z=1.18;
+    rightThigh.rotation.x=0.18;
+    riderBody.add(rightThigh);
+    const rightThighMesh=new THREE.Mesh(riderThighGeo,pants);
+    rightThighMesh.position.set(0,-0.95,0);
+    rightThigh.add(rightThighMesh);
+    const rightCalf=new THREE.Mesh(riderCalfGeo,pantsDark);
+    rightCalf.position.set(0.18,-1.72,0);
+    rightCalf.rotation.z=-0.52;
+    rightThigh.add(rightCalf);
+    const rightStripe=new THREE.Mesh(new THREE.BoxGeometry(0.12,1.9,0.78),trim);
+    rightStripe.position.set(0.14,0.0,0.02);
+    rightCalf.add(rightStripe);
+    const rightBoot=new THREE.Mesh(new THREE.BoxGeometry(1.08,0.52,0.78),bootsMat);
+    rightBoot.position.set(0.45,-1.08,0.05);
+    rightBoot.rotation.z=0.08;
+    rightCalf.add(rightBoot);
+
+    const jNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.28,0.34,0.55,6),skin);
+    jNeck.position.set(0.18,4.0,0);
+    jNeck.rotation.z=-0.1;
+    riderBody.add(jNeck);
+
     riderBody.userData.parts={chestSilk,hips,leftUpperArm,rightUpperArm,leftThigh,rightThigh};
     // Head
     const mHead=buildMascotHead(mascotPoolIdx);
     const headMeta=mHead.userData.multiAngle||{};const headOffset=headMeta.headOffset||{x:0,y:0,z:0};
-    if(headMeta.name==='liberty'){jNeck.position.x+=0.12;jNeck.position.y+=0.28;}
-    mHead.position.set(1.05+(headOffset.x||0),4.45+(headOffset.y||0)+(headMeta.headLift||0),(headOffset.z||0));
+    mHead.position.set(1.05+(headOffset.x||0),4.68+(headOffset.y||0)+(headMeta.headLift||0),(headOffset.z||0));
+    if(headMeta.name==='liberty'){jNeck.visible=false;mHead.position.y-=0.16;}
     mHead.userData.basePos=mHead.position.clone();jG.add(mHead);
     return{root,body,tailG,legs,jG};
 }
 
-// --- GALLOP KEYFRAMES ---
+// --- GALLOP KEYFRAMES (12 frames matching real thoroughbred gallop cycle) ---
 const FRONT_GALLOP_KF=[
   {th:0.45,sh:-0.41,x:-0.30,y:-0.10},{th:0.59,sh:-0.71,x:-0.22,y:-0.10},{th:0.69,sh:-0.01,x:-0.24,y:-0.04},
   {th:-0.31,sh:-0.60,x:-0.19,y:0.16},{th:-0.42,sh:-0.79,x:-0.11,y:0.00},{th:-0.28,sh:-0.29,x:-0.13,y:0.00},
@@ -310,7 +417,7 @@ const HIND_GALLOP_KF=[
 ];
 function sampleGallop(cycle,t){const n=cycle.length;const ft=((t%n)+n)%n;const idx=Math.floor(ft);const next=(idx+1)%n;const a=ft-idx;const A=cycle[idx],B=cycle[next];return{th:THREE.MathUtils.lerp(A.th,B.th,a),sh:THREE.MathUtils.lerp(A.sh,B.sh,a),x:THREE.MathUtils.lerp(A.x,B.x,a),y:THREE.MathUtils.lerp(A.y,B.y,a)};}
 
-// --- UI AND LOBBY ---
+// --- UI ---
 document.getElementById('player-horse-name').innerText=`#${playerHorse.number} ${playerHorse.name}`;
 bootstrapNamePool();
 
@@ -525,7 +632,7 @@ function animate(){
                 leg.shin.position.y += (-3.9 - leg.shin.position.y) * 0.2;
             });
             
-            // EXACT JOCKEY POSITION FROM YOUR SNIPPET applied to idle
+            // Exact jockey position applied to idle
             h.model.jG.position.y = 9.02 + h.model.body.position.y * 0.22;
             h.model.jG.position.x = -0.18;
             
@@ -571,7 +678,7 @@ function animate(){
             leg.shin.position.y=-3.9+pose.y;
         });
         
-        // EXACT JOCKEY POSITION FROM YOUR SNIPPET applied to racing
+        // Exact jockey position applied to racing
         h.model.jG.position.y=9.02+bound*.22;
         h.model.jG.position.x=-0.18;
         
