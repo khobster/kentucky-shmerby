@@ -64,18 +64,17 @@
             <p style="font-size:10px;margin-bottom:12px;">Your Steed:</p>
             <h2 id="player-horse-name" class="hidden" style="color:#ffeb3b;text-shadow:2px 2px #000;font-size:14px;margin:0 0 10px 0;">Loading...</h2>
             
-            <div id="name-spinner-area">
-                <div style="display:flex; justify-content:center; gap:16px; margin: 10px 0 16px 0;">
-                    <div style="text-align:center; flex:1;">
-                        <div id="word1-display" style="color:#ffeb3b;text-shadow:2px 2px #000;font-size:12px;margin-bottom:8px;min-height:12px;">LOADING</div>
-                        <button id="spin-w1-btn" style="padding:8px;font-size:9px;margin-top:0;width:100%;">SPIN 1</button>
-                    </div>
-                    <div style="text-align:center; flex:1;">
-                        <div id="word2-display" style="color:#ffeb3b;text-shadow:2px 2px #000;font-size:12px;margin-bottom:8px;min-height:12px;">LOADING</div>
-                        <button id="spin-w2-btn" style="padding:8px;font-size:9px;margin-top:0;width:100%;">SPIN 2</button>
-                    </div>
+            <div id="name-spinner-area" style="background:#111; border:3px solid #444; padding:16px; margin: 16px 0; border-radius:8px;">
+                <div style="display:flex; justify-content:center; align-items:center; gap:8px; margin-bottom: 14px; background:#000; padding:14px 10px; border:2px inset #555;">
+                    <span id="word1-display" style="color:#ffeb3b;text-shadow:2px 2px #000;font-size:12px;">LOADING</span>
+                    <span id="word2-display" style="color:#ffeb3b;text-shadow:2px 2px #000;font-size:12px;">LOADING</span>
                 </div>
-                <button id="lock-name-btn" style="background:#4caf50;color:#fff;border-color:#2e7d32;box-shadow:0 5px 0 #1b5e20;">LOCK IN NAME</button>
+                <div style="display:flex; gap:10px; margin-bottom:14px;">
+                    <button id="spin-w1-btn" style="flex:1; margin-top:0; padding:10px 4px; font-size:8px; background:#2196f3; border-color:#0d47a1; color:#fff; box-shadow:0 4px 0 #0d47a1;">SPIN 1ST</button>
+                    <button id="spin-random-btn" style="flex:0.6; margin-top:0; padding:10px 4px; font-size:8px; background:#ff9800; border-color:#e65100; color:#fff; box-shadow:0 4px 0 #e65100;">🎲 BOTH</button>
+                    <button id="spin-w2-btn" style="flex:1; margin-top:0; padding:10px 4px; font-size:8px; background:#2196f3; border-color:#0d47a1; color:#fff; box-shadow:0 4px 0 #0d47a1;">SPIN 2ND</button>
+                </div>
+                <button id="lock-name-btn" style="background:#4caf50;color:#fff;border-color:#2e7d32;box-shadow:0 4px 0 #1b5e20; width:100%; margin-top:0;">LOCK IN NAME</button>
             </div>
 
             <div id="race-mode-area" class="hidden">
@@ -126,7 +125,6 @@ let myPlayerId=localStorage.getItem('shmerbyId');
 if(!myPlayerId){myPlayerId=Math.random().toString(36).substr(2,9);localStorage.setItem('shmerbyId',myPlayerId);}
 let gameDocRef=null,unsubGame=null,isMultiplayer=false,isHost=false,myPlayerSlot=0;
 
-// Re-added the missing random generator function
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 
 const DW=["people","history","art","information","map","family","government","health","system","computer","music","person","reading","method","data","food","understanding","theory","law","bird","literature","problem","software","control","knowledge","power","ability","love","internet","television","science","library","nature","fact","product","idea","temperature","investment","area","society","activity","story","industry","media","thing","oven","community","definition","safety","quality","development","language","management","player","variety","video","week","security","country","exam","movie","organization","equipment","physics","analysis","policy","series","thought","basis","boyfriend","direction","strategy","technology","army","camera","freedom","paper","environment","child","instance","month","truth","marketing","university","writing","article","department","difference","goal","news","audience","fishing","growth","income","marriage","user","combination","failure","meaning","medicine","philosophy","teacher","communication","night","chemistry","disease","disk","energy","nation","road","role","soup","advertising","location","success","addition","apartment","education","math","moment","painting","politics","attention","decision","event","property","shopping","student","wood","competition","distribution","entertainment","office","population","president","unit","category","cigarette","context","introduction","opportunity","performance","driver","flight","length","magazine","newspaper","relationship","teaching","cell","dealer","finding","lake","member","message","phone","scene","appearance","association","concept","customer","death","discussion","housing","inflation","insurance","mood","woman","advice","blood","effort","expression","importance","opinion","payment","reality","responsibility","situation","skill","statement","wealth","application","city","county","depth","estate","foundation","grandmother","heart","perspective","photo","recipe","studio","topic","collection","depression","imagination","passion","percentage","resource","setting","ad","agency","college","connection","criticism","debt","description","memory","patience","secretary","solution","administration","aspect","attitude","director","personality","psychology","recommendation","response","selection","storage","version","alcohol","argument","complaint","contract","emphasis","highway","loss","membership","possession","preparation","steak","union","agreement","cancer","currency","employment","engineering","entry","interaction","mixture","preference","region","republic","tradition","virus","actor","classroom","delivery","device","difficulty","drama","election","engine","football","guidance","hotel","owner","priority","protection","suggestion","tension","variation","anxiety","atmosphere","awareness","bath","bread","candidate","climate","comparison","confusion","construction","elevator","emotion","employee","employer","guest","height","leadership","mall","manager","operation","recording","sample","transportation","charity","cousin","disaster","editor","efficiency","way","year","work","day","man","world","life","part","house","course","case","place","end","group","company","party","school","money","point","example","state","business","water","hand","order","john","side","home","council","use","service","room","market","court","lot","war","police","interest","car","form","face","research","sort","body","question","book","level","minister","view","door","line","south","god","father","centre","effect","staff","position","kind","job","action","act","process","north","age","evidence","west","support","sense","report","mind","church","morning","change","land","care","century","range","table","back","trade","study","street","committee","rate","word","team","other","sir","section","air","authority","reason","price","town","class","subject","bank","value","need","east","practice","type","date","figure","right","wife","friend","club","voice","lord","stage","king","us","light","tax","production","march","board","may","hospital","cost","field","award","issue","bed","project","chapter","girl","game","amount","approach","top","front","account","rest","labour","structure","hair","bill","force","movement","letter","capital","model","material","fire","chance","son","sea","record","size","space","term","plan","treatment","st","peter","cup","scheme","design","choice","pressure","hall","couple","defence","list","wall","paul","sun","summer","set","village","colour","floor","season","park","hour","test","garden","husband","style","look","deal","charge","help","economy","page","risk","picture","commission","fish","oil","doctor","film","conference","press","extent","station","window","shop","access","doubt","majority","degree","sound","parliament","site","mark","title","species","increase","return","concern","public","glass","lady","answer","earth","daughter","purpose","leader","river","eye","appeal","opposition","campaign","respect","task","sale","whole","officer","division","source","piece","pattern","lack","surface","oxford","demand","post","mouth","radio","provision","attempt","sector","firm","status","peace","show","speaker","baby","arm","base","miss","trouble","culture","character","box","past","weight","organisation","start","brother","league","condition","machine","sex","budget","english","transport","share","mum","cash","principle","exchange","aid","rule","tea","balance","afternoon","reference","district","turn","smith","review","minute","duty","survey","presence","influence","stone","dog","benefit","executive","speech","function","queen","stock","kitchen","holiday","career","attack","horse","progress","plant","visit","relation","ball","bar","quarter","impact","scale","race","image","trust","justice","edge","gas","railway","advantage","gold","network","text","forest","sister","chair","cause","foot","rise","half","winter","corner","step","damage","credit","pain","possibility","legislation","strength","speed","crime","hill","debate","will","supply","present","confidence","mary","patient","wind","band","museum","farm","pound","henry","match","assessment","football","animal","skin","stuff","play","fear","dad","proportion","island","contact","japan","claim","kingdom","tv","existence","telephone","move","traffic","distance","relief","cabinet","unemployment","target","trial","rock","spirit","accident","coffee","distribution","train","sight","factor","exercise","weekend","battle","prison","grant","aircraft","tree","bridge","contrast","background","shape","wine","star","hope","detail","path","client","search","master","rain","offer","dinner","attitude","seat","manner","favour","fig","pair","crisis","smile","prince","danger","call","capacity","output","note","procedure","theatre","tour","recognition","middle","absence","sentence","package","track","card","sign","commitment","threat","weather","element","conflict","notice","victory","bottom","finance","fund","violence","file","profit","standard","jack","route","china","expenditure","second","discipline","congress","individual","lead","consideration","option","exhibition","reform","spring","feature","touch","assembly","volume","youth","curriculum","contribution","martin","tom","boat","institute","branch","bus","waste","heat","neck","object","captain","challenge","conversation","occasion","code","crown","birth","silence","faith","hell","transfer","gentleman","bag","coal","investigation","leg","belief","total","major","document","murder","aim","manchester","conclusion","drug","pleasure","treaty","tony","alan","desire","professor","copy","ministry","acid","palace","address","institution","lunch","generation","partner","cross","reduction","welfare","key","release","vote","examination","judge","sky","breath","creation","row","guide","milk","cover","screen","intention","jones","silver","journey","explanation","green","measure","brain","significance","phase","injury","run","coast","technique","valley","drink","potential","drive","revolution","bishop","settlement","christ","metal","motion","index","adult","sport","surprise","pension","factory","tape","flow","iron","trip","lane","pool","independence","hole","flat","content","pay","noise","session","appointment","fashion","consumer","accommodation","mike","religion","author","northern","assistance","interpretation","display","shoulder","agent","gallery","proposal","sequence","simon","ship","interview","vehicle","democracy","improvement","involvement","general","enterprise","van","meal","breakfast","motor","channel","impression","tone","sheet","pollution","bob","beauty","square","vision","spot","distinction","brown","crowd","fuel","desk","sum","decline","revenue","fall","diet","bedroom","soil","reader","shock","fruit","behalf","deputy","roof","nose","steel","artist","graham","plate","song","formation","grass","spokesman","ice","talk","program","link","ring","expert","establishment","plastic","rail","passage","joe","parish","emergency","liability","identity","framework","strike","countryside","border","bottle","autumn","cat","agriculture","concentration","guy","dress","victim","mountain","theme","error","loan","stress","recovery","electricity","recession","request","lewis","white","walk","focus","chief","parent","sleep","mass","jane","bush","item","lifespan","lee","publication","decade","beach","sugar","writer","panel","struggle","dream","outcome","offence","resolution","reputation","specialist","taylor","pub","port","incident","representation","chain","initiative","clause","resistance","mistake","worker","advance","empire","notion","mirror","frank","average","expansion","block","alternative","chancellor","meat","store","self","break","corporation","convention","partnership","furniture","round","regime","inquiry","rugby","scope","gate","minority","intelligence","restaurant","consequence","mill","golf","retirement","plane","gun","gap","core","uncle","fun","arrival","snow","command","abuse","limit"];
@@ -157,6 +155,10 @@ function spinWord2() {
 
 document.getElementById('spin-w1-btn').addEventListener('click', spinWord1);
 document.getElementById('spin-w2-btn').addEventListener('click', spinWord2);
+document.getElementById('spin-random-btn').addEventListener('click', () => {
+    spinWord1();
+    spinWord2();
+});
 
 const urlParams=new URLSearchParams(location.search);const joinId=urlParams.get('gameId');
 
@@ -207,12 +209,10 @@ document.getElementById('lock-name-btn').addEventListener('click', () => {
 
 async function bootstrapNamePool(){
     try {
-        // Fetching directly from adambom's dictionary on GitHub
         const r = await fetch('https://raw.githubusercontent.com/adambom/dictionary/master/dictionary.json');
         if (!r.ok) throw new Error('Network response failed');
         const dict = await r.json();
         
-        // Extract all the keys (words) and filter to reasonable lengths (3 to 10 letters) with no weird symbols
         const allWords = Object.keys(dict).filter(w => /^[a-zA-Z]{3,10}$/.test(w));
         
         NAME_WORDS = [...new Set([...NAME_WORDS, ...allWords])];
@@ -221,7 +221,6 @@ async function bootstrapNamePool(){
         console.warn('Dictionary fetch failed. Using built-in pool only.', e);
     }
     
-    // Give them their first random spin once the data loads
     spinWord1();
     spinWord2();
 }
@@ -595,8 +594,17 @@ function animate(){
     if(!raceFinished){const el=((Date.now()-raceStartTime)/1000);document.getElementById('race-timer').innerText=`${Math.floor(el/60)}:${(el%60).toFixed(1).padStart(4,'0')}`;}
     let leader=null,leaderAngle=-999,maxA=-999;
     gameHorses.forEach(h=>{if(h.angle>maxA)maxA=h.angle;});
+    
+    // Calculate how far along the leading horse is
     const progress=(maxA-START_ANGLE)/(FINISH_ANGLE-START_ANGLE);
+    
+    // Remove the starting gate after 8% of the race is complete
+    if (progress > 0.08 && gateG.visible) {
+        gateG.visible = false;
+    }
+    
     if(progress>.78&&!stretchCalled){stretchCalled=true;camMode='stretch';const sc=document.getElementById('stretch-call');sc.innerHTML="AND DOWN THE<br>STRETCH THEY COME!";sc.classList.add('show');setTimeout(()=>sc.classList.remove('show'),3500);}
+    
     gameHorses.forEach((h,i)=>{
         const raceMod=progress<.5?h.earlyMod:h.lateMod;
         h.energy+=(Math.random()-.5)*.0015;h.energy=Math.max(.96,Math.min(1.04,h.energy));
