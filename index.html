@@ -9,7 +9,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
-        /* Imported your Luckiest Guy font and swapped it to the primary font */
         @import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
         *{margin:0;padding:0;box-sizing:border-box;}
         body{font-family: 'Luckiest Guy', Impact, sans-serif; background:#87CEEB;color:#fff;overflow:hidden;user-select:none;-webkit-user-select:none; letter-spacing: 1px;}
@@ -114,20 +113,22 @@
                 <div style="display:flex; justify-content:center; align-items:center; margin-bottom: 16px; background:#000; padding:20px 10px; border:4px inset #555; border-radius: 8px;">
                     <span id="player-name-display" style="color:#ffeb3b;text-shadow:4px 4px #000;font-size:36px; letter-spacing: 2px;">LOADING...</span>
                 </div>
-                <button id="spin-random-btn" style="width:100%; margin-bottom:14px; padding:18px; font-size:24px; background:#2196f3; border-color:#0d47a1; color:#fff; box-shadow:0 8px 0 #0d47a1;">🎲 REROLL NAME</button>
+                <button id="spin-random-btn" style="width:100%; margin-bottom:14px; margin-top:0; padding:18px; font-size:24px; background:#2196f3; border-color:#0d47a1; color:#fff; box-shadow:0 8px 0 #0d47a1;">🎲 REROLL NAME</button>
                 <button id="lock-name-btn" style="background:#4caf50;color:#fff;border-color:#2e7d32;box-shadow:0 8px 0 #1b5e20; width:100%; margin-top:0; font-size: 24px; padding:18px;">LOCK IN NAME</button>
             </div>
 
             <div id="race-mode-area" class="hidden">
                 <p style="font-size:18px;color:#ffd700;margin:0 0 20px 0;">1&frac14; MILES &bull; RUN FOR THE ROSES</p>
-                <button id="solo-btn" style="width: 48%;">SOLO RACE</button>
-                <button id="create-btn" style="width: 48%;">MULTIPLAYER</button>
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                    <button id="solo-btn" style="width: 100%; margin: 0;">SOLO RACE</button>
+                    <button id="create-btn" style="width: 100%; margin: 0;">MULTIPLAYER</button>
+                </div>
                 <div id="share-area" class="share-box hidden">
                     <p style="font-size:16px;color:#fff;margin-bottom:8px;">Share this link:</p>
                     <input type="text" id="game-url" readonly>
                     <button id="copy-btn">COPY LINK</button>
                     <p class="waiting" id="waiting-msg">WAITING FOR PLAYERS...</p>
-                    <button id="start-race-btn" class="hidden" style="width: 100%;">START RACE</button>
+                    <button id="start-race-btn" class="hidden" style="width: 100%; margin-top: 14px;">START RACE</button>
                 </div>
             </div>
             
