@@ -48,6 +48,7 @@
         .result-place{width:50px;color:#ffd700;}
         #timer-display{font-size:34px;color:#fff;text-shadow:4px 4px #000;margin-top:60px;}
         #race-header{position:absolute;top:calc(env(safe-area-inset-top, 0px) + 18px);left:0;width:100%;z-index:100;text-align:center;padding:0 70px 0 12px;pointer-events:none;}
+        #race-status{text-shadow:4px 4px 0 #000,8px 8px 0 rgba(0,0,0,0.28);font-size:18px;letter-spacing:1px;display:none;}
         #race-timer{position:absolute;top:calc(env(safe-area-inset-top, 0px) + 18px);right:16px;z-index:100;font-size:12px;color:#fff;text-shadow:2px 2px #000;}
         
         /* Arcade Text Effects */
@@ -240,12 +241,10 @@ document.getElementById('lock-name-btn').addEventListener('click', () => {
 
 async function bootstrapNamePool(){
     try {
-        // Fetching the top 10,000 most common English words instead of the full Webster's JSON
         const r = await fetch('https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english-no-swears.txt');
         if (!r.ok) throw new Error('Network response failed');
         const text = await r.text();
         
-        // Split by line and grab words that are 4 to 9 letters long to fit nicely on screen
         const allWords = text.split('\n').filter(w => /^[a-zA-Z]{4,9}$/.test(w));
         
         NAME_WORDS = [...new Set([...NAME_WORDS, ...allWords])];
@@ -674,7 +673,7 @@ function animate(){
         if(!h.finished&&h.angle>leaderAngle){leaderAngle=h.angle;leader=h;}
     });
     updateLB();
-    if(leader){const r=BASE_R+leader.laneOffset+(camMode==='broadcast'?70:25);const camPos=camMode==broadcast'?new THREE.Vector3(Math.cos(leader.angle+.06)*r*TRACK_SX,32,Math.sin(leader.angle+.06)*r):new THREE.Vector3(80,55,-(BASE_R+DIRT_W/2)+15);camera.position.lerp(camPos,.08);camTarget.lerp(new THREE.Vector3(Math.cos(leader.angle)*BASE_R*TRACK_SX,5,Math.sin(leader.angle)*BASE_R),.08);camera.lookAt(camTarget);}
+    if(leader){const r=BASE_R+leader.laneOffset+(camMode==='broadcast'?70:25);const camPos=camMode==='broadcast'?new THREE.Vector3(Math.cos(leader.angle+.06)*r*TRACK_SX,32,Math.sin(leader.angle+.06)*r):new THREE.Vector3(80,55,-(BASE_R+DIRT_W/2)+15);camera.position.lerp(camPos,.08);camTarget.lerp(new THREE.Vector3(Math.cos(leader.angle)*BASE_R*TRACK_SX,5,Math.sin(leader.angle)*BASE_R),.08);camera.lookAt(camTarget);}
     if(finishOrder.length===gameHorses.length&&!raceFinished){raceFinished=true;setTimeout(()=>{const rl=document.getElementById('results-list');rl.innerHTML='';document.getElementById('results-title').textContent='OFFICIAL RESULTS';finishOrder.forEach((h,i)=>{const t=i===0?'WIN':i===1?'PLACE':i===2?'SHOW':`${i+1}TH`;rl.innerHTML+=`<div class="result-row"><span class="result-place">${t}</span><div class="lb-color" style="background:${h.color}"></div><span style="color:${h.isPlayer?'#ffeb3b':'#fff'}">#${h.number} ${h.name}${h.isPlayer?' ⭐':''}</span></div>`;});document.getElementById('results-modal').style.display='flex';},2000);}
     renderer.render(scene,camera);
 }
