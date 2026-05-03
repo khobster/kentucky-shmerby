@@ -9,9 +9,11 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        /* Imported your Luckiest Guy font and swapped it to the primary font */
+        @import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
         *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:'Press Start 2P',monospace;background:#87CEEB;color:#fff;overflow:hidden;user-select:none;-webkit-user-select:none;}
+        body{font-family: 'Luckiest Guy', Impact, sans-serif; background:#87CEEB;color:#fff;overflow:hidden;user-select:none;-webkit-user-select:none; letter-spacing: 1px;}
+        
         #tapping-phase{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 170px 0;width:100%;touch-action:pan-y;}
         #tapping-phase .panel{margin-bottom:24px;}
 
@@ -19,54 +21,67 @@
         #game-container{width:100vw;height:100vh;position:relative;display:flex;flex-direction:column;align-items:center;}
         #canvas-container{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;}
         .overlay{position:relative;z-index:10;text-align:center;}
-        h1{color:#ffd700;font-size:22px;text-shadow:4px 4px 0 #000;margin:18px 0;position:relative;z-index:10;}
-        .panel{background:rgba(0,0,0,0.7);padding:24px 32px;border-radius:12px;border:3px solid #ffd700;margin-top:40px;max-width:500px;width:90%;}
-        #tap-zone{width:90%;max-width:600px;height:260px;margin:16px auto;background:#e53935;border:8px solid #000;box-shadow:0 10px 0 #b71c1c;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;color:#fff;line-height:1.8;text-shadow:2px 2px 0 #000;border-radius:8px;}
-        #tap-zone:active{transform:translateY(10px);box-shadow:0 0 0 #b71c1c;}
-        #tap-zone.disabled{background:#6a6a6a;box-shadow:0 10px 0 #444;cursor:default;opacity:.72;}
-        #tap-status{font-size:10px;color:#ffd700;margin-top:14px;line-height:1.7;text-shadow:2px 2px 0 #000;min-height:34px;}
-        button{padding:12px 24px;font-size:12px;font-family:inherit;cursor:pointer;background:#ffeb3b;color:#000;border:5px solid #000;box-shadow:0 5px 0 #f57f17;margin-top:14px;text-transform:uppercase;}
-        button:hover{background:#fff176;}
-        .share-box{margin-top:14px;}
-        .share-box input{font-family:inherit;font-size:8px;padding:8px;width:100%;background:#222;color:#ffd700;border:2px solid #ffd700;border-radius:4px;margin-bottom:8px;}
-        .share-box button{font-size:10px;padding:8px 16px;}
-        .waiting{color:#ffd700;font-size:10px;margin-top:14px;animation:pulse 1.5s infinite;}
-        @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
-        #notifications-container{position:absolute;top:80px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;flex-direction:column;align-items:center;pointer-events:none;}
-        .finish-notif{background:rgba(0,0,0,0.9);border:2px solid #ffd700;color:#fff;padding:10px 20px;margin-bottom:6px;font-size:10px;border-radius:4px;transition:opacity 0.5s ease;}
-        #leaderboard{position:absolute;bottom:20px;left:20px;z-index:100;background:rgba(245,245,245,0.95);border:2px solid #333;border-radius:4px;padding:0;min-width:280px;font-family:Arial,sans-serif;}
-        #lb-header{background:#1a1a1a;color:#fff;padding:6px 10px;font-size:10px;font-weight:bold;letter-spacing:1px;font-family:'Press Start 2P',monospace;}
-        #standings-list{display:flex;flex-direction:column;}
-        .lb-row{display:flex;align-items:center;padding:4px 10px;border-bottom:1px solid #ddd;font-size:11px;color:#222;}
-        .lb-row:last-child{border-bottom:none;}
-        .lb-num{width:22px;color:#000;font-weight:bold;font-size:11px;}
-        .lb-color{width:18px;height:14px;border:1px solid #000;margin-right:8px;display:inline-block;flex-shrink:0;}
-        .lb-name{font-weight:bold;flex-grow:1;text-transform:uppercase;letter-spacing:.5px;}
-        .lb-row.you{background:#fff8c4;}
-        #results-modal{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.95);border:6px solid #ffd700;padding:24px;z-index:1000;text-align:left;width:90%;max-width:480px;display:none;flex-direction:column;}
-        .result-row{display:flex;align-items:center;margin:6px 0;font-size:10px;border-bottom:2px dashed #444;padding-bottom:6px;}
-        .result-place{width:50px;color:#ffd700;}
-        #timer-display{font-size:34px;color:#fff;text-shadow:4px 4px #000;margin-top:60px;}
-        #race-header{position:absolute;top:calc(env(safe-area-inset-top, 0px) + 18px);left:0;width:100%;z-index:100;text-align:center;padding:0 70px 0 12px;pointer-events:none;}
-        #race-status{text-shadow:4px 4px 0 #000,8px 8px 0 rgba(0,0,0,0.28);font-size:18px;letter-spacing:1px;display:none;}
-        #race-timer{position:absolute;top:calc(env(safe-area-inset-top, 0px) + 18px);right:16px;z-index:100;font-size:12px;color:#fff;text-shadow:2px 2px #000;}
         
-        /* Arcade Text Effects */
+        /* Chunky Arcade Title */
+        h1{color:#ffd700;font-size:52px;text-shadow:0px 6px 0 #b71c1c, 0px 12px 0 #000;margin:24px 0;position:relative;z-index:10; -webkit-text-stroke: 2px #000;}
+        
+        .panel{background:rgba(0,0,0,0.85);padding:24px 32px;border-radius:12px;border:5px solid #ffd700;box-shadow: 0px 10px 0 rgba(0,0,0,0.7); margin-top:40px;max-width:500px;width:90%;}
+        
+        #tap-zone{width:90%;max-width:600px;height:260px;margin:16px auto;background:#e53935;border:8px solid #000;box-shadow:0 12px 0 #b71c1c;display:flex;align-items:center;justify-content:center;font-size:32px;cursor:pointer;color:#fff;line-height:1.4;text-shadow:3px 3px 0 #000;border-radius:16px;}
+        #tap-zone:active{transform:translateY(12px);box-shadow:0 0 0 #b71c1c;}
+        #tap-zone.disabled{background:#6a6a6a;box-shadow:0 12px 0 #444;cursor:default;opacity:.72;}
+        #tap-status{font-size:20px;color:#ffd700;margin-top:14px;line-height:1.7;text-shadow:2px 2px 0 #000;min-height:34px;}
+        
+        button{padding:16px 28px;font-size:22px;font-family:inherit;cursor:pointer;background:#ffeb3b;color:#000;border:5px solid #000;box-shadow:0 8px 0 #f57f17;margin-top:14px;text-transform:uppercase; transition: transform 0.1s, box-shadow 0.1s; border-radius: 8px;}
+        button:active{transform:translateY(8px);box-shadow:0 0 0 #f57f17;}
+        button:hover{background:#fff176;}
+        
+        .share-box{margin-top:14px;}
+        .share-box input{font-family:inherit;font-size:16px;padding:12px;width:100%;background:#222;color:#ffd700;border:4px solid #ffd700;border-radius:8px;margin-bottom:8px; text-align: center;}
+        .share-box button{font-size:18px;padding:12px 20px;}
+        .waiting{color:#ffd700;font-size:16px;margin-top:14px;animation:pulse 1.5s infinite;}
+        @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+        
+        #notifications-container{position:absolute;top:80px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;flex-direction:column;align-items:center;pointer-events:none;}
+        .finish-notif{background:rgba(0,0,0,0.9);border:4px solid #ffd700;color:#fff;padding:12px 24px;margin-bottom:8px;font-size:20px;border-radius:8px;transition:opacity 0.5s ease; text-transform: uppercase; box-shadow: 0px 6px 0px #000;}
+        
+        #leaderboard{position:absolute;bottom:20px;left:20px;z-index:100;background:rgba(245,245,245,0.95);border:5px solid #000;border-radius:8px;padding:0;min-width:320px; box-shadow: 8px 8px 0 rgba(0,0,0,0.5);}
+        #lb-header{background:#1a1a1a;color:#fff;padding:12px 14px;font-size:22px;font-weight:normal;letter-spacing:1px; border-bottom: 5px solid #000; border-radius: 4px 4px 0 0;}
+        #standings-list{display:flex;flex-direction:column;}
+        .lb-row{display:flex;align-items:center;padding:10px 14px;border-bottom:3px solid #ccc;font-size:20px;color:#222;}
+        .lb-row:last-child{border-bottom:none;}
+        .lb-num{width:30px;color:#000;font-weight:normal;font-size:22px;}
+        .lb-color{width:24px;height:18px;border:3px solid #000;margin-right:12px;display:inline-block;flex-shrink:0; border-radius: 4px;}
+        .lb-name{font-weight:normal;flex-grow:1;text-transform:uppercase;letter-spacing:1px;}
+        .lb-row.you{background:#fff8c4;}
+        
+        #results-modal{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.95);border:8px solid #ffd700;padding:32px;z-index:1000;text-align:left;width:90%;max-width:540px;display:none;flex-direction:column; box-shadow: 15px 15px 0 rgba(0,0,0,0.7); border-radius: 16px;}
+        #results-title{font-size: 42px; -webkit-text-stroke: 2px #000; text-shadow: 4px 4px 0 #b71c1c; margin-bottom: 20px;}
+        .result-row{display:flex;align-items:center;margin:8px 0;font-size:24px;border-bottom:3px dashed #555;padding-bottom:10px;}
+        .result-place{width:80px;color:#ffd700;}
+        
+        #timer-display{font-size:80px;color:#fff;text-shadow:0px 8px 0px #b71c1c, 0px 16px 0px #000;margin-top:60px; -webkit-text-stroke: 3px #000;}
+        #race-header{position:absolute;top:calc(env(safe-area-inset-top, 0px) + 18px);left:0;width:100%;z-index:100;text-align:center;padding:0 70px 0 12px;pointer-events:none;}
+        #race-status{text-shadow:4px 4px 0 #000,8px 8px 0 rgba(0,0,0,0.28);font-size:32px;letter-spacing:1px;display:none;}
+        #race-timer{position:absolute;top:calc(env(safe-area-inset-top, 0px) + 18px);right:16px;z-index:100;font-size:32px;color:#fff;text-shadow:4px 4px #000; -webkit-text-stroke: 1px #000;}
+        
+        /* The Massive Arcade Text Effects */
         #arcade-start-text {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.1);
-            font-size: 48px;
-            color: #ff2a2a;
-            -webkit-text-stroke: 3px #ffd700;
-            text-shadow: 6px 6px 0px #000;
-            font-style: italic;
+            font-size: 110px;
+            color: #ffeb3b;
+            -webkit-text-stroke: 6px #000;
+            text-shadow: 0px 10px 0px #e53935, 0px 20px 0px #000;
             opacity: 0;
             z-index: 2000;
             pointer-events: none;
             white-space: nowrap;
             display: none;
+            text-align: center;
+            line-height: 1;
         }
 
         @keyframes slamIn {
@@ -82,7 +97,7 @@
             animation: slamIn 1.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
-        #stretch-call{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:500;font-size:24px;color:#fff;text-shadow:6px 6px 0 #000,-2px -2px 0 #ffd700;pointer-events:none;opacity:0;transition:opacity 0.4s;white-space:nowrap;text-align:center;line-height:1.5;}
+        #stretch-call{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:500;font-size:64px;color:#fff;text-shadow:0px 8px 0px #e53935, 0px 16px 0px #000;pointer-events:none;opacity:0;transition:opacity 0.4s;white-space:nowrap;text-align:center;line-height:1.1; -webkit-text-stroke: 3px #000;}
         #stretch-call.show{opacity:1;}
     </style>
 </head>
@@ -92,53 +107,48 @@
     <h1 id="main-title">KENTUCKY SHMERBY</h1>
     <div id="lobby" class="overlay">
         <div class="panel">
-            <p style="font-size:10px;margin-bottom:12px;">Your Steed:</p>
-            <h2 id="player-horse-name" class="hidden" style="color:#ffeb3b;text-shadow:2px 2px #000;font-size:14px;margin:0 0 10px 0;">Loading...</h2>
+            <p style="font-size:20px;margin-bottom:12px; color:#ddd;">Your Steed:</p>
+            <h2 id="player-horse-name" class="hidden" style="color:#ffeb3b;text-shadow:4px 4px #000;font-size:36px;margin:0 0 10px 0; -webkit-text-stroke: 1px #000;">Loading...</h2>
             
-            <div id="name-spinner-area" style="background:#111; border:3px solid #444; padding:16px; margin: 16px 0; border-radius:8px;">
-                <div style="display:flex; justify-content:center; align-items:center; gap:8px; margin-bottom: 14px; background:#000; padding:14px 10px; border:2px inset #555;">
-                    <span id="word1-display" style="color:#ffeb3b;text-shadow:2px 2px #000;font-size:12px;">LOADING</span>
-                    <span id="word2-display" style="color:#ffeb3b;text-shadow:2px 2px #000;font-size:12px;">LOADING</span>
+            <div id="name-spinner-area" style="background:#111; border:5px solid #444; padding:20px; margin: 16px 0; border-radius:12px;">
+                <div style="display:flex; justify-content:center; align-items:center; margin-bottom: 16px; background:#000; padding:20px 10px; border:4px inset #555; border-radius: 8px;">
+                    <span id="player-name-display" style="color:#ffeb3b;text-shadow:4px 4px #000;font-size:36px; letter-spacing: 2px;">LOADING...</span>
                 </div>
-                <div style="display:flex; gap:10px; margin-bottom:14px;">
-                    <button id="spin-w1-btn" style="flex:1; margin-top:0; padding:10px 4px; font-size:8px; background:#2196f3; border-color:#0d47a1; color:#fff; box-shadow:0 4px 0 #0d47a1;">SPIN 1ST</button>
-                    <button id="spin-random-btn" style="flex:0.6; margin-top:0; padding:10px 4px; font-size:8px; background:#ff9800; border-color:#e65100; color:#fff; box-shadow:0 4px 0 #e65100;">🎲 BOTH</button>
-                    <button id="spin-w2-btn" style="flex:1; margin-top:0; padding:10px 4px; font-size:8px; background:#2196f3; border-color:#0d47a1; color:#fff; box-shadow:0 4px 0 #0d47a1;">SPIN 2ND</button>
-                </div>
-                <button id="lock-name-btn" style="background:#4caf50;color:#fff;border-color:#2e7d32;box-shadow:0 4px 0 #1b5e20; width:100%; margin-top:0;">LOCK IN NAME</button>
+                <button id="spin-random-btn" style="width:100%; margin-bottom:14px; padding:18px; font-size:24px; background:#2196f3; border-color:#0d47a1; color:#fff; box-shadow:0 8px 0 #0d47a1;">🎲 REROLL NAME</button>
+                <button id="lock-name-btn" style="background:#4caf50;color:#fff;border-color:#2e7d32;box-shadow:0 8px 0 #1b5e20; width:100%; margin-top:0; font-size: 24px; padding:18px;">LOCK IN NAME</button>
             </div>
 
             <div id="race-mode-area" class="hidden">
-                <p style="font-size:8px;color:#ffd700;margin:0 0 12px 0;">1&frac14; MILES &bull; RUN FOR THE ROSES</p>
-                <button id="solo-btn">SOLO RACE</button>
-                <button id="create-btn">CREATE MULTIPLAYER</button>
+                <p style="font-size:18px;color:#ffd700;margin:0 0 20px 0;">1&frac14; MILES &bull; RUN FOR THE ROSES</p>
+                <button id="solo-btn" style="width: 48%;">SOLO RACE</button>
+                <button id="create-btn" style="width: 48%;">MULTIPLAYER</button>
                 <div id="share-area" class="share-box hidden">
-                    <p style="font-size:8px;color:#fff;margin-bottom:8px;">Share this link:</p>
+                    <p style="font-size:16px;color:#fff;margin-bottom:8px;">Share this link:</p>
                     <input type="text" id="game-url" readonly>
                     <button id="copy-btn">COPY LINK</button>
                     <p class="waiting" id="waiting-msg">WAITING FOR PLAYERS...</p>
-                    <button id="start-race-btn" class="hidden">START RACE</button>
+                    <button id="start-race-btn" class="hidden" style="width: 100%;">START RACE</button>
                 </div>
             </div>
             
             <div id="join-msg" class="hidden" style="margin-top:12px;">
-                <p style="font-size:9px;color:#4caf50;">Waiting for host to start race...</p>
+                <p style="font-size:18px;color:#4caf50;">Waiting for host to start race...</p>
                 <button id="ready-btn" class="hidden">I'M READY</button>
             </div>
         </div>
     </div>
     <div id="tapping-phase" class="overlay hidden">
         <h2 id="timer-display">10.0</h2>
-        <div id="tap-zone">TAP HERE!<br><br>Speed, not force.<br>Your count is hidden!</div>
+        <div id="tap-zone">TAP HERE!<br><br><span style="font-size: 20px; color: #ffeb3b;">Speed, not force.<br>Your count is hidden!</span></div>
         <div id="tap-prep" class="panel hidden" style="margin-top:14px;padding:16px 20px;max-width:420px;">
-            <p style="font-size:9px;line-height:1.7;">When you're ready, hit start.<br>Your 10-second burst begins on your tap.</p>
+            <p style="font-size:20px;line-height:1.4;">When you're ready, hit start.<br>Your 10-second burst begins on your tap.</p>
             <button id="tap-start-btn">START TAPPING</button>
         </div>
         <div id="tap-status" class="hidden"></div>
     </div>
     <div id="race-phase" class="hidden">
         <div id="race-header"></div>
-        <div id="arcade-start-text">AND THEY'RE OFF!</div>
+        <div id="arcade-start-text">AND THEY'RE<br>OFF!</div>
         <div id="race-timer"></div>
         <div id="stretch-call"></div>
         <div id="notifications-container"></div>
@@ -147,7 +157,7 @@
     <div id="results-modal">
         <h2 id="results-title" style="text-align:center;margin-bottom:16px;"></h2>
         <div id="results-list"></div>
-        <button onclick="raceAgain()" style="margin:16px auto 0;display:block;">Race Again</button>
+        <button onclick="raceAgain()" style="margin:24px auto 0;display:block;">Race Again</button>
     </div>
 </div>
 <script>
@@ -174,23 +184,15 @@ function ensureRaceSeed(){if(!currentRaceSeed)currentRaceSeed=Math.floor(Math.ra
 let currentWord1 = "Loading";
 let currentWord2 = "Loading";
 
-function spinWord1() {
+function spinName() {
     currentWord1 = titleCase(pickWord());
-    document.getElementById('word1-display').innerText = currentWord1;
-}
-function spinWord2() {
     let nw;
     do { nw = titleCase(pickWord()); } while(nw === currentWord1);
     currentWord2 = nw;
-    document.getElementById('word2-display').innerText = currentWord2;
+    document.getElementById('player-name-display').innerText = `${currentWord1} ${currentWord2}`;
 }
 
-document.getElementById('spin-w1-btn').addEventListener('click', spinWord1);
-document.getElementById('spin-w2-btn').addEventListener('click', spinWord2);
-document.getElementById('spin-random-btn').addEventListener('click', () => {
-    spinWord1();
-    spinWord2();
-});
+document.getElementById('spin-random-btn').addEventListener('click', spinName);
 
 const urlParams=new URLSearchParams(location.search);const joinId=urlParams.get('gameId');
 
@@ -253,8 +255,7 @@ async function bootstrapNamePool(){
         console.warn('Common words fetch failed. Using built-in pool only.', e);
     }
     
-    spinWord1();
-    spinWord2();
+    spinName();
 }
 
 bootstrapNamePool();
@@ -287,7 +288,7 @@ gctx.fillStyle='#555';gctx.fillRect(0,0,1,1);gctx.fillStyle='#999';gctx.fillRect
 const gradMap=new THREE.CanvasTexture(gradCanvas);gradMap.minFilter=THREE.NearestFilter;gradMap.magFilter=THREE.NearestFilter;
 function toon(opts){return new THREE.MeshToonMaterial({...opts,gradientMap:gradMap});}
 function mowedGrass(){const c=document.createElement('canvas');c.width=512;c.height=512;const x=c.getContext('2d');for(let i=0;i<18;i++){x.fillStyle=i%2?'#3d8a35':'#4da843';x.fillRect(0,i*28.4,512,28.4);}const d=x.getImageData(0,0,512,512);for(let j=0;j<d.data.length;j+=4){const n=(Math.random()-.5)*8;d.data[j]+=n;d.data[j+1]+=n;d.data[j+2]+=n;}x.putImageData(d,0,0);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(6,6);return t;}
-function saddleTex(num,col){const c=document.createElement('canvas');c.width=128;c.height=128;const x=c.getContext('2d');x.fillStyle=col;x.fillRect(0,0,128,128);x.strokeStyle='#000';x.lineWidth=6;x.strokeRect(0,0,128,128);x.fillStyle='#fff';x.font='bold 64px "Press Start 2P",monospace';x.textAlign='center';x.textBaseline='middle';x.fillText(num,64,68);x.lineWidth=3;x.strokeText(num,64,68);return new THREE.CanvasTexture(c);}
+function saddleTex(num,col){const c=document.createElement('canvas');c.width=128;c.height=128;const x=c.getContext('2d');x.fillStyle=col;x.fillRect(0,0,128,128);x.strokeStyle='#000';x.lineWidth=6;x.strokeRect(0,0,128,128);x.fillStyle='#fff';x.font='bold 64px "Luckiest Guy",monospace';x.textAlign='center';x.textBaseline='middle';x.fillText(num,64,68);x.lineWidth=3;x.strokeText(num,64,68);return new THREE.CanvasTexture(c);}
 
 // --- TRACK ---
 (function(){const g=new THREE.Group();
@@ -582,7 +583,8 @@ document.getElementById('ready-btn').addEventListener('click',async()=>await gam
 function setTapZoneEnabled(e){const z=document.getElementById('tap-zone');z.classList.toggle('disabled',!e);z.style.pointerEvents=e?'auto':'none';}
 function showTappingPhase(manualStart=false){
     setupRacePreview();
-    document.getElementById('lobby').classList.add('hidden');document.getElementById('main-title').classList.add('hidden');document.getElementById('tapping-phase').classList.remove('hidden');const prep=document.getElementById('tap-prep');const status=document.getElementById('tap-status');if(!tappingDone)document.getElementById('timer-display').innerText=tapCountdownStarted?'10.0':'READY';document.getElementById('tap-zone').innerHTML='TAP HERE!<br><br>Speed, not force.<br>Your count is hidden!';if(manualStart&&!tapCountdownStarted&&!tappingDone){prep.classList.remove('hidden');status.classList.add('hidden');setTapZoneEnabled(false);}else if(!tappingDone){prep.classList.add('hidden');status.classList.add('hidden');setTapZoneEnabled(true);}
+    document.getElementById('lobby').classList.add('hidden');document.getElementById('main-title').classList.add('hidden');document.getElementById('tapping-phase').classList.remove('hidden');const prep=document.getElementById('tap-prep');const status=document.getElementById('tap-status');if(!tappingDone)document.getElementById('timer-display').innerText=tapCountdownStarted?'10.0':'READY';
+    if(manualStart&&!tapCountdownStarted&&!tappingDone){prep.classList.remove('hidden');status.classList.add('hidden');setTapZoneEnabled(false);}else if(!tappingDone){prep.classList.add('hidden');status.classList.add('hidden');setTapZoneEnabled(true);}
 }
 function startTapping(){
     if(tapping||tappingDone)return;
