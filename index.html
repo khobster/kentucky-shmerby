@@ -203,7 +203,7 @@
     <div id="tapping-phase" class="overlay hidden">
         <h2 id="timer-display">10.0</h2>
         <div id="tap-zone">TAP HERE!<br><br><span style="font-size: 20px; color: #ffeb3b;">Speed, not force.<br>Your count is hidden!</span></div>
-        <div id="tap-prep" class="panel hidden" style="margin-top:14px;padding:16px 20px;max-width:420px;">
+        <div id="tap-prep" class="panel hidden" style="margin:14px auto 0;padding:16px 20px;max-width:420px;">
             <p style="font-size:20px;line-height:1.4;">When you're ready, hit start.<br>Your 10-second burst begins on your tap.</p>
             <button id="tap-start-btn">START TAPPING</button>
         </div>
@@ -410,7 +410,30 @@ const TOM_SET={name:'tomato',front:"tomato-front.png",side:"tomato-side.png",sid
 const ALL_SETS=[LT_SET,GEO_SET,DAV_SET,LIB_SET,BUN_SET,TOM_SET];
 const loadedTextures=[];
 ALL_SETS.forEach(s=>{loadedTextures.push({...s,front:texLoader.load(s.front),side:texLoader.load(s.side),side_r:texLoader.load(s.side_r),back:texLoader.load(s.back)});});
-function buildMascotHead(idx){const charData=loadedTextures[idx%loadedTextures.length];const g=new THREE.Group();const mat=new THREE.MeshBasicMaterial({transparent:true,alphaTest:0.5,side:THREE.DoubleSide});const hsf=charData.frontSize||10.5;const hss=charData.sideSize||10.5;const gF=new THREE.PlaneGeometry(hsf,hsf);const gS=new THREE.PlaneGeometry(hss,hsf);const plane=new THREE.Mesh(gF,mat);plane.position.z=1.3;g.add(plane);g.userData.multiAngle=charData;g.userData.headMat=mat;g.userData.headMesh=plane;g.userData.isHead=true;g.userData.sideGeo=gS;g.userData.frontGeo=gF;return g;}
+function buildMascotHead(idx){
+    const charData=loadedTextures[idx%loadedTextures.length];
+    const g=new THREE.Group();
+    // Two stacked billboards so we can cross-fade between adjacent angle
+    // textures (front/side/back/side_r) for a smooth pseudo-3D rotation.
+    // transparent + depthWrite:false + low alphaTest lets bunched heads
+    // sort cleanly without z-fighting at the billboard planes.
+    const matOpts={transparent:true,depthWrite:false,side:THREE.DoubleSide,alphaTest:0.05};
+    const matA=new THREE.MeshBasicMaterial({...matOpts,opacity:1});
+    const matB=new THREE.MeshBasicMaterial({...matOpts,opacity:0});
+    const hsf=charData.frontSize||10.5;
+    const hss=charData.sideSize||10.5;
+    const gF=new THREE.PlaneGeometry(hsf,hsf);
+    const gS=new THREE.PlaneGeometry(hss,hsf);
+    const planeA=new THREE.Mesh(gF,matA);planeA.position.z=1.30;planeA.renderOrder=2;g.add(planeA);
+    const planeB=new THREE.Mesh(gF,matB);planeB.position.z=1.30;planeB.renderOrder=1;g.add(planeB);
+    g.userData.multiAngle=charData;
+    g.userData.headMatA=matA;g.userData.headMatB=matB;
+    g.userData.headMeshA=planeA;g.userData.headMeshB=planeB;
+    g.userData.isHead=true;g.userData.sideGeo=gS;g.userData.frontGeo=gF;
+    // Back-compat aliases (other code may still reference these)
+    g.userData.headMat=matA;g.userData.headMesh=planeA;
+    return g;
+}
 const _headWorldPos=new THREE.Vector3(),_camToHead=new THREE.Vector3(),_horseForward=new THREE.Vector3();
 const _parentWorldQuat=new THREE.Quaternion(),_targetQuat=new THREE.Quaternion(),_lookMatrix=new THREE.Matrix4(),_desiredHeadPos=new THREE.Vector3();
 function updateHeadAngle(horseRoot,jockeyGroup,cam){
@@ -432,8 +455,39 @@ function updateHeadAngle(horseRoot,jockeyGroup,cam){
     const parts=riderBody.userData.parts||{};const sv=(zone==='side'||zone==='side_r');const snl=sideSign>0;
     if(parts.leftUpperArm)parts.leftUpperArm.visible=!sv||snl;if(parts.leftThigh)parts.leftThigh.visible=!sv||snl;if(parts.rightUpperArm)parts.rightUpperArm.visible=!sv||!snl;if(parts.rightThigh)parts.rightThigh.visible=!sv||!snl;
     if(parts.chestSilk){const tz3=sv?sideSign*0.1:0;parts.chestSilk.position.z+=(tz3-parts.chestSilk.position.z)*0.2;}if(parts.hips){const hz=sv?sideSign*0.08:0;parts.hips.position.z+=(hz-parts.hips.position.z)*0.2;}}
-    if(texSet.name==='liberty'||texSet.name==='lt'){const tg=(zone==='front'||zone==='back')?headGroup.userData.frontGeo:headGroup.userData.sideGeo;if(mesh.geometry!==tg)mesh.geometry=tg;}
-    const newTex=texSet[zone];if(newTex&&mat.map!==newTex){mat.map=newTex;mat.needsUpdate=true;}
+    // --- Smooth cross-fade between adjacent angle textures ---
+    // Map deg -> two anchor textures + blend factor. Anchors at -180, -90, 0, 90, 180.
+    const swap=!!texSet.swapSideViews;
+    const anchors=swap
+      ? [{a:-180,n:'back'},{a:-90,n:'side'},{a:0,n:'front'},{a:90,n:'side_r'},{a:180,n:'back'}]
+      : [{a:-180,n:'back'},{a:-90,n:'side_r'},{a:0,n:'front'},{a:90,n:'side'},{a:180,n:'back'}];
+    let fromName='front',toName='front',rawT=0;
+    for(let i=0;i<anchors.length-1;i++){
+        if(deg>=anchors[i].a && deg<=anchors[i+1].a){
+            fromName=anchors[i].n;toName=anchors[i+1].n;
+            rawT=(deg-anchors[i].a)/(anchors[i+1].a-anchors[i].a);
+            break;
+        }
+    }
+    // Snap to anchor in mid-zone, smooth-blend in transition bands near boundaries.
+    const blendT=THREE.MathUtils.smoothstep(rawT,0.35,0.65);
+    const matA=headGroup.userData.headMatA,matB=headGroup.userData.headMatB;
+    const meshA=headGroup.userData.headMeshA,meshB=headGroup.userData.headMeshB;
+    const texFrom=texSet[fromName],texTo=texSet[toName];
+    if(texFrom&&matA.map!==texFrom){matA.map=texFrom;matA.needsUpdate=true;}
+    if(texTo&&matB.map!==texTo){matB.map=texTo;matB.needsUpdate=true;}
+    matA.opacity=1-blendT;
+    matB.opacity=blendT;
+    // Draw the higher-opacity plane on top so it composites cleanly
+    if(blendT>0.5){meshA.renderOrder=1;meshB.renderOrder=2;} else {meshA.renderOrder=2;meshB.renderOrder=1;}
+    // Per-character geometry swap (square for front/back, narrower for side)
+    if(texSet.name==='liberty'||texSet.name==='lt'){
+        const gFront=headGroup.userData.frontGeo,gSide=headGroup.userData.sideGeo;
+        const tgA=(fromName==='front'||fromName==='back')?gFront:gSide;
+        const tgB=(toName==='front'  ||toName==='back')  ?gFront:gSide;
+        if(meshA.geometry!==tgA)meshA.geometry=tgA;
+        if(meshB.geometry!==tgB)meshB.geometry=tgB;
+    }
 }
 
 // --- HORSE ---
