@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#87CEEB">
     <title>Kentucky Shmerby</title>
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -11,7 +15,9 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
         *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family: 'Luckiest Guy', Impact, sans-serif; background:#87CEEB;color:#fff;overflow:hidden;user-select:none;-webkit-user-select:none; letter-spacing: 1px;}
+        html, body{height:100%;}
+        body{font-family: 'Luckiest Guy', Impact, sans-serif; background:#87CEEB;color:#fff;overflow:hidden;user-select:none;-webkit-user-select:none; letter-spacing: 1px; -webkit-tap-highlight-color:transparent; overscroll-behavior:none;}
+        button, #tap-zone{touch-action:manipulation;}
         
         #tapping-phase{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 170px 0;width:100%;touch-action:pan-y;}
         #tapping-phase .panel{margin-bottom:24px;}
@@ -98,6 +104,62 @@
 
         #stretch-call{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:500;font-size:64px;color:#fff;text-shadow:0px 8px 0px #e53935, 0px 16px 0px #000;pointer-events:none;opacity:0;transition:opacity 0.4s;white-space:nowrap;text-align:center;line-height:1.1; -webkit-text-stroke: 3px #000;}
         #stretch-call.show{opacity:1;}
+
+        /* --- Mobile (narrow viewport) tuning --- */
+        @media (max-width: 700px) {
+            h1{font-size:36px;margin:calc(env(safe-area-inset-top, 0px) + 14px) 0 10px;text-shadow:0px 4px 0 #b71c1c, 0px 8px 0 #000;-webkit-text-stroke:1.5px #000;}
+            .panel{padding:18px 18px;margin-top:14px;border-width:4px;box-shadow:0 6px 0 rgba(0,0,0,0.7);}
+            .panel p{font-size:16px !important;}
+            #player-horse-name{font-size:26px !important;}
+            #player-name-display{font-size:26px !important; letter-spacing:1px !important;}
+            #name-spinner-area{padding:14px !important;}
+            #name-spinner-area > div:first-child{padding:14px 8px !important;}
+            #spin-random-btn, #lock-name-btn{font-size:18px !important;padding:14px !important;box-shadow:0 5px 0 #0d47a1 !important;}
+            #lock-name-btn{box-shadow:0 5px 0 #1b5e20 !important;}
+            button{font-size:18px;padding:12px 18px;box-shadow:0 5px 0 #f57f17;border-width:4px;}
+            button:active{transform:translateY(5px);}
+            #tap-zone{height:200px;font-size:24px;border-width:6px;box-shadow:0 8px 0 #b71c1c;margin:12px auto;}
+            #tap-zone span{font-size:15px !important;}
+            #timer-display{font-size:54px;margin-top:calc(env(safe-area-inset-top, 0px) + 24px);text-shadow:0 5px 0 #b71c1c, 0 10px 0 #000;-webkit-text-stroke:2px #000;}
+            #tap-status{font-size:15px;margin-top:10px;}
+            #race-status{font-size:20px;text-shadow:2px 2px 0 #000;}
+            #race-timer{font-size:22px;top:calc(env(safe-area-inset-top, 0px) + 10px);right:10px;text-shadow:2px 2px #000;}
+            #race-header{padding:0 56px 0 10px;top:calc(env(safe-area-inset-top, 0px) + 10px);}
+
+            #leaderboard{
+                left:8px;right:8px;
+                bottom:calc(env(safe-area-inset-bottom, 0px) + 8px);
+                min-width:0;
+                box-shadow:4px 4px 0 rgba(0,0,0,0.4);
+                border-width:3px;
+                max-height:38vh;
+                display:flex;flex-direction:column;
+            }
+            #lb-header{font-size:16px;padding:8px 10px;border-bottom-width:3px;letter-spacing:0;}
+            #standings-list{overflow-y:auto;-webkit-overflow-scrolling:touch;}
+            .lb-row{font-size:15px;padding:6px 10px;border-bottom-width:2px;}
+            .lb-num{font-size:16px;width:24px;}
+            .lb-color{width:18px;height:14px;border-width:2px;margin-right:8px;}
+
+            #results-modal{padding:18px;border-width:5px;box-shadow:6px 6px 0 rgba(0,0,0,0.5);max-height:92vh;overflow-y:auto;}
+            #results-title{font-size:28px !important;margin-bottom:12px !important;text-shadow:2px 2px 0 #b71c1c !important;-webkit-text-stroke:1.5px #000 !important;}
+            .result-row{font-size:17px;padding-bottom:6px;margin:5px 0;}
+            .result-place{width:60px;font-size:16px;}
+
+            #notifications-container{top:calc(env(safe-area-inset-top, 0px) + 56px);width:92%;}
+            .finish-notif{font-size:14px;padding:8px 14px;}
+
+            #arcade-start-text{font-size:60px;-webkit-text-stroke:3px #000;text-shadow:0 5px 0 #e53935, 0 10px 0 #000;}
+            #stretch-call{font-size:38px;text-shadow:0 5px 0 #e53935, 0 10px 0 #000;-webkit-text-stroke:2px #000;white-space:normal;width:90%;}
+
+            .share-box input{font-size:14px;padding:10px;}
+        }
+
+        /* Landscape phones: leaderboard stays narrow on the side */
+        @media (max-width: 900px) and (orientation: landscape) {
+            #leaderboard{right:auto;max-width:220px;max-height:80vh;}
+            #timer-display{margin-top:calc(env(safe-area-inset-top, 0px) + 12px);}
+        }
     </style>
 </head>
 <body>
@@ -680,7 +742,9 @@ function animate(){
     if(finishOrder.length===gameHorses.length&&!raceFinished){raceFinished=true;setTimeout(()=>{const rl=document.getElementById('results-list');rl.innerHTML='';document.getElementById('results-title').textContent='OFFICIAL RESULTS';finishOrder.forEach((h,i)=>{const t=i===0?'WIN':i===1?'PLACE':i===2?'SHOW':`${i+1}TH`;rl.innerHTML+=`<div class="result-row"><span class="result-place">${t}</span><div class="lb-color" style="background:${h.color}"></div><span style="color:${h.isPlayer?'#ffeb3b':'#fff'}">#${h.number} ${h.name}${h.isPlayer?' ⭐':''}</span></div>`;});document.getElementById('results-modal').style.display='flex';},2000);}
     renderer.render(scene,camera);
 }
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+function handleResize(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));}
+addEventListener('resize',handleResize);
+addEventListener('orientationchange',()=>setTimeout(handleResize,150));
 </script>
 </body>
 </html>
