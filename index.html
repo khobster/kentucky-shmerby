@@ -337,7 +337,7 @@ function genNameRng(rng){const pool=(NAME_WORDS&&NAME_WORDS.length)?NAME_WORDS:D
 const TRACK_SX=1.8,BASE_R=280,DIRT_W=75;
 const START_ANGLE=-Math.PI/2,FINISH_ANGLE=START_ANGLE+2*Math.PI;
 const AVG_SPEED=0.0011;
-let camMode='broadcast';
+let camMode='start';
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x87CEEB);scene.fog=new THREE.Fog(0x87CEEB,600,1200);
 const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,1,3000);
 const camTarget=new THREE.Vector3();
@@ -703,7 +703,10 @@ function animate(){
     if (progress > 0.08 && gateG.visible) {
         gateG.visible = false;
     }
-    
+
+    // Drop the high overhead "start" cam once horses have spread out
+    if (camMode === 'start' && progress > 0.12) camMode = 'broadcast';
+
     if(progress>.78&&!stretchCalled){stretchCalled=true;camMode='stretch';const sc=document.getElementById('stretch-call');sc.innerHTML="AND DOWN THE<br>STRETCH THEY COME!";sc.classList.add('show');setTimeout(()=>sc.classList.remove('show'),3500);}
     
     gameHorses.forEach((h,i)=>{
@@ -738,7 +741,31 @@ function animate(){
         if(!h.finished&&h.angle>leaderAngle){leaderAngle=h.angle;leader=h;}
     });
     updateLB();
-    if(leader){const r=BASE_R+leader.laneOffset+(camMode==='broadcast'?70:25);const camPos=camMode==='broadcast'?new THREE.Vector3(Math.cos(leader.angle+.06)*r*TRACK_SX,32,Math.sin(leader.angle+.06)*r):new THREE.Vector3(80,55,-(BASE_R+DIRT_W/2)+15);camera.position.lerp(camPos,.08);camTarget.lerp(new THREE.Vector3(Math.cos(leader.angle)*BASE_R*TRACK_SX,5,Math.sin(leader.angle)*BASE_R),.08);camera.lookAt(camTarget);}
+    if(leader){
+        const horseR=BASE_R+leader.laneOffset;
+        let camPos,camTargetVec,lerpRate=.08;
+        if(camMode==='start'){
+            // High overhead — keeps the field readable when they bunch out of the gate
+            const r=horseR+90;
+            camPos=new THREE.Vector3(Math.cos(leader.angle+.04)*r*TRACK_SX,110,Math.sin(leader.angle+.04)*r);
+            camTargetVec=new THREE.Vector3(Math.cos(leader.angle-.02)*BASE_R*TRACK_SX,4,Math.sin(leader.angle-.02)*BASE_R);
+            lerpRate=.05;
+        } else if(camMode==='stretch'){
+            // Close trailing shot for "down the stretch they come"
+            const r=horseR+28;
+            camPos=new THREE.Vector3(Math.cos(leader.angle+.10)*r*TRACK_SX,15,Math.sin(leader.angle+.10)*r);
+            camTargetVec=new THREE.Vector3(Math.cos(leader.angle-.02)*BASE_R*TRACK_SX,9,Math.sin(leader.angle-.02)*BASE_R);
+            lerpRate=.06;
+        } else {
+            // Standard broadcast orbit
+            const r=horseR+70;
+            camPos=new THREE.Vector3(Math.cos(leader.angle+.06)*r*TRACK_SX,32,Math.sin(leader.angle+.06)*r);
+            camTargetVec=new THREE.Vector3(Math.cos(leader.angle)*BASE_R*TRACK_SX,5,Math.sin(leader.angle)*BASE_R);
+        }
+        camera.position.lerp(camPos,lerpRate);
+        camTarget.lerp(camTargetVec,lerpRate);
+        camera.lookAt(camTarget);
+    }
     if(finishOrder.length===gameHorses.length&&!raceFinished){raceFinished=true;setTimeout(()=>{const rl=document.getElementById('results-list');rl.innerHTML='';document.getElementById('results-title').textContent='OFFICIAL RESULTS';finishOrder.forEach((h,i)=>{const t=i===0?'WIN':i===1?'PLACE':i===2?'SHOW':`${i+1}TH`;rl.innerHTML+=`<div class="result-row"><span class="result-place">${t}</span><div class="lb-color" style="background:${h.color}"></div><span style="color:${h.isPlayer?'#ffeb3b':'#fff'}">#${h.number} ${h.name}${h.isPlayer?' ⭐':''}</span></div>`;});document.getElementById('results-modal').style.display='flex';},2000);}
     renderer.render(scene,camera);
 }
